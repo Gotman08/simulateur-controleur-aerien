@@ -32,7 +32,8 @@ simulator running on a local machine.
 8. [Tech stack](#tech-stack)
 9. [Status and roadmap](#status-and-roadmap)
 10. [Limitations](#limitations)
-11. [License and acknowledgements](#license-and-acknowledgements)
+11. [References](#references)
+12. [License and acknowledgements](#license-and-acknowledgements)
 
 ---
 
@@ -204,6 +205,18 @@ to end scenarios (S9), and a quantitative evaluation over 20 scenarios with a de
   An unsafe or unknown order is rejected by the validation layer rather than applied.
 - Voice synthesis runs on CPU on the cluster (a known cuFFT issue with torchaudio on the GH200 GPU),
   so it is reliable but not real time fast.
+
+## References
+
+State of the art that informed the design (full BibTeX in `src/references.bib`):
+
+1. Zuluaga-Gomez, J. et al. ATCO2 corpus: A Large-Scale Dataset for Research on ASR and NLU of Air Traffic Control Communications. arXiv:2211.04054, 2023. https://arxiv.org/abs/2211.04054
+2. Zhang, Q. and Mott, J. H. An Exploratory Assessment of LLM's Potential Toward Flight Trajectory Reconstruction Analysis. arXiv:2401.06204, 2024. https://arxiv.org/abs/2401.06204
+3. Sharifi, I., Zongo, A. and Wei, P. Fine-Tuning Large Language Models for Cooperative Tactical Deconfliction of Small Unmanned Aerial Systems. arXiv:2603.28561, 2026. https://arxiv.org/abs/2603.28561
+4. Sid, D. et al. AirTrafficGen: Configurable Air Traffic Scenario Generation with Large Language Models. arXiv:2508.02269, 2025. https://arxiv.org/abs/2508.02269
+5. van Doorn, J. L. P. M. Applying Large-Scale Weakly Supervised Automatic Speech Recognition to Air Traffic Control. Master's Thesis, TU Delft, 2023.
+6. Su, J. and Haq, O. Fine-Tuning Whisper for American English Air Traffic Control Speech Recognition: A Data-Efficient Pipeline. Research Square, 2026. https://doi.org/10.21203/rs.3.rs-8970162/v1
+7. ICAO. Doc 4444: Procedures for Air Navigation Services, Air Traffic Management (PANS-ATM), 16th edition, 2016.
 
 ## License and acknowledgements
 
