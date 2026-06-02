@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# Virtual environments
+bluesky-env/
+env/
+venv/
+.venv/
+
+# Caches, models and generated data (kept on the cluster, not versioned)
+hf_cache/
+tts_data/
+conda_pkgs/
+pip_cache/
+data_proc/
+outputs/
+*.log
+
+# BlueSky local working data
+bluesky/
+
+# OS
+.DS_Store
+Thumbs.db

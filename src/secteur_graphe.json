@@ -1,0 +1,99 @@
+{
+  "separation_nm": 5.0,
+  "noeuds": [
+    {
+      "id": "ENTRY_W",
+      "pos_nm": [
+        0,
+        20
+      ],
+      "type": "entry"
+    },
+    {
+      "id": "BALMO",
+      "pos_nm": [
+        25,
+        20
+      ],
+      "type": "fix"
+    },
+    {
+      "id": "CROSS",
+      "pos_nm": [
+        50,
+        25
+      ],
+      "type": "fix"
+    },
+    {
+      "id": "DELTA",
+      "pos_nm": [
+        75,
+        20
+      ],
+      "type": "fix"
+    },
+    {
+      "id": "EXIT_E",
+      "pos_nm": [
+        100,
+        20
+      ],
+      "type": "exit"
+    },
+    {
+      "id": "ENTRY_S",
+      "pos_nm": [
+        50,
+        0
+      ],
+      "type": "entry"
+    },
+    {
+      "id": "NORTH",
+      "pos_nm": [
+        50,
+        50
+      ],
+      "type": "exit"
+    }
+  ],
+  "segments": [
+    {
+      "de": "ENTRY_W",
+      "vers": "BALMO",
+      "dist_nm": 25.0,
+      "creneaux_5nm": 5
+    },
+    {
+      "de": "BALMO",
+      "vers": "CROSS",
+      "dist_nm": 25.5,
+      "creneaux_5nm": 5
+    },
+    {
+      "de": "CROSS",
+      "vers": "DELTA",
+      "dist_nm": 25.5,
+      "creneaux_5nm": 5
+    },
+    {
+      "de": "CROSS",
+      "vers": "ENTRY_S",
+      "dist_nm": 25.0,
+      "creneaux_5nm": 5
+    },
+    {
+      "de": "CROSS",
+      "vers": "NORTH",
+      "dist_nm": 25.0,
+      "creneaux_5nm": 5
+    },
+    {
+      "de": "DELTA",
+      "vers": "EXIT_E",
+      "dist_nm": 25.0,
+      "creneaux_5nm": 5
+    }
+  ]
+}

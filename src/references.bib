@@ -1,0 +1,70 @@
+% =====================================================================
+%  Bibliographie du stage - Contrôle aérien augmenté par l'IA
+%  Constituée en semaines 1 et 2 (état de l'art)
+%  Auteur : Nicolas Marano
+% =====================================================================
+
+@article{atco2_2023,
+  author  = {Zuluaga-Gomez, Juan and others},
+  title   = {{ATCO2} corpus: A Large-Scale Dataset for Research on Automatic
+             Speech Recognition and Natural Language Understanding of Air
+             Traffic Control Communications},
+  journal = {arXiv preprint arXiv:2211.04054v2},
+  year    = {2023},
+  note    = {Corpus de référence pour l'apprentissage faiblement supervisé (NER ATC)}
+}
+
+@article{zhang_trajectory_2024,
+  author  = {Zhang, Qilei and Mott, John H.},
+  title   = {An Exploratory Assessment of {LLM}'s Potential Toward Flight
+             Trajectory Reconstruction Analysis},
+  journal = {arXiv preprint arXiv:2401.06204v1},
+  year    = {2024},
+  note    = {Limites des LLM face aux longues séquences de coordonnées brutes}
+}
+
+@article{sharifi_deconfliction_2026,
+  author  = {Sharifi, Iman and Zongo, Abdoul and Wei, Peng},
+  title   = {Fine-Tuning Large Language Models for Cooperative Tactical
+             Deconfliction of Small Unmanned Aerial Systems},
+  journal = {arXiv preprint arXiv:2603.28561v1},
+  year    = {2026},
+  note    = {SFT + DPO pour la déconfliction tactique}
+}
+
+@article{airtrafficgen_2025,
+  author  = {Sid, Driss and others},
+  title   = {{AirTrafficGen}: Configurable Air Traffic Scenario Generation
+             with Large Language Models},
+  journal = {arXiv preprint arXiv:2508.02269v2},
+  year    = {2025},
+  note    = {Représentation de l'espace aérien sous forme de graphes}
+}
+
+@mastersthesis{vandoorn_2023,
+  author  = {van Doorn, J. L. P. M.},
+  title   = {Applying Large-Scale Weakly Supervised Automatic Speech
+             Recognition to Air Traffic Control},
+  school  = {Delft University of Technology (TU Delft)},
+  year    = {2023},
+  note    = {Adaptation de Whisper au domaine ATC}
+}
+
+@article{su_whisper_2026,
+  author  = {Su, Jian and Haq, Obaid},
+  title   = {Fine-Tuning Whisper for American English Air Traffic Control
+             Speech Recognition: A Data-Efficient Pipeline},
+  journal = {Research Square},
+  year    = {2026},
+  doi     = {10.21203/rs.3.rs-8970162/v1},
+  note    = {Filtre Butterworth 300-3400 Hz ; alerte LoRA input_features}
+}
+
+@techreport{icao_doc4444,
+  author      = {{Organisation de l'Aviation Civile Internationale (OACI)}},
+  title       = {Doc 4444 - Gestion du trafic aérien (PANS-ATM)},
+  institution = {OACI},
+  year        = {2016},
+  edition     = {16e},
+  note        = {Source réglementaire de la base vectorielle RAG}
+}

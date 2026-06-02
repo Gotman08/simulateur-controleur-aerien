@@ -1,0 +1,18 @@
+# AI side (ROMEO cluster, GPU node, aarch64).
+# Install PyTorch for the cluster CUDA first (handled by setup_romeo.sh / setup_tts_romeo.sh):
+#   pip install torch torchaudio
+transformers>=4.44
+datasets[audio]>=2.20
+peft>=0.12
+accelerate>=0.33
+evaluate
+jiwer
+librosa
+soundfile
+scipy
+matplotlib
+sentence-transformers>=3.0
+coqui-tts
+fastapi
+uvicorn[standard]
+python-multipart

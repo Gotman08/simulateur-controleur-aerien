@@ -1,0 +1,9 @@
+# Normalize line endings to LF for text, mark media and model weights as binary
+* text=auto eol=lf
+*.png binary
+*.gif binary
+*.jpg binary
+*.jpeg binary
+*.wav binary
+*.safetensors binary
+*.bin binary

@@ -1,0 +1,8 @@
+# Local side (Windows, Python 3.12): BlueSky simulator + orchestrator client.
+bluesky-simulator
+numpy
+scipy
+matplotlib
+soundfile
+requests
+pillow
