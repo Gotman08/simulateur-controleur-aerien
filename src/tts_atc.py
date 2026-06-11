@@ -52,7 +52,7 @@ def synth(text, ref_wav, out_path=None, language="en", vhf=True):
 
 
 if __name__ == "__main__":
-    import argparse, soundfile as sf
+    import argparse
     ap = argparse.ArgumentParser()
     ap.add_argument("--text", default="air france one two three four descend flight level one hundred")
     ap.add_argument("--ref", required=True, help="wav de voix de reference (clonage)")

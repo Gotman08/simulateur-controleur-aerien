@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Validation 1 - Verification de la formule CPA par propriete
 ===========================================================
@@ -17,7 +16,6 @@ Execution :  src\\bluesky-env\\Scripts\\python.exe validation\\01_cpa_analytique
 import os
 import sys
 import json
-import math
 import time
 
 import numpy as np

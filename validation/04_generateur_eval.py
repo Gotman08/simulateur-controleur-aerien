@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Validation 4 - Conformite du generateur de situations local (atc_ai.local_scenario)
 ====================================================================================
@@ -196,7 +195,7 @@ def main():
     fig.tight_layout()
     fig.savefig(os.path.join(FIG_DIR, "fig_generateur_contraintes.png"), dpi=150)
     plt.close(fig)
-    print(f"[2] figure : fig_generateur_contraintes.png")
+    print("[2] figure : fig_generateur_contraintes.png")
 
     duree = time.time() - t_start
     save_results("generateur", {

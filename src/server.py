@@ -72,7 +72,8 @@ ROLE = os.environ.get("ATC_ROLE", "all")
 async def lifespan(app):
     print(f"[server] role={ROLE} : chargement des modeles...", flush=True)
     if ROLE in ("all", "asrllm"):
-        get_asr(); get_retriever()
+        get_asr()
+        get_retriever()
         try:
             atc_llm.load_llm()
         except Exception as e:

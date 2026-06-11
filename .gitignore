@@ -28,8 +28,10 @@ frontend/node_modules/
 # Rapports d'exercice generes a l'usage
 reports/
 
-# Tests
+# Tests / outils
 .pytest_cache/
+.ruff_cache/
+.claude/
 
 # OS
 .DS_Store

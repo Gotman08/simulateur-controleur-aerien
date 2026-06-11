@@ -6,7 +6,6 @@ ni n'appelle de fonction BlueSky : on ne touche qu'aux helpers geometriques
 (to_nm / from_nm / _point_in_poly) et a la methode STATIQUE SimManager._analyze,
 qui opere sur des dictionnaires d'avions construits a la main.
 """
-import math
 
 import pytest
 
