@@ -17,6 +17,7 @@ est ouvert, sinon repli 100 % local (le navigateur fait STT/TTS via la Web Speec
 Lancer :  bluesky-env/Scripts/python.exe atc_app.py     (ouvre le navigateur)
 """
 import os
+import re
 import sys
 import json
 import base64
@@ -108,6 +109,35 @@ app = FastAPI(title="ATC training app", lifespan=lifespan)
 
 
 # --- coeur : interpretation -> execution -> readback -------------------------
+_VERB_DESC = re.compile(r"\b(descend|descending|descent|descende[zr]|descendre)\b", re.I)
+_VERB_CLIMB = re.compile(r"\b(climb|climbing|monte[zr]|monter)\b", re.I)
+
+
+def _check_alt_coherence(text, orders, lines, rejected, cur_alt):
+    """Garde-fou semantique : si la phrase dit 'descend' (sans 'climb'), un ordre
+    ALT au-dessus du niveau actuel est incoherent (transcription tronquee ou
+    hallucination du LLM) -> rejete plutot qu'execute. Et symetriquement."""
+    want_desc = _VERB_DESC.search(text) and not _VERB_CLIMB.search(text)
+    want_climb = _VERB_CLIMB.search(text) and not _VERB_DESC.search(text)
+    if not (want_desc or want_climb):
+        return orders, lines
+    kept = []
+    for o in orders:
+        cur = cur_alt.get(o.get("callsign"))
+        if o.get("action") == "ALT" and cur is not None:
+            bad_up = want_desc and o["value"] > cur + 200
+            bad_down = want_climb and o["value"] < cur - 200
+            if bad_up or bad_down:
+                sens = "« descend »" if bad_up else "« climb »"
+                rejected.append(f"incohérence : {sens} entendu mais FL{int(o['value'] / 100):03d} "
+                                f"est {'au-dessus' if bad_up else 'au-dessous'} du niveau actuel "
+                                f"FL{int(cur / 100):03d} — ordre non exécuté")
+                lines = [ln for ln in lines if ln != f"ALT {o['callsign']} {o['value']}"]
+                continue
+        kept.append(o)
+    return kept, lines
+
+
 def process_instruction(text):
     text = (text or "").strip()
     if not text:
@@ -127,11 +157,13 @@ def process_instruction(text):
         orders = [o for o in orders if o.get("callsign") in known]
         lines = [ln for ln in lines if len(ln.split()) > 1 and ln.split()[1] in known]
 
+    cur_alt = {a["id"]: a["alt_ft"] for a in snap["aircraft"]}
+    orders, lines = _check_alt_coherence(text, orders, lines, rejected, cur_alt)
+
     for line in lines:
         SIM.enqueue(line)
     if EX.active:
         EX.note_command(text, len(lines), len(rejected))
-    cur_alt = {a["id"]: a["alt_ft"] for a in snap["aircraft"]}
     rb = RB.readback_text(orders, cur_alt)
     return {"transcript": text, "orders": orders, "trafscript": lines,
             "rejected": rejected, "readback_text": rb}
