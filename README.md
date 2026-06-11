@@ -14,7 +14,7 @@ validated command, executed in the BlueSky simulator, and answered by a synthesi
 voice. The full chain runs as a real time loop, with the AI models hosted on a GPU cluster and the
 simulator running on a local machine.
 
-![Radar control session](docs/assets/radar_session.gif)
+![ATC Trainer — live radar with programmed conflicts, storm cell and flight strips](docs/assets/app_radar_live.gif)
 
 > Internship project (10 week PoC), University of Reims Champagne-Ardenne (URCA). AI compute on the
 > ROMEO supercomputer (NVIDIA GH200, Grace-Hopper, aarch64). Author: Nicolas Marano.
@@ -105,24 +105,15 @@ multilayer safety net) are measured and discussed in
 
 ## Demos
 
-### Realistic radar scope, built from the simulator data
+### A scored exercise in progress
 
-A controller style radar scope rendered from the real BlueSky simulation state and the real
-navigation database (waypoints, airports), centered on the Reims sector. Aircraft show a velocity
-leader and a data block (callsign, flight level, ground speed).
+The control-room interface during a *Difficile* exercise: the engine has placed conflict pairs
+(amber CONF tags and dashed line with time-to-CPA), a storm cell (CB) and a 40 kt wind; the radar
+shows velocity leaders, data blocks with climb/descend trends and cleared levels, FMS routes, and
+the strip bay sorts alerts first. The live score updates in the Exercice tab while the student
+works the frequency.
 
-![Radar scope Reims](docs/assets/radar_reims.png)
-
-### Live interaction: spoken instructions deviate the aircraft
-
-Four aircraft fly straight (heading 090). Natural language instructions are sent through the
-pipeline and the aircraft deviate. Left: before. Right: after the pipeline commands.
-
-![Before and after](docs/assets/radar_live_beforeafter.png)
-
-Animated replay with the rotating radar sweep:
-
-![Live radar replay](docs/assets/radar_live.gif)
+![Exercise in progress — objectives and live scoring](docs/assets/app_exercice.png)
 
 ### Whisper fine tuning and RAG results
 
