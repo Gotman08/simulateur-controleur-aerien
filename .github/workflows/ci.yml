@@ -18,7 +18,7 @@ jobs:
       - name: Dependances de test (modules purs uniquement, sans BlueSky)
         run: pip install pytest ruff requests
       - name: Ruff
-        run: ruff check src tests validation
+        run: ruff check src tests validation tools
       - name: Pytest
         run: pytest
 
