@@ -96,6 +96,12 @@ and the guaranteed-conflict construction are documented with figures in
 **[docs/VALIDATION.md](docs/VALIDATION.md)** — reproducible with
 `src\bluesky-env\Scripts\python.exe validation\run_all.py`.
 
+Performance, usefulness and limits (AI latency local vs ROMEO, ASR/TTS
+real-time factors, BlueSky scaling up to 200 aircraft at 55x real time, the
+multilayer safety net) are measured and discussed in
+**[docs/PERFORMANCE.md](docs/PERFORMANCE.md)** — reproducible with
+`src\bluesky-env\Scripts\python.exe validation\05_performance.py`.
+
 ## Demos
 
 ### Realistic radar scope, built from the simulator data

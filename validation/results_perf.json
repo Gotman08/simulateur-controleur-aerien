@@ -1,0 +1,80 @@
+{
+ "local": {
+  "interpret": {
+   "n": 200,
+   "moyenne_ms": 0.04,
+   "mediane_ms": 0.03,
+   "p95_ms": 0.05,
+   "max_ms": 1.8
+  },
+  "scenario": {
+   "n": 100,
+   "moyenne_ms": 0.03,
+   "mediane_ms": 0.02,
+   "p95_ms": 0.03,
+   "max_ms": 0.62
+  }
+ },
+ "romeo": {
+  "interpret_s": {
+   "n": 8,
+   "moyenne": 5.17,
+   "min": 0.98,
+   "max": 8.38
+  },
+  "asr_s": {
+   "n": 3,
+   "moyenne": 0.84,
+   "rtf_moyen": 0.04
+  },
+  "tts_s": {
+   "n": 3,
+   "moyenne": 3.87,
+   "rtf_moyen": 0.82
+  },
+  "scenario_s": {
+   "n": 2,
+   "moyenne": 17.09,
+   "max": 22.69
+  }
+ },
+ "simulateur": [
+  {
+   "avions": 5,
+   "sim_s": 10.0,
+   "mur_s": 0.148,
+   "facteur_temps_reel": 67.7
+  },
+  {
+   "avions": 10,
+   "sim_s": 10.0,
+   "mur_s": 0.087,
+   "facteur_temps_reel": 114.6
+  },
+  {
+   "avions": 25,
+   "sim_s": 10.0,
+   "mur_s": 0.097,
+   "facteur_temps_reel": 103.5
+  },
+  {
+   "avions": 50,
+   "sim_s": 10.0,
+   "mur_s": 0.114,
+   "facteur_temps_reel": 88.0
+  },
+  {
+   "avions": 100,
+   "sim_s": 10.0,
+   "mur_s": 0.145,
+   "facteur_temps_reel": 68.8
+  },
+  {
+   "avions": 200,
+   "sim_s": 10.0,
+   "mur_s": 0.181,
+   "facteur_temps_reel": 55.2
+  }
+ ],
+ "duree_totale_s": 112.3
+}
