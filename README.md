@@ -2,9 +2,10 @@
 
 ### An AI co-pilot for air traffic control: from pilot speech to simulator action, and back to voice
 
+![CI](https://github.com/Gotman08/simulateur-controleur-aerien/actions/workflows/ci.yml/badge.svg)
 ![Python](https://img.shields.io/badge/Python-3.11%20|%203.12-blue)
 ![License](https://img.shields.io/badge/License-MIT-green)
-![Status](https://img.shields.io/badge/status-proof%20of%20concept-orange)
+![Status](https://img.shields.io/badge/status-training%20app-success)
 ![HPC](https://img.shields.io/badge/HPC-ROMEO%20GH200-7b3fa0)
 
 A proof of concept that automates the pilot and controller radio dialogue inside an air traffic

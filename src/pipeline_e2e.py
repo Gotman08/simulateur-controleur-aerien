@@ -14,12 +14,9 @@ Prerequis : tunnel ouvert (tunnel.sh) + serveur lance (job_server.slurm) + venv 
 Lancer :  bluesky-env/Scripts/python.exe pipeline_e2e.py
 """
 import os
-import io
 import json
 import argparse
 import requests
-import numpy as np
-import soundfile as sf
 
 import bluesky_runtime as bsk
 

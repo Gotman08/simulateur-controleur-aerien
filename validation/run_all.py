@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Campagne de validation complete - enchaine les scripts 1 a 4
 ============================================================

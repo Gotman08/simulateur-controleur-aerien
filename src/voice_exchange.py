@@ -77,7 +77,7 @@ def main():
             sf.write(os.path.join(OUT, f"exchange_{i}.wav"), ex, SR)
             session += [ca, sil(0.4), pa, sil(0.9)]
         else:
-            print(f"     (aucun ordre exploitable -> pas de readback)")
+            print("     (aucun ordre exploitable -> pas de readback)")
         bsk.advance(60)
 
     if session:

@@ -20,6 +20,7 @@ import os
 import re
 import sys
 import json
+import queue
 import base64
 import asyncio
 import threading
@@ -44,7 +45,6 @@ SIM = atc_sim.SimManager()
 AI = atc_ai.AIClient()
 
 # File d'evenements (transcript / readback / situation) a diffuser via WebSocket.
-import queue
 _event_q = queue.Queue()
 
 
@@ -302,7 +302,7 @@ def voice(file: UploadFile = File(...)):
     try:
         text = AI.asr(wav)
     except Exception as e:
-        raise HTTPException(502, f"ASR ROMEO: {e}")
+        raise HTTPException(502, f"ASR ROMEO: {e}") from e
     out = process_instruction(text)
     audio_b64 = None
     if out["readback_text"] and AI.caps().get("tts"):
@@ -359,7 +359,7 @@ def exercise_start(payload: dict = Body(default={})):
                       duration_min=payload.get("duration_min"),
                       seed=payload.get("seed"))
     except ValueError as e:
-        raise HTTPException(400, str(e))
+        raise HTTPException(400, str(e)) from e
     emit({"type": "info", "message": f"Exercice {st.get('label', '')} démarré "
                                      f"({st.get('mode_ia', 'local')})."})
     return st
@@ -412,7 +412,8 @@ def gui_launch():
             import PyQt6  # noqa: F401
         except Exception:
             raise HTTPException(503, "GUI natif BlueSky indisponible : installez PyQt5 et PyOpenGL "
-                                     "(bluesky-env/Scripts/python.exe -m pip install pyqt5 pyopengl).")
+                                     "(bluesky-env/Scripts/python.exe -m pip install pyqt5 pyopengl).") \
+                from None
     scn = _build_scn(SIM.snapshot())
     scen_dir = os.path.join(os.path.expanduser("~"), "bluesky", "scenario")
     if os.path.isdir(scen_dir):
@@ -425,7 +426,7 @@ def gui_launch():
     try:
         subprocess.Popen([sys.executable, "-m", "bluesky", arg], cwd=_HERE)
     except Exception as e:
-        raise HTTPException(500, f"lancement BlueSky: {e}")
+        raise HTTPException(500, f"lancement BlueSky: {e}") from e
     emit({"type": "info", "message": "Fenêtre BlueSky native lancée (situation exportée)."})
     return {"ok": True, "scenario": path}
 

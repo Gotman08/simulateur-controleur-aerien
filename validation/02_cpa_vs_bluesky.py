@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Validation 2 - Le predicteur CPA vs la realite simulee (campagne BlueSky)
 =========================================================================
@@ -153,7 +152,7 @@ def main():
     rng = np.random.default_rng(SEED)
     random.seed(SEED)
 
-    print(f"[1] init BlueSky (headless, detached)...")
+    print("[1] init BlueSky (headless, detached)...")
     bsk.bs()
     rows = []
     for i in range(N_ENC):
@@ -205,7 +204,6 @@ def main():
     dr = [r["d_min"] for r in pred_pos]
     ax.scatter(dr, dp, s=28, c="#2c7fb8", alpha=0.75, edgecolors="none",
                label="conflit predit (d* < 5 NM, t* <= 120 s)")
-    nop = [r for r in valides if r["pred"] is None]
     lim = 12.0
     ax.plot([0, lim], [0, lim], "k--", lw=1, label="diagonale (prediction parfaite)")
     ax.axhline(SEP_NM, color="#d7301f", lw=1, ls=":")
@@ -239,7 +237,7 @@ def main():
     fig.tight_layout()
     fig.savefig(os.path.join(FIG_DIR, "fig_bluesky_erreurs.png"), dpi=150)
     plt.close(fig)
-    print(f"[3] figures : fig_bluesky_scatter.png, fig_bluesky_erreurs.png")
+    print("[3] figures : fig_bluesky_scatter.png, fig_bluesky_erreurs.png")
 
     duree = time.time() - t_start
     save_results("cpa_vs_bluesky", {

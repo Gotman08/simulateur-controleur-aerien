@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Volet 5 - Etude de performance : latences IA (local vs ROMEO) et montee en
 charge du simulateur BlueSky.

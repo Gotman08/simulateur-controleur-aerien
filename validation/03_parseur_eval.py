@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Validation 3 - Precision du parseur de clairances local (atc_ai.local_interpret)
 ================================================================================
@@ -212,7 +211,7 @@ def main():
     fig.tight_layout()
     fig.savefig(os.path.join(FIG_DIR, "fig_parseur_categories.png"), dpi=150)
     plt.close(fig)
-    print(f"[2] figure : fig_parseur_categories.png")
+    print("[2] figure : fig_parseur_categories.png")
 
     duree = time.time() - t_start
     save_results("parseur", {

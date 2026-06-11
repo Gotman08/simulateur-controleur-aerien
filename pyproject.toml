@@ -1,0 +1,47 @@
+[project]
+name = "simulateur-controleur-aerien"
+version = "1.0.0"
+description = "Simulateur d'entrainement au controle aerien : radar temps reel (BlueSky), IA hybride (locale / cluster ROMEO), mode exercice note"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [{ name = "Nicolas Marano" }]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+extend-exclude = ["src/bluesky-env", "frontend", "docs"]
+
+[tool.ruff.lint]
+# E/F/W : pycodestyle + pyflakes ; I : tri des imports ; B : bugbear ; UP : modernisation
+select = ["E", "F", "W", "B", "UP"]
+ignore = [
+    "E501",   # longueur geree par line-length sur le code neuf ; scripts legacy toleres
+    "B008",   # fastapi utilise des appels en valeur par defaut (Body, File) par conception
+    "B905",   # zip(strict=...) : non critique ici, sequences de meme source
+    "UP015",  # open(..., "r") explicite tolere
+]
+
+[tool.ruff.lint.per-file-ignores]
+# scripts d'experimentation numerotes (S1-S16) : conserves tels quels
+"src/0*.py" = ["E", "F", "W", "B", "UP"]
+"src/1*.py" = ["E", "F", "W", "B", "UP"]
+# scripts de demo PoC : style compact historique tolere
+"src/live_demo.py" = ["E702"]
+"src/live_voice_session.py" = ["E702"]
+"src/radar_anim.py" = ["E702"]
+"src/radar_replay.py" = ["E702"]
+"src/radar_scope.py" = ["E702"]
+"src/voice_exchange.py" = ["E702"]
+"src/pipeline_e2e.py" = ["E702"]
+# initialisation d'environnement AVANT les imports lourds (HF_HOME, CUDA...) :
+# motif requis cote cluster, idem sys.path dans les campagnes de validation
+"src/server.py" = ["E402"]
+"src/atc_asr.py" = ["E402"]
+"src/atc_llm.py" = ["E402"]
+"src/tts_atc.py" = ["E402"]
+"validation/*.py" = ["E402"]
