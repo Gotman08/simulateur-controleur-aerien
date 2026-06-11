@@ -84,6 +84,17 @@ operational frontend.
 | Sector graph (S5) | Shortest path ENTRY_W to EXIT_E | 101 NM, ADDWPT validated against sector fixes |
 | Voice loop (S6 + S8) | Re-transcription WER of the synthesized voice | about 22 to 24% |
 | Live interaction (S8) | Aircraft maneuver on spoken instruction | confirmed (heading and level changes in BlueSky) |
+| Conflict prediction (CPA) | Closed form vs numerical minimum, 100 000 random geometries | max error 5.5e-4 NM (~1 m) |
+| Conflict prediction (CPA) | Predicted vs measured in BlueSky, 200 encounters | MAE 0.067 NM, precision = recall = F1 = **1.000** |
+| Clearance parser (local) | 68 annotated phrases (EN + FR), 10 negative/safety cases | **100%** exact, 100% unsafe rejected |
+| Scenario generator (local) | 20 descriptions, 116 constraints | **100%** conformity |
+| Unit tests | pytest suite over the pure modules | 110 / 110 pass |
+
+The full mathematical derivation (CPA closed form, convexity proof, conflict
+predicate), the empirical campaign against BlueSky, the exercise scoring model
+and the guaranteed-conflict construction are documented with figures in
+**[docs/VALIDATION.md](docs/VALIDATION.md)** — reproducible with
+`src\bluesky-env\Scripts\python.exe validation\run_all.py`.
 
 ## Demos
 
@@ -158,6 +169,71 @@ bluesky-env/Scripts/python.exe voice_exchange.py      # controller and pilot rad
 bluesky-env/Scripts/python.exe radar_anim.py          # radar scope image + animation
 ```
 
+### Training app (interactive radar + voice) — recommended
+
+A single launchable application with a professional control-room interface (React + Tailwind,
+pre-built — **no Node.js needed to run it**): a live radar scope with zoom/pan and flight strips,
+an instructor panel that turns a natural-language description into traffic, a push-to-talk
+controller position, and a full **exercise mode** where the AI builds the situation and the
+student is scored like in a real check-ride.
+
+![Training app — radar and flight strips](docs/assets/app_radar.png)
+
+```bash
+cd src
+bash setup_bluesky_local.sh                                  # one time: venv + BlueSky
+bluesky-env/Scripts/python.exe -m pip install -r ../requirements-local.txt
+bluesky-env/Scripts/python.exe atc_app.py                    # opens http://127.0.0.1:8000
+```
+
+The AI backend is **hybrid**:
+
+- **With ROMEO** — one command from Windows: `.\start_romeo.ps1` (submits the SLURM job, waits for
+  the node, opens the SSH tunnel). Speech recognition then uses the fine-tuned Whisper,
+  interpretation uses Mistral + RAG, scenario generation uses Mistral, and the pilot reads back in
+  the cloned VHF voice (XTTS). The status badge shows `ROMEO`.
+- **Without ROMEO** (default, fully offline): the browser's Web Speech API does speech-to-text and the
+  pilot read-back voice, and a local phraseology parser (validated at 100% on 68 phrases, EN **and**
+  FR) handles clearances and scenario generation. The badge shows `LOCAL`. Nothing else is required.
+
+Workflow: the instructor types a situation (e.g. `three A320 from the north at FL300 heading 180, 8
+miles apart` or `trois A320 venant du nord au niveau 300`) or loads a saved scenario from
+`src/scenarios/`; the aircraft appear and fly live; the student holds the push-to-talk button (or the
+space bar) and says e.g. `air france one two three four descend flight level one zero zero` (French
+phraseology works too: `... descendez niveau 1 0 0`); the aircraft maneuvers and the pilot reads
+back. A clearance to a callsign that is not on the scope gets **no answer**, like on a real
+frequency. App code: `src/atc_app.py` (server), `src/atc_sim.py` (real-time BlueSky),
+`src/atc_ai.py` (hybrid AI client), `src/atc_exercise.py` (exercise engine), `frontend/` (UI).
+
+### Exercise mode (the AI builds the situation, the student adapts)
+
+Pick a difficulty (Facile / Moyen / Difficile) and a duration: the engine constructs aircraft pairs
+that are **mathematically guaranteed to conflict** (same arrival time at a crossing point — proof in
+[docs/VALIDATION.md](docs/VALIDATION.md) §7), adds AI-generated filler traffic, wind, storm cells
+and turbulence, then measures everything in real time: losses of separation (5 NM / 1000 ft),
+predicted conflicts resolved before they degenerate, weather-zone penetrations, radio quality. The
+final debrief shows a 0-100 score with the documented breakdown (§6), the minimum-separation
+timeline, every event and every clearance:
+
+![Exercise debrief](docs/assets/app_debrief.png)
+
+The app leans on BlueSky's own engine for the hard parts, and the web radar renders everything it
+computes:
+
+- **Conflict detection (BlueSky CD&R, StateBased)**: predicted conflicts (amber, with time-to-CPA and
+  minimum distance) and actual loss of separation (red), in 3D. The radar badge shows `CD BlueSky`.
+- **Weather — wind**: `WIND` from the instructor (e.g. `200/40`); aircraft crab and their **ground speed**
+  changes (shown in the data block); a wind vector is drawn on the scope.
+- **Weather — storm cells and restricted zones**: click the radar to drop a `CIRCLE` area; aircraft that
+  penetrate it are ringed and a banner fires (containment is computed locally because BlueSky's compiled
+  `kwikdist` is incompatible with numpy 2.x).
+- **Turbulence**: BlueSky's turbulence model, set from a slider.
+- **Routes / FMS**: `proceed direct <fix>` (ADDWPT), vertical-speed clearances (`expedite`, `rate 1500`);
+  each aircraft's FMS route and active waypoint are drawn.
+- **Native BlueSky GUI**: the "GUI BlueSky natif" button exports the current situation to a `.scn` and
+  launches BlueSky's official Qt/OpenGL scope on it. This needs the optional GUI dependencies:
+  `bluesky-env/Scripts/python.exe -m pip install pyqt5 pyopengl`.
+
 Python dependencies are listed in `requirements-romeo.txt` (AI side) and `requirements-local.txt`
 (simulator side).
 
@@ -169,16 +245,30 @@ simulateur-controleur-aerien/
   LICENSE
   requirements-romeo.txt        AI stack (cluster side)
   requirements-local.txt        BlueSky client (local side)
-  docs/assets/                  figures and radar GIFs used in this page
+  start_romeo.ps1               one-command ROMEO backend (sbatch + tunnel, Windows)
+  pytest.ini / tests/           unit tests (110 tests over the pure modules)
+  validation/                   mathematical + empirical validation campaign (reproducible)
+  docs/VALIDATION.md            CPA derivation, BlueSky campaign, scoring model, proofs
+  docs/assets/                  figures, screenshots and radar GIFs used in this page
+  frontend/                     web UI source (React + TypeScript + Tailwind)
+  frontend/dist/                pre-built UI served by atc_app.py (no Node.js needed)
   src/                          all runtime code (flat, see note below)
+  src/scenarios/                saved training scenarios (JSON)
   model/whisper-lora-adapter/   trained LoRA adapter for whisper-small
   audio/                        recorded radio exchanges (controller and pilot)
+  reports/                      exercise debrief reports (generated at use)
 ```
 
 Note: `src/` is intentionally flat. The reasoning and server modules load sibling files by path
 (for example `03_bluesky_connector.py`, `04_ner_extraction.py`, `graph_secteur`, `atc_callsign`,
 `atc_asr`, `tts_atc`). Keeping them together preserves these imports and matches the working
 directory used on the cluster.
+
+To rebuild the web UI after changing `frontend/src/` (requires Node 20+):
+
+```bash
+cd frontend && npm install && npm run build      # output goes to frontend/dist
+```
 
 ## Tech stack
 
@@ -187,14 +277,19 @@ directory used on the cluster.
 - Airspace model: a graph of the sector (nodes, segments, separation), Dijkstra routing.
 - Voice synthesis: Coqui XTTS v2 (zero shot voice cloning), VHF bandpass degradation.
 - Simulator: BlueSky (TU Delft), headless, driven by TrafScript.
-- Serving: FastAPI and Uvicorn, SSH tunnel between the cluster and the local PC.
+- Serving: FastAPI and Uvicorn, WebSocket state streaming, SSH tunnel between the cluster and the local PC.
+- Web UI: React 19 + TypeScript, Vite, Tailwind CSS 4, Recharts (debrief charts), lucide icons;
+  canvas-rendered radar scope at 60 fps (zoom, pan, selection, trails, data blocks).
+- Quality: pytest unit suite (110 tests), reproducible validation campaign (`validation/run_all.py`).
 - Datasets: ATCO2, UWB-ATCC, ATCOSIM (public ATC speech corpora).
 - HPC: ROMEO (URCA), NVIDIA GH200 (Grace-Hopper, aarch64), SLURM.
 
 ## Status and roadmap
 
 Done: foundations (S1 to S3), Whisper fine tuning (S4), RAG and sector graph (S5), voice synthesis
-(S6), BlueSky live and the real time loop (S8), plus the two way voice readback.
+(S6), BlueSky live and the real time loop (S8), the two way voice readback, the professional
+training interface (radar, strips, instructor, radio), the scored exercise mode with debrief, and
+the mathematical/empirical validation campaign (docs/VALIDATION.md).
 
 Next: unified situation aware query that feeds the live traffic state to the LLM (S7), scripted end
 to end scenarios (S9), and a quantitative evaluation over 20 scenarios with a demonstration video (S10).

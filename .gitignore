@@ -22,6 +22,15 @@ outputs/
 # BlueSky local working data
 bluesky/
 
+# Interface web (frontend/dist est VERSIONNE pour lancer sans Node.js)
+frontend/node_modules/
+
+# Rapports d'exercice generes a l'usage
+reports/
+
+# Tests
+.pytest_cache/
+
 # OS
 .DS_Store
 Thumbs.db

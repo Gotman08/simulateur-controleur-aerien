@@ -119,6 +119,16 @@ def interpret(payload: dict = Body(...)):
             "cited": res["cited"]}
 
 
+@app.post("/scenario")
+def scenario(payload: dict = Body(...)):
+    if ROLE not in ("all", "asrllm"):
+        raise HTTPException(503, "role != asrllm")
+    desc = payload.get("description", "")
+    if not desc:
+        raise HTTPException(400, "description vide")
+    return {"aircraft": atc_llm.scenario_from_description(desc)}
+
+
 @app.post("/tts")
 def tts(payload: dict = Body(...)):
     if ROLE not in ("all", "tts"):

@@ -1,0 +1,10 @@
+{
+  "title": "Arrivées Reims (4 avions)",
+  "description": "Quatre arrivées convergentes vers le secteur de Reims, niveaux et provenances variés.",
+  "aircraft": [
+    {"callsign": "AFR201", "type": "A320", "bearing_deg": 0,   "dist_nm": 50, "hdg": 180, "alt_ft": 24000, "spd_kt": 300},
+    {"callsign": "BAW202", "type": "B738", "bearing_deg": 120, "dist_nm": 48, "hdg": 300, "alt_ft": 20000, "spd_kt": 290},
+    {"callsign": "DLH203", "type": "A319", "bearing_deg": 250, "dist_nm": 52, "hdg": 70,  "alt_ft": 16000, "spd_kt": 270},
+    {"callsign": "RYR204", "type": "B738", "bearing_deg": 200, "dist_nm": 45, "hdg": 20,  "alt_ft": 12000, "spd_kt": 250}
+  ]
+}

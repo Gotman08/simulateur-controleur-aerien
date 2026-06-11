@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entraînement ATC — radar</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div id="app">
+    <div id="radar-pane">
+      <canvas id="radar"></canvas>
+      <div id="hud-top">
+        <span class="tag" id="hud-sector">CTR REIMS / URCA · 70 NM</span>
+        <span class="tag" id="hud-clock">t=000s · 0 vol</span>
+      </div>
+      <button id="show-instr" class="small hidden">▸ instructeur</button>
+      <div id="alert-banner">⚠ PERTE DE SÉPARATION</div>
+    </div>
+
+    <aside id="side">
+      <header>
+        <span>◎ ATC TRAINER</span>
+        <span id="mode-badge" class="local" title="cliquer pour re-détecter ROMEO">…</span>
+      </header>
+
+      <section id="instructor">
+        <h2>Situation (instructeur) <button id="hide-instr" class="small">masquer</button></h2>
+        <textarea id="scenario-text" placeholder="ex : three A320 from the north at FL300 heading 180, 8 miles apart"></textarea>
+        <div class="row">
+          <button id="gen-btn" class="primary" style="flex:1">Générer la situation</button>
+          <button id="scenario-mic" class="small" title="dicter la situation">🎤</button>
+        </div>
+        <div class="row">
+          <select id="scenario-list"></select>
+          <button id="load-btn" class="small">Charger</button>
+        </div>
+        <div class="row sim-ctrl">
+          <button id="pause-btn" class="small" title="pause / reprise">⏸</button>
+          <label style="flex:1;display:flex;gap:6px;align-items:center;font-size:12px">
+            vit. <input id="speed" type="range" min="1" max="10" step="1" value="1"><span id="speed-val">1×</span>
+          </label>
+          <button id="reset-btn" class="small" title="vider le radar">RESET</button>
+        </div>
+
+        <h2 style="margin-top:12px">Météo &amp; zones</h2>
+        <div class="row">
+          <input id="wind-dir" type="text" placeholder="dir°" style="width:56px">
+          <input id="wind-spd" type="text" placeholder="kt" style="width:46px">
+          <input id="wind-fl" type="text" placeholder="FL (opt)" style="width:64px">
+          <button id="wind-btn" class="small">Vent</button>
+          <button id="wind-clr" class="small" title="effacer le vent">✕</button>
+        </div>
+        <div class="row">
+          <label style="flex:1;display:flex;gap:6px;align-items:center;font-size:12px">turbulence
+            <input id="turb" type="range" min="0" max="8" step="1" value="0"><span id="turb-val">0</span></label>
+        </div>
+        <div class="row">
+          <button id="storm-btn" class="small" title="placer une cellule orageuse au clic">⛈ cellule orageuse</button>
+          <button id="zone-btn" class="small" title="placer une zone interdite au clic">⛔ zone interdite</button>
+          <button id="zone-clr" class="small">effacer zones</button>
+        </div>
+        <div id="place-hint" class="hidden" style="font-size:11.5px;color:var(--orange);margin-top:6px"></div>
+        <div class="row">
+          <button id="gui-btn" class="small" style="flex:1" title="ouvre la fenêtre Qt native de BlueSky sur la situation courante">🖥 GUI BlueSky natif</button>
+        </div>
+      </section>
+
+      <section id="student">
+        <h2>Radio (contrôleur)</h2>
+        <button id="ptt">🎙 MAINTENIR POUR PARLER</button>
+        <div class="row">
+          <input id="cmd-text" type="text" placeholder="ou tapez : air france one two three four descend flight level one zero zero">
+          <button id="send-btn" class="small">↵</button>
+        </div>
+        <div id="last-exchange"></div>
+      </section>
+
+      <section id="log-sec">
+        <h2>Journal de session</h2>
+        <div id="log"></div>
+      </section>
+    </aside>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -196,3 +196,61 @@ def interpret(text, retriever, k=4, max_new_tokens=256):
             rejected.append({"order": o, "erreur": res})
     return {"text": text, "orders": orders, "valid": valid, "rejected": rejected,
             "cited": [d["id"] for d, _ in retrieved], "raw": raw}
+
+
+# --- Generation de situation (instructeur -> avions a creer) --------------
+SCENARIO_SYSTEM = (
+    "You are an air traffic control training scenario generator. "
+    "From the instructor's free-text description, output a JSON ARRAY of aircraft to spawn "
+    "in the sector. Each aircraft is an object: "
+    "{\"callsign\": ICAO airline code + flight number (e.g. AFR1234), "
+    "\"type\": ICAO aircraft type designator (A320, A319, A321, B737, B738, E190, A333...), "
+    "\"bearing_deg\": integer 0-359, bearing of the aircraft POSITION from the sector center "
+    "(0=North, 90=East, 180=South, 270=West), "
+    "\"dist_nm\": integer 20-60, distance from the sector center, "
+    "\"hdg\": integer 0-359, the aircraft heading in degrees, "
+    "\"alt_ft\": integer altitude in feet (flight level x 100, e.g. FL300 -> 30000), "
+    "\"spd_kt\": integer ground speed in knots}. "
+    "If a count is given ('three aircraft'), output exactly that many, separated along the radial. "
+    "If a direction is given ('from the north'), set bearing_deg to it and head them toward the "
+    "center unless a heading is stated. Use realistic distinct callsigns. "
+    "Output ONLY the JSON array, no prose, no code fences."
+)
+
+
+def build_scenario_messages(description):
+    sector = (f"Sector context: {_GRAPH.topology_text()}\n\n" if _GRAPH is not None else "")
+    user = (f"{sector}Instructor description: \"{description}\"\n\n"
+            "Return ONLY the JSON array of aircraft.")
+    return [{"role": "system", "content": SCENARIO_SYSTEM}, {"role": "user", "content": user}]
+
+
+def scenario_from_description(description, max_new_tokens=512):
+    """Description en langage naturel -> liste d'avions {callsign,type,bearing_deg,
+    dist_nm,hdg,alt_ft,spd_kt} (bornes appliquees). Conversion en lat/lon cote local."""
+    tok, model = load_llm()
+    msgs = build_scenario_messages(description)
+    enc = tok.apply_chat_template(msgs, add_generation_prompt=True, return_tensors="pt",
+                                  return_dict=True).to(model.device)
+    out = model.generate(**enc, max_new_tokens=max_new_tokens, do_sample=False)
+    raw = tok.decode(out[0][enc["input_ids"].shape[1]:], skip_special_tokens=True)
+    clean = []
+    for it in parse_orders(raw):
+        if not isinstance(it, dict):
+            continue
+        try:
+            cs = atc_callsign.normalize_callsign(str(it.get("callsign", "")))
+            if not cs:
+                continue
+            clean.append({
+                "callsign": cs,
+                "type": str(it.get("type", "A320")).upper(),
+                "bearing_deg": int(float(it.get("bearing_deg", 270))) % 360,
+                "dist_nm": max(10.0, min(65.0, float(it.get("dist_nm", 40)))),
+                "hdg": int(float(it.get("hdg", 0))) % 360,
+                "alt_ft": max(1000.0, min(45000.0, float(it.get("alt_ft", 24000)))),
+                "spd_kt": max(120.0, min(350.0, float(it.get("spd_kt", 280)))),
+            })
+        except Exception:
+            continue
+    return clean

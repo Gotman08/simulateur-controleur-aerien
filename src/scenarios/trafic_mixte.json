@@ -1,0 +1,11 @@
+{
+  "title": "Trafic mixte (5 avions)",
+  "description": "Cinq avions, types et niveaux variés, répartis tout autour du secteur — vacation chargée.",
+  "aircraft": [
+    {"callsign": "AFR410", "type": "A320", "bearing_deg": 10,  "dist_nm": 55, "hdg": 190, "alt_ft": 30000, "spd_kt": 300},
+    {"callsign": "EZY420", "type": "A319", "bearing_deg": 80,  "dist_nm": 40, "hdg": 250, "alt_ft": 18000, "spd_kt": 270},
+    {"callsign": "RYR430", "type": "B738", "bearing_deg": 160, "dist_nm": 50, "hdg": 340, "alt_ft": 22000, "spd_kt": 290},
+    {"callsign": "KLM440", "type": "E190", "bearing_deg": 230, "dist_nm": 45, "hdg": 60,  "alt_ft": 14000, "spd_kt": 250},
+    {"callsign": "DLH450", "type": "A333", "bearing_deg": 310, "dist_nm": 58, "hdg": 120, "alt_ft": 34000, "spd_kt": 320}
+  ]
+}

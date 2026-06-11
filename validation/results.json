@@ -1,0 +1,220 @@
+{
+  "cpa_analytique": {
+    "seed": 42,
+    "n_geometries": 100000,
+    "grille": {
+      "dt_s": 0.05,
+      "horizon_s": 300.0
+    },
+    "tirages": {
+      "positions_nm": [
+        -80,
+        80
+      ],
+      "caps_deg": [
+        0,
+        360
+      ],
+      "vitesses_sol_kt": [
+        150,
+        550
+      ]
+    },
+    "erreur_dcpa_nm": {
+      "max": 0.0005523740939954577,
+      "moyenne": 7.486379392464567e-08,
+      "p99": 7.56674371551466e-07
+    },
+    "minima_interieurs": {
+      "n": 21185,
+      "erreur_tcpa_max_s": 0.02499932907144853,
+      "erreur_tcpa_moyenne_s": 0.012525597573360574
+    },
+    "convexite": {
+      "min_v2": 7.096469928231848e-08,
+      "cas_degeneres": 0
+    },
+    "coherence_implementation": {
+      "n_cas": 100000,
+      "n_predictions": 446,
+      "n_predictions_attendues": 446,
+      "n_desaccords": 0
+    },
+    "figure": "fig_cpa_analytique_err.png",
+    "duree_s": 11.7
+  },
+  "cpa_vs_bluesky": {
+    "seed": 42,
+    "n_rencontres": 200,
+    "n_valides": 200,
+    "protocole": {
+      "fl": [
+        200,
+        360
+      ],
+      "cas_kt": [
+        220,
+        300
+      ],
+      "rayon_centre_nm": [
+        25,
+        60
+      ],
+      "stabilisation_s": 2.0,
+      "observation_s": 180.0,
+      "pas_obs_s": 2.0,
+      "part_biaisee_conflit": 0.55,
+      "seuil_pred": {
+        "d_nm": 5.0,
+        "t_s": 120.0
+      },
+      "seuil_reel": {
+        "d_nm": 5.0,
+        "t_s": 130.0
+      }
+    },
+    "conflits_predits": {
+      "n": 113,
+      "mae_dcpa_nm": 0.06702654867256637,
+      "rmse_dcpa_nm": 0.10815860199651578,
+      "biais_dcpa_nm": -0.036442477876106195,
+      "mae_tcpa_s": 0.7079646017699115
+    },
+    "confusion": {
+      "tp": 113,
+      "fp": 0,
+      "fn": 0,
+      "tn": 87,
+      "precision": 1.0,
+      "rappel": 1.0,
+      "f1": 1.0
+    },
+    "figures": [
+      "fig_bluesky_scatter.png",
+      "fig_bluesky_erreurs.png"
+    ],
+    "duree_s": 649.6
+  },
+  "parseur": {
+    "n_phrases": 68,
+    "n_positifs": 58,
+    "n_negatifs": 10,
+    "exactitude_globale": 1.0,
+    "exactitude_positifs": 1.0,
+    "taux_rejet_negatifs": 1.0,
+    "negatifs_rejet_explicite": 7,
+    "par_categorie": {
+      "cap": {
+        "n": 8,
+        "ok": 8,
+        "exactitude": 1.0
+      },
+      "niveau": {
+        "n": 10,
+        "ok": 10,
+        "exactitude": 1.0
+      },
+      "vitesse": {
+        "n": 7,
+        "ok": 7,
+        "exactitude": 1.0
+      },
+      "direct": {
+        "n": 6,
+        "ok": 6,
+        "exactitude": 1.0
+      },
+      "taux": {
+        "n": 5,
+        "ok": 5,
+        "exactitude": 1.0
+      },
+      "multi": {
+        "n": 6,
+        "ok": 6,
+        "exactitude": 1.0
+      },
+      "indicatif": {
+        "n": 6,
+        "ok": 6,
+        "exactitude": 1.0
+      },
+      "chiffres": {
+        "n": 4,
+        "ok": 4,
+        "exactitude": 1.0
+      },
+      "francais": {
+        "n": 6,
+        "ok": 6,
+        "exactitude": 1.0
+      },
+      "negatif": {
+        "n": 10,
+        "ok": 10,
+        "exactitude": 1.0
+      }
+    },
+    "echecs": [],
+    "figure": "fig_parseur_categories.png",
+    "duree_s": 0.1
+  },
+  "generateur": {
+    "n_descriptions": 20,
+    "n_contraintes_verifiees": 116,
+    "n_contraintes_ok": 116,
+    "taux_global": 1.0,
+    "descriptions_conformes": 20,
+    "tolerances": {
+      "espacement_nm": 0.5,
+      "direction_deg": 2.0
+    },
+    "par_contrainte": {
+      "nombre": {
+        "n": 20,
+        "ok": 20,
+        "taux": 1.0
+      },
+      "niveau": {
+        "n": 21,
+        "ok": 21,
+        "taux": 1.0
+      },
+      "cap": {
+        "n": 21,
+        "ok": 21,
+        "taux": 1.0
+      },
+      "direction": {
+        "n": 21,
+        "ok": 21,
+        "taux": 1.0
+      },
+      "vitesse": {
+        "n": 5,
+        "ok": 5,
+        "taux": 1.0
+      },
+      "espacement": {
+        "n": 10,
+        "ok": 10,
+        "taux": 1.0
+      },
+      "type": {
+        "n": 18,
+        "ok": 18,
+        "taux": 1.0
+      }
+    },
+    "echecs": [],
+    "figure": "fig_generateur_contraintes.png",
+    "duree_s": 0.1
+  },
+  "meta": {
+    "date": "2026-06-11 17:49:33",
+    "python": "3.12.10",
+    "seed": 42,
+    "duree_totale_s": 664.3,
+    "commande": "src\\bluesky-env\\Scripts\\python.exe validation\\run_all.py"
+  }
+}

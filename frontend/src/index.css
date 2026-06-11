@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+/* Jetons de design du poste de controle (theme sombre "salle d'ops"). */
+@theme {
+  --color-bg: #0a0e13;
+  --color-panel: #10161e;
+  --color-panel2: #161e28;
+  --color-edge: #233042;
+  --color-ink: #d7e0ea;
+  --color-mut: #7e90a5;
+  --color-acc: #3fc6d6;          /* cyan — selection / actions */
+  --color-rdr: #38d97f;          /* vert radar — trafic nominal */
+  --color-warn: #ffb454;         /* ambre — conflit predit */
+  --color-dang: #ff5868;         /* rouge — perte de separation */
+  --color-mag: #ff5ab0;          /* magenta — meteo / zones */
+  --color-wpt: #4f8fe8;          /* bleu — points de navigation */
+
+  --font-sans: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-mono: "Cascadia Mono", "JetBrains Mono", Consolas, monospace;
+}
+
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  user-select: none;
+}
+
+/* Curseurs / scrollbars discrets */
+* { scrollbar-width: thin; scrollbar-color: var(--color-edge) transparent; }
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--color-edge); border-radius: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+input[type="range"] { accent-color: var(--color-acc); }
+
+@keyframes pulse-dang { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+.animate-alert { animation: pulse-dang 1.1s ease-in-out infinite; }

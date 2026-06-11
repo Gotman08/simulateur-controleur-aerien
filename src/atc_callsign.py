@@ -17,8 +17,11 @@ PHON = {"alfa": "A", "alpha": "A", "bravo": "B", "charlie": "C", "delta": "D", "
 DIGI = {"zero": "0", "oh": "0", "one": "1", "two": "2", "three": "3", "four": "4", "five": "5",
         "six": "6", "seven": "7", "eight": "8", "nine": "9", "niner": "9"}
 # telephonie -> code OACI (cas non ambigus). 'oscar kilo' = prefixe immat. tcheque OK-.
+# 'delta' n'est mappe qu'en TETE d'indicatif (Delta Air Lines) ; ailleurs il reste
+# la lettre phonetique D (ex. 'csa one delta zulu' -> CSA1DZ), cf. _map_tokens.
 AIRLINE = {"air france": "AFR", "speedbird": "BAW", "lufthansa": "DLH", "ryanair": "RYR",
-           "easyjet": "EZY", "easy": "EZY", "klm": "KLM", "csa": "CSA", "oscar kilo": "OK"}
+           "easyjet": "EZY", "easy": "EZY", "klm": "KLM", "csa": "CSA", "delta": "DAL",
+           "oscar kilo": "OK"}
 
 
 def _map_tokens(toks):

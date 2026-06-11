@@ -1,0 +1,8 @@
+{
+  "title": "Conflit frontal (2 avions, même niveau)",
+  "description": "Deux avions face à face au même niveau FL280 : entraînement à la résolution de conflit (changement de cap ou de niveau).",
+  "aircraft": [
+    {"callsign": "AFR300", "type": "A320", "bearing_deg": 270, "dist_nm": 45, "hdg": 90,  "alt_ft": 28000, "spd_kt": 300},
+    {"callsign": "BAW305", "type": "B738", "bearing_deg": 90,  "dist_nm": 45, "hdg": 270, "alt_ft": 28000, "spd_kt": 300}
+  ]
+}

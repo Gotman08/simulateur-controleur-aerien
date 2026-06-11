@@ -1,4 +1,4 @@
-# Local side (Windows, Python 3.12): BlueSky simulator + orchestrator client.
+# Local side (Windows, Python 3.12): BlueSky simulator + orchestrator + training web app.
 bluesky-simulator
 numpy
 scipy
@@ -6,3 +6,12 @@ matplotlib
 soundfile
 requests
 pillow
+# Application d'entrainement (serveur web local)
+fastapi
+uvicorn[standard]
+python-multipart
+websockets
+# Optionnel : pour le bouton "GUI BlueSky natif" (fenetre Qt/OpenGL officielle)
+#   pip install pyqt5 pyopengl
+# pyqt5
+# pyopengl
