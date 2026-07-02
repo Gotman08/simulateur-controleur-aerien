@@ -3,7 +3,7 @@ Moteur d'exercice - Application d'entrainement ATC
 ==================================================
 L'IA cree la situation, l'eleve s'adapte : l'exercice genere un trafic dont
 certains avions sont mathematiquement EN CONFLIT (construction geometrique,
-cf. docs/VALIDATION.md par. 7), ajoute du trafic de remplissage (IA ROMEO ou
+cf. docs/VALIDATION.md par. 7), ajoute du trafic de remplissage (API LLM ou
 generateur local) et des conditions meteo selon la difficulte, puis MESURE la
 performance de l'eleve en continu :
 
@@ -28,6 +28,7 @@ import json
 import math
 import time
 import random
+import logging
 import threading
 from datetime import datetime
 
@@ -35,6 +36,8 @@ from atc_sim import from_nm
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 REPORTS_DIR = os.path.join(os.path.dirname(_HERE), "reports")
+
+_log = logging.getLogger("atc_exercise")
 
 SEP_NM = 5.0
 SEP_FT = 1000.0
@@ -198,7 +201,7 @@ class ExerciseEngine:
             self._meta = {"difficulty": difficulty, "label": cfg["label"],
                           "duration_s": duration_min * 60.0,
                           "started_iso": datetime.now().isoformat(timespec="seconds"),
-                          "mode_ia": self._ai.mode(), "seed": seed,
+                          "seed": seed,
                           "aircraft": sorted(used), "created": created,
                           "conflicts_built": conflicts, "wind": wind, "storm": storm,
                           "turbulence": cfg["turb"], "objectives": objectives}
@@ -214,7 +217,7 @@ class ExerciseEngine:
             try:
                 self._sample(self._sim.snapshot())
             except Exception:
-                pass
+                _log.exception("echec d'echantillonnage de l'exercice (snapshot ignore)")
             time.sleep(1.0)
 
     def _sample(self, snap):
@@ -394,4 +397,4 @@ class ExerciseEngine:
             with open(os.path.join(REPORTS_DIR, name), "w", encoding="utf-8") as f:
                 json.dump(report, f, ensure_ascii=False, indent=1)
         except Exception:
-            pass
+            _log.exception("echec d'ecriture du rapport de debrief dans %s", REPORTS_DIR)

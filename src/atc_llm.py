@@ -134,13 +134,19 @@ def build_messages(transcription, retrieved, ner):
     return [{"role": "system", "content": SYSTEM}, {"role": "user", "content": user}]
 
 
-def generate_text(transcription, retrieved, ner, max_new_tokens=256):
+def generate_from_messages(messages, max_new_tokens=256):
+    """Generation brute a partir de messages chat arbitraires (role system/user).
+    Utilise par la facade OpenAI-compatible (server.py /v1/chat/completions)."""
     tok, model = load_llm()
-    msgs = build_messages(transcription, retrieved, ner)
-    enc = tok.apply_chat_template(msgs, add_generation_prompt=True, return_tensors="pt",
+    enc = tok.apply_chat_template(messages, add_generation_prompt=True, return_tensors="pt",
                                   return_dict=True).to(model.device)
     out = model.generate(**enc, max_new_tokens=max_new_tokens, do_sample=False)
     return tok.decode(out[0][enc["input_ids"].shape[1]:], skip_special_tokens=True)
+
+
+def generate_text(transcription, retrieved, ner, max_new_tokens=256):
+    return generate_from_messages(build_messages(transcription, retrieved, ner),
+                                  max_new_tokens=max_new_tokens)
 
 
 def parse_orders(text):
@@ -164,13 +170,11 @@ def parse_orders(text):
     return data if isinstance(data, list) else []
 
 
-def interpret(text, retriever, k=4, max_new_tokens=256):
-    """transcription -> {orders, valid(+trafscript), rejected(+erreur), cited, raw}.
-    NER (04) + retrieval + LLM + validation de securite (03). Reutilise par 14/15."""
-    ner = ner_extract(text)
-    retrieved = retriever.retrieve(text, k=k)
-    raw = generate_text(text, retrieved, ner, max_new_tokens=max_new_tokens)
-    orders = parse_orders(raw)
+def postprocess_orders(orders):
+    """Post-traitement PUR de la sortie LLM : normalisation des indicatifs,
+    validation ADDWPT contre le graphe secteur, validation de securite (03).
+    -> (valid=[{order, trafscript}], rejected=[{order, erreur}]).
+    Sans GPU : reutilisable par le client API (ai_client) comme par interpret()."""
     valid, rejected = [], []
     for o in orders:
         if not isinstance(o, dict):
@@ -194,6 +198,17 @@ def interpret(text, retriever, k=4, max_new_tokens=256):
             valid.append({"order": o, "trafscript": res})
         else:
             rejected.append({"order": o, "erreur": res})
+    return valid, rejected
+
+
+def interpret(text, retriever, k=4, max_new_tokens=256):
+    """transcription -> {orders, valid(+trafscript), rejected(+erreur), cited, raw}.
+    NER (04) + retrieval + LLM + validation de securite (03). Reutilise par 14/15."""
+    ner = ner_extract(text)
+    retrieved = retriever.retrieve(text, k=k)
+    raw = generate_text(text, retrieved, ner, max_new_tokens=max_new_tokens)
+    orders = parse_orders(raw)
+    valid, rejected = postprocess_orders(orders)
     return {"text": text, "orders": orders, "valid": valid, "rejected": rejected,
             "cited": [d["id"] for d, _ in retrieved], "raw": raw}
 
@@ -225,17 +240,11 @@ def build_scenario_messages(description):
     return [{"role": "system", "content": SCENARIO_SYSTEM}, {"role": "user", "content": user}]
 
 
-def scenario_from_description(description, max_new_tokens=512):
-    """Description en langage naturel -> liste d'avions {callsign,type,bearing_deg,
-    dist_nm,hdg,alt_ft,spd_kt} (bornes appliquees). Conversion en lat/lon cote local."""
-    tok, model = load_llm()
-    msgs = build_scenario_messages(description)
-    enc = tok.apply_chat_template(msgs, add_generation_prompt=True, return_tensors="pt",
-                                  return_dict=True).to(model.device)
-    out = model.generate(**enc, max_new_tokens=max_new_tokens, do_sample=False)
-    raw = tok.decode(out[0][enc["input_ids"].shape[1]:], skip_special_tokens=True)
+def clean_scenario_items(items):
+    """Nettoyage PUR de la sortie LLM scenario : normalisation des indicatifs
+    + bornes (bearing/dist/alt/spd). Sans GPU : reutilisable par ai_client."""
     clean = []
-    for it in parse_orders(raw):
+    for it in items:
         if not isinstance(it, dict):
             continue
         try:
@@ -254,3 +263,11 @@ def scenario_from_description(description, max_new_tokens=512):
         except Exception:
             continue
     return clean
+
+
+def scenario_from_description(description, max_new_tokens=512):
+    """Description en langage naturel -> liste d'avions {callsign,type,bearing_deg,
+    dist_nm,hdg,alt_ft,spd_kt} (bornes appliquees). Conversion en lat/lon cote local."""
+    raw = generate_from_messages(build_scenario_messages(description),
+                                 max_new_tokens=max_new_tokens)
+    return clean_scenario_items(parse_orders(raw))

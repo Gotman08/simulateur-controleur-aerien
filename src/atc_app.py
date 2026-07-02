@@ -6,13 +6,17 @@ LE point d'entree unique pour l'utilisateur. Lance le simulateur temps reel
 la boucle d'entrainement :
 
   - l'INSTRUCTEUR decrit une situation en langage naturel -> des avions
-    apparaissent sur le radar (IA ROMEO si dispo, sinon generateur local) ;
+    apparaissent sur le radar (generation par l'API LLM configuree) ;
   - l'ELEVE (controleur) parle (push-to-talk) ou tape une clairance -> elle est
-    transcrite + interpretee + executee dans BlueSky -> l'avion manoeuvre et le
-    pilote collationne (readback).
+    transcrite (API STT) + interpretee (API LLM) + executee dans BlueSky ->
+    l'avion manoeuvre et le pilote collationne (readback), TOUJOURS vocalise
+    par l'API TTS avec une voix stable par indicatif.
 
-Backend IA HYBRIDE (atc_ai.AIClient) : ROMEO (Whisper/Mistral/XTTS) quand le tunnel
-est ouvert, sinon repli 100 % local (le navigateur fait STT/TTS via la Web Speech API).
+Backend IA UNIQUE (ai_client.AIClient) : trois services au contrat OpenAI
+(STT/LLM/TTS) configures par .env — facade auto-hebergee (server.py) ou cloud,
+interchangeables par URL + cle + modele. Toute erreur de fournisseur est
+VISIBLE (HTTP 502 + log UI) ; seule exception voulue : un indicatif inconnu
+au radar reste muet (realisme radio).
 
 Lancer :  bluesky-env/Scripts/python.exe atc_app.py     (ouvre le navigateur)
 """
@@ -23,6 +27,7 @@ import json
 import queue
 import base64
 import asyncio
+import logging
 import threading
 import subprocess
 import webbrowser
@@ -32,17 +37,20 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect, UploadFile, File, B
 from fastapi.staticfiles import StaticFiles
 
 import atc_sim
-import atc_ai
+import atc_ai                    # bibliotheque pure : _items_to_aircraft (scenarios JSON)
+import ai_client
+import voices
 import atc_exercise
 import readback as RB
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 WEB_DIST = os.path.join(os.path.dirname(_HERE), "frontend", "dist")
-WEB_LEGACY = os.path.join(_HERE, "web")
 SCEN_DIR = os.path.join(_HERE, "scenarios")
 
+log = logging.getLogger("atc_app")
+
 SIM = atc_sim.SimManager()
-AI = atc_ai.AIClient()
+AI = ai_client.AIClient()        # facade API unique (aucun appel reseau a l'init)
 
 # File d'evenements (transcript / readback / situation) a diffuser via WebSocket.
 _event_q = queue.Queue()
@@ -169,6 +177,41 @@ def process_instruction(text):
             "rejected": rejected, "readback_text": rb}
 
 
+def _synthesize_readback(out):
+    """Vocalise SYSTEMATIQUEMENT le collationnement via l'API TTS (voix stable
+    par indicatif). Readback vide (indicatif inconnu au radar = silence radio
+    voulu, ou aucun ordre valide) -> pas d'appel TTS. Echec TTS -> tts_error
+    renseigne + event 'error' visible dans l'UI (jamais avale)."""
+    out["audio_b64"] = None
+    out["tts_error"] = None
+    if not out["readback_text"]:
+        return out
+    cs = out["orders"][0].get("callsign", "") if out["orders"] else ""
+    voice = voices.voice_for_callsign(cs, AI.tts_pool)
+    try:
+        out["audio_b64"] = base64.b64encode(AI.tts(out["readback_text"], voice)).decode("ascii")
+    except ai_client.ProviderError as e:
+        out["tts_error"] = str(e)
+        emit({"type": "error", "provider": "tts", "message": str(e)})
+    return out
+
+
+def _handle_instruction(text):
+    """Chemin commun /api/command et /api/voice : interpretation (API LLM) ->
+    execution sim -> readback texte + AUDIO. Erreur LLM -> 502 explicite."""
+    try:
+        out = process_instruction(text)
+    except ai_client.ProviderError as e:
+        emit({"type": "error", "provider": e.provider, "message": str(e)})
+        raise HTTPException(502, str(e)) from e
+    out = _synthesize_readback(out)
+    emit({"type": "exchange", "transcript": out["transcript"], "orders": out["orders"],
+          "trafscript": out["trafscript"], "rejected": out["rejected"],
+          "readback": out["readback_text"], "audio_b64": out["audio_b64"],
+          "tts_error": out["tts_error"]})
+    return out
+
+
 def _list_scenarios():
     out = []
     if os.path.isdir(SCEN_DIR):
@@ -179,21 +222,20 @@ def _list_scenarios():
                         d = json.load(f)
                     out.append({"name": fn[:-5], "title": d.get("title", fn[:-5]),
                                 "description": d.get("description", "")})
-                except Exception:
-                    pass
+                except Exception as e:
+                    log.warning("scenario %s ignore (illisible/malforme) : %s", fn, e)
     return out
 
 
 # --- API ---------------------------------------------------------------------
 @app.get("/api/health")
 def health():
-    return {"mode": AI.mode(), "caps": AI.caps()}
+    return {"providers": AI.health()}
 
 
 @app.post("/api/health/refresh")
 def health_refresh():
-    AI.refresh_health()
-    return {"mode": AI.mode(), "caps": AI.caps()}
+    return {"providers": AI.health()}
 
 
 @app.get("/api/nav")
@@ -217,10 +259,14 @@ def scenario(payload: dict = Body(...)):
     desc = str(payload.get("description", "")).strip()
     if not desc:
         raise HTTPException(400, "description vide")
-    ac = AI.scenario(desc)
+    try:
+        ac = AI.scenario(desc)
+    except ai_client.ProviderError as e:
+        emit({"type": "error", "provider": e.provider, "message": str(e)})
+        raise HTTPException(502, str(e)) from e
     created = SIM.create_aircraft(ac)
-    emit({"type": "situation", "description": desc, "created": created, "mode": AI.mode()})
-    return {"aircraft": ac, "created": created, "mode": AI.mode()}
+    emit({"type": "situation", "description": desc, "created": created})
+    return {"aircraft": ac, "created": created}
 
 
 @app.post("/api/scenario/load")
@@ -234,9 +280,13 @@ def scenario_load(payload: dict = Body(...)):
     if d.get("aircraft"):
         ac = atc_ai._items_to_aircraft(d["aircraft"])
     else:
-        ac = AI.scenario(d.get("description", ""))
+        try:
+            ac = AI.scenario(d.get("description", ""))
+        except ai_client.ProviderError as e:
+            emit({"type": "error", "provider": e.provider, "message": str(e)})
+            raise HTTPException(502, str(e)) from e
     created = SIM.create_aircraft(ac)
-    emit({"type": "situation", "description": d.get("title", name), "created": created, "mode": AI.mode()})
+    emit({"type": "situation", "description": d.get("title", name), "created": created})
     return {"aircraft": ac, "created": created}
 
 
@@ -286,35 +336,33 @@ def weather_clearzones():
 
 @app.post("/api/command")
 def command(payload: dict = Body(...)):
-    out = process_instruction(payload.get("text", ""))
-    emit({"type": "exchange", "transcript": out["transcript"], "orders": out["orders"],
-          "trafscript": out["trafscript"], "rejected": out["rejected"],
-          "readback": out["readback_text"]})
-    return out
+    """Clairance TAPEE : interpretation (API LLM) -> sim -> readback texte + AUDIO
+    (reponse vocale systematique, voix stable par indicatif)."""
+    return _handle_instruction(payload.get("text", ""))
 
 
 @app.post("/api/voice")
 def voice(file: UploadFile = File(...)):
-    """Mode ROMEO : audio -> ASR -> interpretation -> readback synthetise (audio WAV)."""
-    if not AI.caps().get("asr"):
-        raise HTTPException(503, "ASR ROMEO indisponible (utilisez le mode local du navigateur)")
+    """Clairance PARLEE : audio -> STT (API) -> interpretation -> readback texte + AUDIO."""
     wav = file.file.read()
     try:
         text = AI.asr(wav)
-    except Exception as e:
-        raise HTTPException(502, f"ASR ROMEO: {e}") from e
-    out = process_instruction(text)
-    audio_b64 = None
-    if out["readback_text"] and AI.caps().get("tts"):
-        try:
-            audio_b64 = base64.b64encode(AI.tts(out["readback_text"])).decode("ascii")
-        except Exception:
-            audio_b64 = None
-    emit({"type": "exchange", "transcript": out["transcript"], "orders": out["orders"],
-          "trafscript": out["trafscript"], "rejected": out["rejected"],
-          "readback": out["readback_text"]})
-    out["audio_b64"] = audio_b64
+    except ai_client.ProviderError as e:
+        emit({"type": "error", "provider": "stt", "message": str(e)})
+        raise HTTPException(502, str(e)) from e
+    out = _handle_instruction(text)
     return out
+
+
+@app.post("/api/transcribe")
+def transcribe(file: UploadFile = File(...)):
+    """Transcription SEULE (dictee de situation instructeur) : audio -> texte (API STT)."""
+    wav = file.file.read()
+    try:
+        return {"text": AI.asr(wav)}
+    except ai_client.ProviderError as e:
+        emit({"type": "error", "provider": "stt", "message": str(e)})
+        raise HTTPException(502, str(e)) from e
 
 
 @app.post("/api/sim/reset")
@@ -360,8 +408,11 @@ def exercise_start(payload: dict = Body(default={})):
                       seed=payload.get("seed"))
     except ValueError as e:
         raise HTTPException(400, str(e)) from e
-    emit({"type": "info", "message": f"Exercice {st.get('label', '')} démarré "
-                                     f"({st.get('mode_ia', 'local')})."})
+    except ai_client.ProviderError as e:
+        # le trafic de remplissage vient de l'API LLM : panne -> erreur claire
+        emit({"type": "error", "provider": e.provider, "message": str(e)})
+        raise HTTPException(502, str(e)) from e
+    emit({"type": "info", "message": f"Exercice {st.get('label', '')} démarré."})
     return st
 
 
@@ -445,13 +496,13 @@ async def ws(websocket: WebSocket):
         MGR.disconnect(websocket)
 
 
-# --- interface web (SPA buildee dans frontend/dist, repli sur src/web) --------
-_WEB_ROOT = WEB_DIST if os.path.isdir(WEB_DIST) else WEB_LEGACY
-if os.path.isdir(_WEB_ROOT):
-    if _WEB_ROOT == WEB_LEGACY:         # l'ancienne page reference /static/*
-        app.mount("/static", StaticFiles(directory=WEB_LEGACY), name="static")
+# --- interface web (SPA buildee dans frontend/dist) --------------------------
+if os.path.isdir(WEB_DIST):
     # Monte en DERNIER : toutes les routes /api et /ws ci-dessus restent prioritaires.
-    app.mount("/", StaticFiles(directory=_WEB_ROOT, html=True), name="web")
+    app.mount("/", StaticFiles(directory=WEB_DIST, html=True), name="web")
+else:
+    log.warning("Interface web absente : %s introuvable. Lancez `npm run build` "
+                "dans frontend/. L'API reste disponible mais aucune UI n'est servie.", WEB_DIST)
 
 
 def main():
@@ -460,7 +511,10 @@ def main():
     port = int(os.environ.get("ATC_APP_PORT", "8000"))
     url = f"http://{host}:{port}"
     print(f"[*] Application d'entrainement ATC : {url}")
-    print(f"[*] Backend IA : mode={AI.mode()}  caps={AI.caps()}")
+    h = AI.health()
+    print(f"[*] Fournisseurs IA : stt={'OK' if h['stt'] else 'KO'}  "
+          f"llm={'OK' if h['llm'] else 'KO'}  tts={'OK' if h['tts'] else 'KO'}  "
+          f"(config : .env, voir .env.example)")
     if os.environ.get("ATC_APP_NOBROWSER") != "1":
         threading.Timer(1.5, lambda: webbrowser.open(url)).start()
     uvicorn.run(app, host=host, port=port, log_level="warning")

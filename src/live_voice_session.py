@@ -1,9 +1,10 @@
 """
 Vacation de controle - boucle VOIX complete, instructions en continu
 ====================================================================
-Plusieurs instructions ATC *parlees* (synthese voix clonee + VHF sur ROMEO)
-arrivent au fil du temps ; pour chacune :
-   /tts -> audio -> /asr (re-transcription) -> /interpret -> TrafScript -> BlueSky.
+Plusieurs instructions ATC *parlees* (synthese voix clonee + VHF) arrivent au
+fil du temps ; pour chacune :
+   TTS -> audio -> STT (re-transcription) -> interpretation -> TrafScript -> BlueSky
+(via les helpers OpenAI-compatibles de pipeline_e2e).
 Les avions devient progressivement. Rendu : GIF radar (balayage) + journal de
 session (PARLE / ASR / WER / commande) + audios sess_*.wav.
 

@@ -1,9 +1,9 @@
 /** Panneau instructeur : generation de situation en langage naturel, scenarios
  *  sauvegardes, meteo (vent / turbulence / zones) et GUI BlueSky natif. */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CloudLightning, Mic, MonitorUp, OctagonMinus, Sparkles, Wind, X } from "lucide-react";
 import { api } from "../api";
-import { getRecognition } from "../audio";
+import { WavRecorder } from "../audio";
 import type { PlaceMode, ScenarioMeta } from "../types";
 import type { SimHub } from "../useSim";
 import { Btn, Input, Row, Section } from "./ui";
@@ -21,10 +21,16 @@ export default function InstructorPanel({ hub, placeMode, setPlaceMode }: {
   const [windFl, setWindFl] = useState("");
   const [turb, setTurb] = useState(0);
   const [genBusy, setGenBusy] = useState(false);
+  const [dictating, setDictating] = useState(false);
+  const recRef = useRef<WavRecorder | null>(null);
 
   useEffect(() => {
     api.scenarios().then((r) => setScenarios(r.scenarios)).catch(() => undefined);
   }, []);
+
+  // Le panneau est monte conditionnellement (onglets) : couper le micro si
+  // l'utilisateur change d'onglet pendant une dictee (sinon flux orphelin).
+  useEffect(() => () => { void recRef.current?.stop(); recRef.current = null; }, []);
 
   const generate = async () => {
     if (!desc.trim()) return;
@@ -35,12 +41,34 @@ export default function InstructorPanel({ hub, placeMode, setPlaceMode }: {
     finally { setGenBusy(false); }
   };
 
-  const dictate = () => {
-    const r = getRecognition();
-    if (!r) { hub.pushLog("rej", "Dictée indisponible."); return; }
-    r.onresult = (e) => setDesc(e.results[0][0].transcript);
-    r.onerror = () => undefined;
-    try { r.start(); } catch { /* deja en cours */ }
+  // Dictee via l'API STT (clic = demarrer, re-clic = arreter + transcrire).
+  const dictate = async () => {
+    if (recRef.current) {                       // arret + transcription
+      setDictating(false);
+      const rec = recRef.current;               // ref nullee AVANT l'await :
+      recRef.current = null;                    // pas de double transcription
+      const wav = await rec.stop();
+      if (!wav) return;
+      try {
+        const { text } = await api.transcribe(wav);
+        if (text) setDesc(text);
+      } catch (e) { hub.pushLog("rej", `⊘ Dictée : ${e}`); }
+      return;
+    }
+    if (!hub.providers.stt) {
+      hub.pushLog("rej", "⊘ STT non configuré ou injoignable — tapez la situation.");
+      return;
+    }
+    const rec = new WavRecorder();
+    recRef.current = rec;                       // pose AVANT l'await : un second
+    setDictating(true);                         // clic prend la branche "arret"
+    try {
+      await rec.start();
+    } catch (e) {
+      hub.pushLog("rej", `⊘ Micro indisponible : ${e}`);
+      if (recRef.current === rec) recRef.current = null;
+      setDictating(false);
+    }
   };
 
   return (
@@ -59,7 +87,13 @@ export default function InstructorPanel({ hub, placeMode, setPlaceMode }: {
             <Sparkles size={13} className="mr-1 inline" />
             {genBusy ? "Génération…" : "Générer la situation"}
           </Btn>
-          <Btn title="Dicter la situation" onClick={dictate}><Mic size={14} /></Btn>
+          <Btn
+            title={dictating ? "Arrêter et transcrire (API STT)" : "Dicter la situation (API STT)"}
+            className={dictating ? "!border-dang/70 !text-dang" : ""}
+            onClick={() => void dictate()}
+          >
+            <Mic size={14} />
+          </Btn>
         </Row>
         <Row>
           <select

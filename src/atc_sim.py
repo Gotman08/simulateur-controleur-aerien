@@ -17,9 +17,12 @@ portee 70 NM, conversion NM) reprennent radar_anim.py sans importer matplotlib.
 import math
 import time
 import queue
+import logging
 import threading
 
 import bluesky_runtime as bsk
+
+_log = logging.getLogger("atc_sim")
 
 # --- Reperes du secteur (identiques a radar_anim.py : Reims / URCA) ----------
 CLAT, CLON = 49.25, 4.05
@@ -80,6 +83,7 @@ class SimManager:
         self._turb = 0.0       # intensite de turbulence (m/s)
         self._zones = {}       # name -> {"type","shape","coords","color"}
         self._zone_seq = 0
+        self._cd_on = False    # moteur CD BlueSky reellement actif (cf. _enable_cd)
         self._snapshot = {"t": 0.0, "running": False, "paused": False,
                           "speed": speed, "aircraft": [], "conflicts": []}
 
@@ -280,8 +284,10 @@ class SimManager:
             for c in ("CDMETHOD ON", "ZONER 5", "ZONEDH 1000", "DTLOOK 120"):
                 bsk.cmd(c)
             bsk.advance(0.1)
-        except Exception:
-            pass
+            self._cd_on = True
+        except Exception as e:
+            self._cd_on = False
+            _log.warning("activation CD BlueSky echouee (%s) : repli geometrique", e)
 
     def _define_sector_fixes(self):
         """Definit les fix du secteur (graphe S2) autour du centre Reims :
@@ -391,17 +397,22 @@ class SimManager:
                             "points": [[round(x, 2), round(y, 2)] for x, y in pts], "color": z["color"]})
         return out
 
-    @staticmethod
-    def _analyze_cd():
+    def _analyze_cd(self):
         """Lit le moteur de detection de conflits de BlueSky (bs.traf.cd).
-        Renvoie (perte_de_separation, conflits_predits) ou None si la CD est OFF.
+        Renvoie (perte_de_separation, conflits_predits) ou None si la CD est OFF
+        (=> repli geometrique _analyze).
         - lospairs : avions deja dans la zone protegee (vol trop proche) ;
-        - confpairs : conflit predit (CPA sous la separation) dans l'horizon."""
+        - confpairs : conflit predit (CPA sous la separation) dans l'horizon.
+
+        NB : on s'appuie sur self._cd_on (positionne par _enable_cd) plutot que
+        sur type(cd).__name__ : bs().traf.cd est un Proxy (ReplaceableSingleton),
+        dont le nom de type ne vaut jamais 'ConflictDetection' -> l'ancien test
+        ne detectait jamais la CD desactivee et rendait le repli inatteignable."""
+        if not self._cd_on:                              # CD non activee => repli
+            return None
         try:
             cd = bsk.bs().traf.cd
         except Exception:
-            return None
-        if type(cd).__name__ == "ConflictDetection":     # methode de base = OFF
             return None
         try:
             from bluesky.tools.aero import nm as _NM

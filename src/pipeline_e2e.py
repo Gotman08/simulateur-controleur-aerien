@@ -1,16 +1,19 @@
 """
 Pipeline bout-en-bout - Semaines 6&8 (V6/V7/V8)
 ===============================================
-Orchestrateur LOCAL qui ferme la boucle, en s'appuyant sur le serveur ROMEO
-(via tunnel SSH localhost:8765) et BlueSky local :
+Orchestrateur LOCAL qui ferme la boucle via la facade OpenAI-compatible
+(server.py, tunnel SSH localhost:8765/8766 — ou tout autre fournisseur) et
+BlueSky local :
 
-  texte ATC --/tts (voix clonee + VHF)--> audio --/asr--> transcription
-        --/interpret--> JSON/TrafScript --> BlueSky execute --> etat des vols
+  texte ATC --/v1/audio/speech (voix clonee) + VHF client--> audio
+        --/v1/audio/transcriptions--> transcription
+        --ai_client.interpret (LLM + KB + validation)--> JSON/TrafScript
+        --> BlueSky execute --> etat des vols
 
 Demontre : synthese vocale (S6), re-transcription (boucle voix), interpretation
 ancree (S5) et execution simulateur (S8). Sauvegarde les audios dans demo_out/.
 
-Prerequis : tunnel ouvert (tunnel.sh) + serveur lance (job_server.slurm) + venv BlueSky.
+Prerequis : tunnel ouvert (tunnel.sh) + facade lancee (job_server.slurm) + venv BlueSky.
 Lancer :  bluesky-env/Scripts/python.exe pipeline_e2e.py
 """
 import os
@@ -20,9 +23,33 @@ import requests
 
 import bluesky_runtime as bsk
 
-SERVER = os.environ.get("ATC_SERVER", "http://localhost:8765")       # ASR + interpret (GPU0)
+SERVER = os.environ.get("ATC_SERVER", "http://localhost:8765")       # STT + LLM (GPU0)
 TTS_SERVER = os.environ.get("ATC_TTS_SERVER", "http://localhost:8766")  # TTS XTTS (GPU1)
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "demo_out")
+
+# .env d'abord (si present) : une config utilisateur prime sur les defauts
+# facade ci-dessous. Ensuite seulement, setdefault vers la facade tunnel.
+try:
+    from dotenv import load_dotenv
+    load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), ".env"))
+except ImportError:
+    pass
+os.environ.setdefault("ATC_STT_URL", SERVER)
+os.environ.setdefault("ATC_LLM_URL", SERVER)
+os.environ.setdefault("ATC_TTS_URL", TTS_SERVER)
+os.environ.setdefault("ATC_STT_MODEL", "whisper-atc-lora")
+os.environ.setdefault("ATC_LLM_MODEL", "mistral-7b-atc")
+os.environ.setdefault("ATC_TTS_MODEL", "xtts-atc")
+
+_AI = None
+
+
+def _ai():
+    global _AI
+    if _AI is None:
+        import ai_client
+        _AI = ai_client.AIClient()
+    return _AI
 
 # scenario : (instruction du controleur, voix de reference a cloner)
 SCENARIO = [
@@ -47,22 +74,37 @@ def wer(ref, hyp):
     return d[n][m] / max(1, n)
 
 
+def _hdr(key_env):
+    k = os.environ.get(key_env, "").strip()
+    return {"Authorization": f"Bearer {k}"} if k else {}
+
+
 def tts(text, voice, vhf=True):
-    r = requests.post(f"{TTS_SERVER}/tts", json={"text": text, "voice": voice, "vhf": vhf}, timeout=180)
+    """POST /v1/audio/speech (contrat OpenAI) ; degradation VHF cote client."""
+    r = requests.post(f"{os.environ['ATC_TTS_URL'].rstrip('/')}/v1/audio/speech",
+                      headers=_hdr("ATC_TTS_KEY"),
+                      json={"model": os.environ["ATC_TTS_MODEL"], "input": text,
+                            "voice": voice, "response_format": "wav"}, timeout=180)
     r.raise_for_status()
-    return r.content
+    if not vhf:
+        return r.content
+    import ai_client
+    return ai_client._apply_vhf(r.content)
 
 
 def asr(wav_bytes):
-    r = requests.post(f"{SERVER}/asr", files={"file": ("utt.wav", wav_bytes, "audio/wav")}, timeout=180)
+    """POST /v1/audio/transcriptions (contrat OpenAI)."""
+    r = requests.post(f"{os.environ['ATC_STT_URL'].rstrip('/')}/v1/audio/transcriptions",
+                      headers=_hdr("ATC_STT_KEY"),
+                      files={"file": ("utt.wav", wav_bytes, "audio/wav")},
+                      data={"model": os.environ["ATC_STT_MODEL"]}, timeout=180)
     r.raise_for_status()
     return r.json()["text"]
 
 
 def interpret(text):
-    r = requests.post(f"{SERVER}/interpret", json={"text": text}, timeout=180)
-    r.raise_for_status()
-    return r.json()
+    """Interpretation via le client unifie (LLM + KB inlinee + validation bornes)."""
+    return _ai().interpret(text)
 
 
 def main():
@@ -71,7 +113,7 @@ def main():
     args = ap.parse_args()
     os.makedirs(OUT, exist_ok=True)
 
-    print(f"[*] serveur : {SERVER} | health : {requests.get(SERVER + '/health', timeout=30).json()}")
+    print(f"[*] serveur : {SERVER} | modeles : {requests.get(SERVER + '/v1/models', timeout=30).json()}")
     bsk.bs(); bsk.reset()
     created = {}
     wers = []
@@ -85,17 +127,17 @@ def main():
         wpath = os.path.join(OUT, f"ex{i}_{voice.replace('.wav','')}.wav")
         with open(wpath, "wb") as f:
             f.write(wav)
-        print(f"  1) /tts  -> {wpath} ({len(wav)} octets, voix={voice}, VHF)")
+        print(f"  1) TTS  -> {wpath} ({len(wav)} octets, voix={voice}, VHF)")
 
         # 2) re-transcription (boucle voix)
         stt = asr(wav)
         w = wer(text, stt)
         wers.append(w)
-        print(f"  2) /asr  -> \"{stt}\"  (WER vs texte = {w*100:.0f} %)")
+        print(f"  2) STT  -> \"{stt}\"  (WER vs texte = {w*100:.0f} %)")
 
         # 3) interpretation ancree -> JSON/TrafScript
         res = interpret(stt)
-        print(f"  3) /interpret -> {json.dumps(res['orders'], ensure_ascii=False)}")
+        print(f"  3) interpretation -> {json.dumps(res['orders'], ensure_ascii=False)}")
         if res["rejected"]:
             print(f"     rejets securite : {res['rejected']}")
 

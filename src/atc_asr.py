@@ -47,8 +47,12 @@ def build_inference_model(model_path="openai/whisper-small", adapter_path=None,
     from transformers import WhisperProcessor, WhisperForConditionalGeneration
     if dtype is None:
         dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
-    proc_src = adapter_path if (adapter_path and os.path.exists(
-        os.path.join(adapter_path, "preprocessor_config.json"))) else model_path
+    # Le processor peut etre serialise sous deux noms selon la version de
+    # transformers : preprocessor_config.json (ancien) ou processor_config.json.
+    _proc_files = ("preprocessor_config.json", "processor_config.json")
+    _has_proc = adapter_path and any(
+        os.path.exists(os.path.join(adapter_path, f)) for f in _proc_files)
+    proc_src = adapter_path if _has_proc else model_path
     processor = WhisperProcessor.from_pretrained(proc_src, language="en", task="transcribe")
     model = WhisperForConditionalGeneration.from_pretrained(model_path, torch_dtype=dtype)
     if adapter_path:

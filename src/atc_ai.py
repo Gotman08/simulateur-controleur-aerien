@@ -1,17 +1,18 @@
 """
-Client IA hybride - Application d'entrainement ATC
-==================================================
-Aiguille les requetes IA vers le serveur ROMEO (Whisper / Mistral+RAG / XTTS)
-quand le tunnel est ouvert, sinon bascule en REPLI LOCAL 100 % hors-ligne :
+Bibliotheque de reference : parseur ATC a regles (HORS runtime)
+===============================================================
+Parseur regex de phraseologie (local_interpret) et generateur de situation
+(local_scenario), valides a 100 % sur 68 phrases (validation/03) et couverts
+par 64 tests. Depuis le passage a l'architecture API-first (ai_client.py),
+ces fonctions ne sont PLUS appelees par l'application : elles restent la
+REFERENCE deterministe utilisee par les tests, la campagne de validation
+(03/04/05-A) et comme documentation executable de la grammaire ATC.
 
-  - interpret(texte)  -> ordres ATC {callsign, action, value/wpt} + TrafScript
-        ROMEO : POST /interpret (Mistral+RAG)   |  local : parseur regex de phraseologie
-  - scenario(texte)   -> liste d'avions a creer {callsign,type,lat,lon,hdg,alt_ft,spd_kt}
-        ROMEO : POST /scenario (Mistral)        |  local : generateur de situation
-  - asr(wav) / tts(texte) : proxy ROMEO (en repli, c'est le navigateur qui fait STT/TTS)
+_items_to_aircraft reste utilise par l'application (chargement de scenarios
+JSON et normalisation de la sortie LLM scenario).
 
-Le repli reutilise les briques LEGERES du projet (sans charger les modeles lourds) :
-  03_bluesky_connector.json_to_trafscript (validation/bornes S2), 04_ner_extraction,
+Reutilise les briques LEGERES du projet (sans charger les modeles lourds) :
+  03_bluesky_connector.json_to_trafscript (validation/bornes S2),
   graph_secteur (fix du secteur), atc_callsign (indicatifs), atc_sim (geometrie).
 """
 import os
@@ -19,14 +20,10 @@ import re
 import math
 import importlib.util
 
-import requests
-
 import atc_callsign
 from atc_sim import from_nm
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
-ROMEO = os.environ.get("ATC_SERVER", "http://localhost:8765")
-ROMEO_TTS = os.environ.get("ATC_TTS_SERVER", "http://localhost:8766")
 
 
 def _load_module(filename, modname):
@@ -331,78 +328,6 @@ def _items_to_aircraft(items):
         except Exception:
             continue
     return out
-
-
-# =============================================================================
-#  Client : aiguillage ROMEO / local
-# =============================================================================
-class AIClient:
-    def __init__(self):
-        self._caps = {"romeo": False, "asr": False, "llm": False, "tts": False}
-        self.refresh_health()
-
-    def refresh_health(self):
-        caps = {"romeo": False, "asr": False, "llm": False, "tts": False}
-        try:
-            j = requests.get(ROMEO + "/health", timeout=3).json()
-            caps["romeo"] = True
-            caps["asr"] = j.get("role") in ("all", "asrllm")
-            caps["llm"] = j.get("role") in ("all", "asrllm")
-        except Exception:
-            pass
-        try:
-            caps["tts"] = requests.get(ROMEO_TTS + "/health", timeout=3).ok
-        except Exception:
-            pass
-        self._caps = caps
-        return caps
-
-    def caps(self):
-        return dict(self._caps)
-
-    def mode(self):
-        return "romeo" if self._caps.get("llm") else "local"
-
-    def interpret(self, text):
-        if self._caps.get("llm"):
-            try:
-                r = requests.post(ROMEO + "/interpret", json={"text": text}, timeout=60)
-                r.raise_for_status()
-                j = r.json()
-                j.setdefault("orders", [])
-                j.setdefault("trafscript", [])
-                j.setdefault("rejected", [])
-                j.setdefault("cited", [])
-                return j
-            except Exception:
-                pass
-        return local_interpret(text)
-
-    def scenario(self, description):
-        if self._caps.get("llm"):
-            try:
-                r = requests.post(ROMEO + "/scenario", json={"description": description}, timeout=90)
-                r.raise_for_status()
-                ac = _items_to_aircraft(r.json().get("aircraft", []))
-                if ac:
-                    return ac
-            except Exception:
-                pass
-        return local_scenario(description)
-
-    def asr(self, wav_bytes):
-        r = requests.post(ROMEO + "/asr",
-                          files={"file": ("utt.wav", wav_bytes, "audio/wav")}, timeout=60)
-        r.raise_for_status()
-        return r.json().get("text", "")
-
-    def tts(self, text, voice=None):
-        payload = {"text": text, "vhf": True}
-        if voice:
-            payload["voice"] = voice
-        r = requests.post(ROMEO_TTS + "/tts", json=payload, timeout=120)
-        r.raise_for_status()
-        return r.content
 
 
 if __name__ == "__main__":

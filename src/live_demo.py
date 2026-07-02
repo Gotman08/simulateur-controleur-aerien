@@ -37,10 +37,18 @@ INSTR = [   # instructions ATC en langage naturel
 PHASE1, PHASE2, DT = 5, 18, 20
 
 
+_AI = None
+
+
 def interpret(text):
-    r = requests.post(f"{SERVER}/interpret", json={"text": text}, timeout=120)
-    r.raise_for_status()
-    return r.json()
+    """Interpretation via le client unifie (contrat OpenAI-compatible)."""
+    global _AI
+    if _AI is None:
+        os.environ.setdefault("ATC_LLM_URL", SERVER)
+        os.environ.setdefault("ATC_LLM_MODEL", "mistral-7b-atc")
+        import ai_client
+        _AI = ai_client.AIClient()
+    return _AI.interpret(text)
 
 
 def navdata():
@@ -94,7 +102,8 @@ def main():
         frames.append(snap_frame()); bsk.advance(DT)
     cmd_frame = len(frames)
 
-    print(f"[*] serveur {SERVER} | health {requests.get(SERVER+'/health', timeout=20).json().get('role')}")
+    print(f"[*] serveur {SERVER} | modeles "
+          f"{[m['id'] for m in requests.get(SERVER + '/v1/models', timeout=20).json().get('data', [])]}")
     print("=== INSTRUCTIONS ATC -> pipeline -> commandes BlueSky ===")
     for instr in INSTR:                     # interaction LIVE via le pipeline
         res = interpret(instr)

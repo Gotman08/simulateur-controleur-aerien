@@ -1,11 +1,15 @@
 # =====================================================================
-#  Lancement du backend IA ROMEO en UNE commande (Windows / PowerShell)
+#  Lancement de la facade IA auto-hebergee (ROMEO) en UNE commande
 #  ---------------------------------------------------------------------
-#  1. soumet job_server.slurm sur le cluster (Whisper + Mistral + XTTS),
+#  1. soumet job_server.slurm sur le cluster (Whisper + Mistral + XTTS,
+#     exposes au contrat OpenAI-compatible : /v1/...),
 #  2. attend que le job demarre et recupere le noeud de calcul,
-#  3. ouvre le tunnel SSH localhost:8765/8766 -> noeud (reste ouvert),
-#  -> l'application (atc_app.py) detecte alors ROMEO automatiquement
-#     (badge ROMEO en haut a droite, ou clic sur le badge pour re-detecter).
+#  3. ouvre le tunnel SSH localhost:8765/8766 -> noeud (reste ouvert).
+#
+#  PUIS configurez .env (config A de .env.example) :
+#     ATC_STT_URL=http://localhost:8765   ATC_LLM_URL=http://localhost:8765
+#     ATC_TTS_URL=http://localhost:8766   ATC_TTS_VOICES=pilot_1,pilot_2,pilot_3
+#  Les pastilles STT/LLM/TTS de l'application passent au vert (clic = re-test).
 #
 #  Usage :   .\start_romeo.ps1            (depuis la racine du projet)
 #  Arret :   Ctrl+C (ferme le tunnel) puis .\start_romeo.ps1 -Cancel

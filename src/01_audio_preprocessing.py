@@ -36,7 +36,7 @@ def augment(signal, rng, snr_db=12.0):
     """Augmentation aléatoire : gain léger + bruit blanc additif à un SNR donné."""
     gain = rng.uniform(0.8, 1.2)
     sig = signal * gain
-    p_sig = np.mean(sig ** 2)
+    p_sig = np.mean(sig ** 2) + 1e-12          # epsilon : evite 0/0 sur signal muet
     p_noise = p_sig / (10 ** (snr_db / 10))
     noise = rng.normal(0.0, np.sqrt(p_noise), size=sig.shape)
     return sig + noise

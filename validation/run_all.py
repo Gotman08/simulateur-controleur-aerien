@@ -1,8 +1,11 @@
 """
-Campagne de validation complete - enchaine les scripts 1 a 4
-============================================================
+Campagne de validation (justesse) - enchaine les scripts 1 a 4
+==============================================================
 Chaque script tourne dans son PROPRE processus (BlueSky ne supporte qu'une
 seule init par processus) et fusionne sa section dans validation/results.json.
+
+NB : 05_performance.py (latences ROMEO / simulateur) N'EST PAS inclus ici car il
+requiert le tunnel ROMEO (GPU) ; il se lance separement (-> results_perf.json).
 
 Execution :  src\\bluesky-env\\Scripts\\python.exe validation\\run_all.py
 Duree totale ~ 12-15 min (domine par la campagne BlueSky du script 2).
@@ -83,7 +86,8 @@ def main():
         print(f"  [ATTENTION] sections manquantes: {manquantes}, figures absentes: {figs_absentes}")
         sys.exit(1)
     print(f"  Figures OK ({len(FIGURES)}) dans docs/assets/validation/")
-    print(f"[OK] campagne complete en {data['meta']['duree_totale_s']:.0f}s -> {res_path}")
+    print("  (performance : lancer separement 05_performance.py -> results_perf.json)")
+    print(f"[OK] campagne justesse (01-04) en {data['meta']['duree_totale_s']:.0f}s -> {res_path}")
 
 
 if __name__ == "__main__":

@@ -1,23 +1,23 @@
-/** Poste radio du controleur : push-to-talk (souris ou barre espace) + saisie
- *  texte + dernier echange. ROMEO -> capture WAV vers /api/voice ; sinon Web
- *  Speech API du navigateur (STT + voix du collationnement). */
+/** Poste radio du controleur : push-to-talk (touche « V » maintenue) + saisie
+ *  texte + dernier echange. Chemin UNIQUE : capture WAV -> /api/voice (API STT)
+ *  -> interpretation -> collationnement TOUJOURS vocalise par l'API TTS (audio
+ *  joue par l'event WebSocket "exchange", commande tapee ou parlee). */
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Mic, SendHorizonal } from "lucide-react";
 import { api } from "../api";
-import { getRecognition, playB64Wav, WavRecorder } from "../audio";
-import { speakLocalReadback, type SimHub } from "../useSim";
+import { WavRecorder } from "../audio";
+import { type SimHub } from "../useSim";
 import { Btn, Input } from "./ui";
 
 export default function RadioPanel({ hub, prefill }: { hub: SimHub; prefill: string }) {
   const [text, setText] = useState("");
   const [talking, setTalking] = useState(false);
   const [busy, setBusy] = useState(false);
-  const recRef = useRef<ReturnType<typeof getRecognition>>(null);
   const wavRef = useRef<WavRecorder | null>(null);
-  const capsRef = useRef(hub.caps);
-  capsRef.current = hub.caps;
-  const modeRef = useRef(hub.mode);
-  modeRef.current = hub.mode;
+  const providersRef = useRef(hub.providers);
+  providersRef.current = hub.providers;
+  const talkingRef = useRef(false);
+  talkingRef.current = talking;
 
   // selection d'un avion au radar -> indicatif pre-rempli
   useEffect(() => {
@@ -28,90 +28,94 @@ export default function RadioPanel({ hub, prefill }: { hub: SimHub; prefill: str
     const txt = t.trim();
     if (!txt) return;
     try {
-      const out = await api.command(txt) as { readback_text?: string };
-      speakLocalReadback(modeRef.current, out.readback_text);
+      await api.command(txt);          // readback texte + audio arrivent via l'event WS
     } catch (e) {
-      hub.pushLog("rej", `Erreur commande : ${e}`);
+      hub.pushLog("rej", `⊘ Erreur commande : ${e}`);
     }
   }, [hub]);
 
   const startTalk = useCallback(async () => {
-    setTalking(true);
-    if (capsRef.current.asr) {
-      try {
-        wavRef.current = new WavRecorder();
-        await wavRef.current.start();
-      } catch (e) {
-        hub.pushLog("rej", `Micro indisponible : ${e}`);
-        setTalking(false);
-      }
-    } else {
-      const r = getRecognition();
-      if (!r) {
-        hub.pushLog("rej", "Reconnaissance vocale indisponible — tapez la clairance.");
-        setTalking(false);
-        return;
-      }
-      recRef.current = r;
-      r.onresult = (e) => { void send(e.results[0][0].transcript); };
-      r.onerror = (e) => hub.pushLog("rej", `STT : ${e.error}`);
-      try { r.start(); } catch { /* deja demarre */ }
+    if (wavRef.current) return;        // deja en cours d'emission
+    if (!providersRef.current.stt) {
+      hub.pushLog("rej", "⊘ STT non configuré ou injoignable (voir .env) — tapez la clairance.");
+      return;
     }
-  }, [hub, send]);
-
-  const stopTalk = useCallback(async () => {
-    setTalking(false);
-    if (capsRef.current.asr && wavRef.current) {
-      const wav = await wavRef.current.stop();
-      wavRef.current = null;
-      if (!wav) return;
-      setBusy(true);
-      try {
-        const j = await api.voice(wav);
-        if (j.audio_b64) playB64Wav(j.audio_b64);
-      } catch (e) {
-        hub.pushLog("rej", `Erreur /api/voice : ${e}`);
-      } finally {
-        setBusy(false);
-      }
-    } else {
-      try { recRef.current?.stop(); } catch { /* deja arrete */ }
+    const rec = new WavRecorder();
+    wavRef.current = rec;
+    setTalking(true);
+    try {
+      await rec.start();               // si stopTalk arrive pendant l'attente,
+    } catch (e) {                      // WavRecorder (flag cancelled) ferme le flux
+      hub.pushLog("rej", `⊘ Micro indisponible : ${e}`);
+      if (wavRef.current === rec) wavRef.current = null;
+      setTalking(false);
     }
   }, [hub]);
 
-  // barre espace = alternat (hors champs de saisie)
+  const stopTalk = useCallback(async () => {
+    setTalking(false);
+    // Nulle la ref AVANT l'await : un second stopTalk concurrent (keyup V +
+    // blur quasi simultanes) ne doit pas renvoyer le meme audio deux fois.
+    const rec = wavRef.current;
+    wavRef.current = null;
+    if (!rec) return;
+    const wav = await rec.stop();
+    if (!wav) return;
+    setBusy(true);
+    try {
+      await api.voice(wav);            // reponse (texte + audio) via l'event WS
+    } catch (e) {
+      hub.pushLog("rej", `⊘ Erreur /api/voice : ${e}`);
+    } finally {
+      setBusy(false);
+    }
+  }, [hub]);
+
+  // touche « V » = alternat (hors champs de saisie)
   useEffect(() => {
     const isTyping = (t: EventTarget | null) =>
       t instanceof HTMLElement && (t.tagName === "INPUT" || t.tagName === "TEXTAREA");
     const down = (e: KeyboardEvent) => {
-      if (e.code === "Space" && !isTyping(e.target) && !e.repeat) { e.preventDefault(); void startTalk(); }
+      if (e.code === "KeyV" && !isTyping(e.target) && !e.repeat) { e.preventDefault(); void startTalk(); }
     };
     const up = (e: KeyboardEvent) => {
-      if (e.code === "Space" && !isTyping(e.target)) { e.preventDefault(); void stopTalk(); }
+      if (e.code === "KeyV" && !isTyping(e.target)) { e.preventDefault(); void stopTalk(); }
     };
+    // Si le focus est perdu pendant la transmission (alt-tab, popup permission
+    // micro...), le keyup « V » peut ne jamais arriver : on coupe le micro pour
+    // eviter une transmission bloquee / un micro laisse ouvert.
+    const stopIfTalking = () => { if (talkingRef.current) void stopTalk(); };
+    const onVisibility = () => { if (document.hidden) stopIfTalking(); };
     window.addEventListener("keydown", down);
     window.addEventListener("keyup", up);
-    return () => { window.removeEventListener("keydown", down); window.removeEventListener("keyup", up); };
+    window.addEventListener("blur", stopIfTalking);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("keydown", down);
+      window.removeEventListener("keyup", up);
+      window.removeEventListener("blur", stopIfTalking);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, [startTalk, stopTalk]);
 
   const m = hub.lastExchange;
   return (
     <div className="shrink-0 border-t border-edge bg-panel px-4 py-3">
-      <button
-        className={`w-full rounded-lg border-2 px-4 py-3.5 text-[14px] font-bold tracking-wide
-          transition-colors ${talking
+      <div
+        aria-live="polite"
+        className={`flex w-full select-none items-center justify-center gap-1.5 rounded-lg
+          border-2 px-4 py-3.5 text-[14px] font-bold tracking-wide transition-colors ${talking
             ? "border-dang bg-dang text-white"
-            : busy
-              ? "cursor-wait border-edge bg-panel2 text-mut"
-              : "border-rdr/70 bg-rdr/10 text-rdr hover:bg-rdr/20"}`}
-        onPointerDown={(e) => { e.preventDefault(); void startTalk(); }}
-        onPointerUp={(e) => { e.preventDefault(); void stopTalk(); }}
-        onPointerLeave={() => { if (talking) void stopTalk(); }}
-        title="Maintenir pour parler (ou barre espace)"
+            : "border-edge bg-panel2 text-mut"}`}
+        title="Maintenir la touche V pour parler"
       >
-        <Mic size={15} className="mr-1 inline" />
-        {talking ? "TRANSMISSION…" : busy ? "TRAITEMENT…" : "MAINTENIR POUR PARLER"}
-      </button>
+        <Mic size={15} className={talking ? "inline" : "inline opacity-70"} />
+        {talking
+          ? "TRANSMISSION…"
+          : busy
+            ? "TRAITEMENT…"
+            : "MAINTENIR « V » POUR PARLER"}
+      </div>
 
       <div className="mt-2 flex gap-2">
         <Input

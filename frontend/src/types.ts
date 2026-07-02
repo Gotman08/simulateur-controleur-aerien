@@ -72,7 +72,8 @@ export interface NavData {
   center: [number, number];
 }
 
-export interface Caps { romeo: boolean; asr: boolean; llm: boolean; tts: boolean }
+/** Etat de sante des trois fournisseurs IA (contrat OpenAI-compatible). */
+export interface Providers { stt: boolean; llm: boolean; tts: boolean }
 
 export interface Order { callsign: string; action: string; value?: number; wpt?: string }
 
@@ -82,6 +83,8 @@ export interface Exchange {
   trafscript: string[];
   rejected: string[];
   readback: string;
+  audio_b64?: string | null;
+  tts_error?: string | null;
 }
 
 export interface ExerciseState {
@@ -97,7 +100,6 @@ export interface ExerciseState {
   wind?: Wind | null;
   storm?: { x: number; y: number; r: number } | null;
   turbulence?: number;
-  mode_ia?: string;
   score?: ExerciseScore;
   last_report?: boolean;
 }

@@ -59,19 +59,28 @@ Every brick is trained or grounded on its own, then assembled:
 
 ## Architecture
 
-The AI models stay on the GPU cluster, the simulator runs on the local PC, and the two sides are
-linked by an SSH tunnel. This mirrors a realistic split between a heavy compute backend and a light
-operational frontend.
+**API-first, single mode.** The three AI services (STT, LLM, TTS) are consumed through the
+standard **OpenAI-compatible REST contract**, configured by URL + API key + model name in a `.env`
+file (see `.env.example`). Swapping a model — self-hosted or cloud — means changing three
+environment variables, nothing else. The project's own models (fine-tuned Whisper, Mistral 7B,
+XTTS voice cloning) remain available behind a self-hosted façade (`src/server.py`) that speaks the
+same contract, typically reached through an SSH tunnel to the GPU cluster.
 
 ```
-        LOCAL PC (Windows, Python 3.12)                 ROMEO cluster (armgpu node, GH200)
-  +------------------------------------+   SSH tunnel   +-----------------------------------+
-  | pipeline orchestrator              |  ===========>  | FastAPI inference server          |
-  |   + BlueSky simulator (headless)   |  /asr /interpret  ASR  : fine tuned Whisper (GPU)  |
-  |   executes TrafScript, reads state |  <-- JSON ----    LLM  : Mistral 7B + RAG + graph  |
-  |   renders the radar scope          |  /tts (text)  ->  TTS  : XTTS voice cloning (CPU)  |
-  +------------------------------------+  <-- wav -----  +-----------------------------------+
+        LOCAL PC (Windows, Python 3.12)               AI providers (interchangeable via .env)
+  +------------------------------------+            +-------------------------------------------+
+  | training app (FastAPI + React)     |   HTTPS    | ANY OpenAI-compatible service:            |
+  |   + BlueSky simulator (headless)   | =========> |  - self-hosted facade server.py (ROMEO,   |
+  |   prompt building + KB (ICAO)      |    /v1/    |    fine-tuned Whisper / Mistral / XTTS)   |
+  |   deterministic safety validation  |  audio/*   |  - OpenAI, Mistral API, Groq, ...         |
+  |   per-callsign voice + VHF filter  |   chat/*   |  - any local gateway (vLLM, LiteLLM...)   |
+  +------------------------------------+            +-------------------------------------------+
 ```
+
+The prompt engineering stays **client-side** (ICAO knowledge base inlined in the system prompt,
+NER hints, sector graph) and every LLM output goes through the **deterministic safety validation**
+(bounds, known waypoints) — identical whatever the provider. The VHF radio degradation is also
+applied client-side, so the pilot voice sounds like a real radio with any TTS backend.
 
 ## Key results
 
@@ -136,32 +145,42 @@ and the per exchange files in [audio/](audio/).
 | RAG OACI | phraseology knowledge base, retrieval, Mistral strict JSON, graph validation | `src/11_..16_`, `src/atc_llm.py`, `src/kb_oaci.py`, `src/graph_secteur.py` | 100% valid JSON, 100% unsafe blocked |
 | Voice synthesis | XTTS zero shot voice cloning + VHF degradation, pilot readback | `src/tts_atc.py`, `src/readback.py`, `src/make_pilot_voices.py` | intelligible cloned voices |
 | BlueSky live | run the simulator, execute TrafScript, read flight state, radar render | `src/bluesky_runtime.py`, `src/radar_*.py` | aircraft maneuver for real |
-| Real time link | FastAPI server (ROMEO) + SSH tunnel + local orchestrator | `src/server.py`, `src/tunnel.sh`, `src/pipeline_e2e.py` | full closed loop |
+| Real time link | OpenAI-compatible facade (ROMEO) + SSH tunnel + local orchestrator | `src/server.py`, `src/ai_client.py`, `src/tunnel.sh`, `src/pipeline_e2e.py` | full closed loop |
 
 ## How to run
 
-The AI side runs on the ROMEO cluster (SLURM), the simulator side runs locally.
+The app consumes STT/LLM/TTS through OpenAI-compatible APIs. Pick a provider configuration in
+`.env` (copy `.env.example`), then launch the app. Two typical setups:
 
-### ROMEO (AI server)
+### Option 1 — self-hosted façade on the ROMEO cluster (project models)
 
 ```bash
-# one time environment setup (Whisper + Mistral + RAG, then XTTS)
+# one time environment setup (Whisper + Mistral, then XTTS)
 sbatch setup_romeo.sh           # base env, fine tuning stack
-sbatch setup_rag.sh             # Mistral + embeddings
+sbatch setup_rag.sh             # Mistral
 sbatch setup_tts_romeo.sh       # XTTS voice cloning
 
-# launch the inference server (ASR + LLM on GPU, TTS on CPU)
+# launch the OpenAI-compatible facade (STT + LLM on GPU, TTS on CPU)
 sbatch job_server.slurm         # prints SERVER_NODE in the log
+bash tunnel.sh <SERVER_NODE>    # forward ports 8765 and 8766
+#   (or, from Windows, one command: .\start_romeo.ps1)
+
+# then in .env (config A of .env.example):
+#   ATC_STT_URL=http://localhost:8765   ATC_LLM_URL=http://localhost:8765
+#   ATC_TTS_URL=http://localhost:8766   ATC_TTS_VOICES=pilot_1,pilot_2,pilot_3
 ```
 
-### Local PC (BlueSky + orchestrator)
+### Option 2 — cloud providers (no cluster at all)
+
+Fill `.env` with any OpenAI-compatible service (config B/C of `.env.example`): e.g. OpenAI
+(`whisper-1` / `gpt-4o-mini` / `gpt-4o-mini-tts`), or a mix (Groq STT + Mistral API LLM + a
+compatible TTS server). **Changing provider = changing URL + key + model name.**
+
+### Demos (need a configured provider)
 
 ```bash
 bash setup_bluesky_local.sh                  # Python 3.12 venv + bluesky-simulator
-bash tunnel.sh <SERVER_NODE>                 # forward ports 8765 and 8766
-
-# demos
-bluesky-env/Scripts/python.exe pipeline_e2e.py        # audio -> Whisper -> LLM -> BlueSky
+bluesky-env/Scripts/python.exe pipeline_e2e.py        # audio -> STT -> LLM -> BlueSky
 bluesky-env/Scripts/python.exe live_demo.py           # instructions deviate the aircraft
 bluesky-env/Scripts/python.exe voice_exchange.py      # controller and pilot radio exchange
 bluesky-env/Scripts/python.exe radar_anim.py          # radar scope image + animation
@@ -184,24 +203,26 @@ bluesky-env/Scripts/python.exe -m pip install -r ../requirements-local.txt
 bluesky-env/Scripts/python.exe atc_app.py                    # opens http://127.0.0.1:8000
 ```
 
-The AI backend is **hybrid**:
+The AI backend is **API-first, single mode** (configured in `.env`):
 
-- **With ROMEO** — one command from Windows: `.\start_romeo.ps1` (submits the SLURM job, waits for
-  the node, opens the SSH tunnel). Speech recognition then uses the fine-tuned Whisper,
-  interpretation uses Mistral + RAG, scenario generation uses Mistral, and the pilot reads back in
-  the cloned VHF voice (XTTS). The status badge shows `ROMEO`.
-- **Without ROMEO** (default, fully offline): the browser's Web Speech API does speech-to-text and the
-  pilot read-back voice, and a local phraseology parser (validated at 100% on 68 phrases, EN **and**
-  FR) handles clearances and scenario generation. The badge shows `LOCAL`. Nothing else is required.
+- **STT / LLM / TTS are three OpenAI-compatible endpoints** — the self-hosted façade (project
+  models: fine-tuned Whisper, Mistral, XTTS cloned voices) or any cloud service, interchangeable.
+  Three status badges (STT / LLM / TTS) in the top bar show each provider's health; click to
+  re-test. Any provider error is **loudly visible** (UI log + HTTP 502) — never silent.
+- **Every readback is spoken** through the TTS API, for typed *and* spoken clearances, and **each
+  aircraft keeps its own stable voice** (deterministic callsign hash over the `ATC_TTS_VOICES`
+  pool). The VHF radio degradation is applied client-side, whatever the TTS provider.
 
 Workflow: the instructor types a situation (e.g. `three A320 from the north at FL300 heading 180, 8
 miles apart` or `trois A320 venant du nord au niveau 300`) or loads a saved scenario from
-`src/scenarios/`; the aircraft appear and fly live; the student holds the push-to-talk button (or the
-space bar) and says e.g. `air france one two three four descend flight level one zero zero` (French
+`src/scenarios/`; the aircraft appear and fly live; the student holds the push-to-talk key (`V`) and
+says e.g. `air france one two three four descend flight level one zero zero` (French
 phraseology works too: `... descendez niveau 1 0 0`); the aircraft maneuvers and the pilot reads
-back. A clearance to a callsign that is not on the scope gets **no answer**, like on a real
-frequency. App code: `src/atc_app.py` (server), `src/atc_sim.py` (real-time BlueSky),
-`src/atc_ai.py` (hybrid AI client), `src/atc_exercise.py` (exercise engine), `frontend/` (UI).
+back with its own voice. A clearance to a callsign that is not on the scope gets **no answer**,
+like on a real frequency (deliberate exception to the always-speak rule). App code:
+`src/atc_app.py` (server), `src/ai_client.py` (OpenAI-compatible AI client), `src/atc_sim.py`
+(real-time BlueSky), `src/atc_exercise.py` (exercise engine), `src/atc_ai.py` (reference rules
+parser, kept for tests/validation), `frontend/` (UI).
 
 ### Exercise mode (the AI builds the situation, the student adapts)
 
@@ -241,10 +262,11 @@ Python dependencies are listed in `requirements-romeo.txt` (AI side) and `requir
 simulateur-controleur-aerien/
   README.md
   LICENSE
-  requirements-romeo.txt        AI stack (cluster side)
-  requirements-local.txt        BlueSky client (local side)
-  start_romeo.ps1               one-command ROMEO backend (sbatch + tunnel, Windows)
-  pytest.ini / tests/           unit tests (110 tests over the pure modules)
+  requirements-romeo.txt        AI stack (cluster side, self-hosted facade)
+  requirements-local.txt        BlueSky client + app (local side)
+  .env.example                  AI provider configuration (OpenAI-compatible URLs/keys/models)
+  start_romeo.ps1               one-command self-hosted facade (sbatch + tunnel, Windows)
+  pytest.ini / tests/           unit tests (pure modules + mocked API client)
   validation/                   mathematical + empirical validation campaign (reproducible)
   docs/VALIDATION.md            CPA derivation, BlueSky campaign, scoring model, proofs
   docs/assets/                  figures, screenshots and radar GIFs used in this page

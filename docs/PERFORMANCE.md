@@ -1,39 +1,46 @@
 # Étude de performance, utilité et limites
 
-Mesures réalisées le 2026-06-11 sur la configuration cible : application sur le
-PC local (Windows, Python 3.12), backend IA sur le supercalculateur **ROMEO**
-(nœud `armgpu` GH200, job SLURM `job_server.slurm`, accès par tunnel SSH).
-Reproductible : `src\bluesky-env\Scripts\python.exe validation\05_performance.py`
-(le volet ROMEO est ignoré automatiquement si le tunnel est fermé). Données
+Mesures réalisées le 2026-06-11 sur la configuration cible de l'époque :
+application sur le PC local (Windows, Python 3.12), modèles IA sur le
+supercalculateur **ROMEO** (nœud `armgpu` GH200, job SLURM `job_server.slurm`,
+accès par tunnel SSH). Depuis le passage à l'architecture **API-first**
+(2026-07-02), ces modèles sont servis par la façade OpenAI-compatible
+(`src/server.py`) — les latences mesurées restent représentatives de cette
+configuration « fournisseur auto-hébergé via tunnel » ; un fournisseur cloud
+aura son propre profil. Reproductible :
+`src\bluesky-env\Scripts\python.exe validation\05_performance.py`
+(le volet façade est ignoré automatiquement si le tunnel est fermé). Données
 brutes : [`validation/results_perf.json`](../validation/results_perf.json).
 
-## 1. Latence des briques IA — repli local vs ROMEO
+## 1. Latence des briques IA — parseur local de référence vs façade auto-hébergée
 
 ![Latences IA](assets/validation/fig_perf_latences.png)
 
-| Brique | Local (hors-ligne) | ROMEO (GH200 + tunnel SSH) |
+| Brique | Parseur local de référence (`atc_ai`, hors runtime) | Façade auto-hébergée (GH200 + tunnel SSH) |
 |---|---|---|
 | Interprétation d'une clairance | **0,04 ms** (p95 : 0,05 ms, n = 200) | **5,2 s** en moyenne (0,98 – 8,4 s, n = 8, après chauffe) |
 | Génération de situation | **0,03 ms** (n = 100) | **17,1 s** en moyenne (max 22,7 s, n = 2) |
-| Reconnaissance vocale (ASR) | navigateur (Web Speech API, ~instantané) | **0,84 s** par message, **RTF 0,04** (≈ 25× plus rapide que le temps réel, n = 3) |
-| Synthèse voix pilote (TTS) | navigateur (speechSynthesis, ~instantané) | **3,9 s** par collationnement, **RTF 0,82** (XTTS sur CPU, n = 3) |
+| Reconnaissance vocale (STT) | — (bibliothèque texte uniquement) | **0,84 s** par message, **RTF 0,04** (≈ 25× plus rapide que le temps réel, n = 3) |
+| Synthèse voix pilote (TTS) | — | **3,9 s** par collationnement, **RTF 0,82** (XTTS sur CPU, n = 3) |
 
 Lecture :
 
-- Le **mode local est temps réel** au sens strict : l'interprétation est ~10⁵ fois
-  plus rapide que le LLM, pour une exactitude de 100 % sur la grammaire
-  couverte ([VALIDATION.md](VALIDATION.md) § 4) — mais c'est une grammaire
-  **fermée** (phraséologie standard EN/FR).
-- Le **mode ROMEO** comprend des formulations libres (LLM + RAG ancré sur les
-  fiches OACI, citations à l'appui), transcrit l'audio réel bruité avec le
-  Whisper *fine-tuné* (WER 29,2 % sur ATCO2 contre 74,3 % zéro-shot, cf. S4) et
-  répond avec une **voix de pilote clonée** dégradée VHF. Le coût est une
-  latence de dialogue de l'ordre de **6 à 10 s par échange complet**
-  (ASR 0,8 s + LLM ~5 s + TTS ~4 s, mesuré 17,4 s au premier échange, chargements
-  compris) : adapté à un entraînement au rythme d'une fréquence réelle (un
-  échange toutes les 10–30 s), pas à du tir rapide.
-- Le tunnel SSH est négligeable dans le bilan (l'ASR fait l'aller-retour réseau
-  + inférence en 0,84 s pour ~20 s d'audio).
+- Le **parseur à règles** (bibliothèque `atc_ai`, désormais hors runtime — il
+  sert de référence aux tests et à la validation) est temps réel au sens
+  strict : ~10⁵ fois plus rapide que le LLM, pour une exactitude de 100 % sur
+  la grammaire couverte ([VALIDATION.md](VALIDATION.md) § 4) — mais c'est une
+  grammaire **fermée** (phraséologie standard EN/FR).
+- La **chaîne LLM** comprend des formulations libres (fiches OACI inlinées dans
+  le prompt, validation déterministe des bornes en aval), transcrit l'audio
+  réel bruité avec le Whisper *fine-tuné* (WER 29,2 % sur ATCO2 contre 74,3 %
+  zéro-shot, cf. S4) et répond avec une **voix de pilote clonée** dégradée VHF
+  (dégradation désormais appliquée côté client, identique pour tout
+  fournisseur). Le coût est une latence de dialogue de l'ordre de **6 à 10 s
+  par échange complet** (STT 0,8 s + LLM ~5 s + TTS ~4 s, mesuré 17,4 s au
+  premier échange, chargements compris) : adapté à un entraînement au rythme
+  d'une fréquence réelle (un échange toutes les 10–30 s), pas à du tir rapide.
+- Le tunnel SSH est négligeable dans le bilan (le STT fait l'aller-retour
+  réseau + inférence en 0,84 s pour ~20 s d'audio).
 
 ## 2. Montée en charge du simulateur
 

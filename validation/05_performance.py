@@ -2,10 +2,12 @@
 Volet 5 - Etude de performance : latences IA (local vs ROMEO) et montee en
 charge du simulateur BlueSky.
 
-  A. IA locale (hors-ligne)  : latence de local_interpret / local_scenario.
-  B. IA ROMEO (tunnel SSH)   : latence /interpret, /asr (+RTF), /tts (+RTF),
-                               /scenario. Mesure uniquement si le tunnel est
-                               ouvert (localhost:8765/8766), sinon ignore.
+  A. Parseur local (reference hors-ligne) : latence de local_interpret /
+                               local_scenario (bibliotheque atc_ai, hors runtime).
+  B. Facade OpenAI-compatible (tunnel SSH) : latence interpretation, STT (+RTF),
+                               TTS (+RTF), scenario via ai_client. Mesure
+                               uniquement si le tunnel est ouvert
+                               (localhost:8765/8766), sinon ignore.
   C. Simulateur BlueSky      : temps mur pour avancer 10 s de simulation avec
                                N avions (N = 5..200), facteur temps reel.
 
@@ -92,23 +94,44 @@ def _wav_duration(path):
 
 
 def bench_romeo():
+    """Volet B : latences de la facade OpenAI-compatible (server.py via tunnel),
+    mesurees a travers le client unifie ai_client — equivalent fonctionnel des
+    anciens endpoints /interpret et /scenario (l'intelligence de prompt est
+    desormais cote client)."""
     import requests
     try:
-        requests.get("http://localhost:8765/health", timeout=3).raise_for_status()
+        requests.get("http://localhost:8765/v1/models", timeout=3).raise_for_status()
     except Exception:
         print("[B] tunnel ROMEO ferme -> volet ROMEO ignore")
         RESULTS["romeo"] = None
         return
 
-    # /interpret (Mistral+RAG) - 1 appel de chauffe puis mesure
-    requests.post("http://localhost:8765/interpret", json={"text": PHRASES[0]}, timeout=300)
+    os.environ.setdefault("ATC_STT_URL", "http://localhost:8765")
+    os.environ.setdefault("ATC_LLM_URL", "http://localhost:8765")
+    os.environ.setdefault("ATC_TTS_URL", "http://localhost:8766")
+    os.environ.setdefault("ATC_LLM_MODEL", "mistral-7b-atc")
+    os.environ.setdefault("ATC_TTS_MODEL", "xtts-atc")
+    import ai_client
+    AI = ai_client.AIClient()
+
+    try:
+        _bench_romeo_measure(AI)
+    except Exception as e:
+        # une erreur/timeout d'un provider n'avorte pas le reste de la campagne
+        print(f"[B] echec de mesure ({e}) -> volet ROMEO incomplet, ignore")
+        RESULTS["romeo"] = None
+
+
+def _bench_romeo_measure(AI):
+    # interpretation (prompt client + /v1/chat/completions) - chauffe puis mesure
+    AI.interpret(PHRASES[0])
     lat_i = []
     for p in PHRASES:
         t0 = time.perf_counter()
-        requests.post("http://localhost:8765/interpret", json={"text": p}, timeout=300)
+        AI.interpret(p)
         lat_i.append(time.perf_counter() - t0)
 
-    # /asr : wavs du projet + RTF (latence / duree audio)
+    # STT /v1/audio/transcriptions : wavs du projet + RTF (latence / duree audio)
     wavs = [os.path.join(ROOT, "audio", w) for w in
             ("exchange_1.wav", "exchange_2.wav", "exchange_3.wav")]
     wavs = [w for w in wavs if os.path.isfile(w)]
@@ -118,32 +141,30 @@ def bench_romeo():
         with open(w, "rb") as f:
             data = f.read()
         t0 = time.perf_counter()
-        requests.post("http://localhost:8765/asr",
-                      files={"file": ("u.wav", data, "audio/wav")}, timeout=300)
+        AI.asr(data)
         dt = time.perf_counter() - t0
         lat_a.append(dt)
         rtf_a.append(dt / dur)
 
-    # /tts : 3 collationnements + RTF (latence / duree audio produite)
+    # TTS /v1/audio/speech (+ degradation VHF cote client) : 3 collationnements + RTF
     texts = ["descend flight level one eight zero, air france three zero zero",
              "heading two seven zero, speedbird five seven",
              "climb flight level two four zero, ryanair niner"]
     lat_t, rtf_t = [], []
     for txt in texts:
         t0 = time.perf_counter()
-        r = requests.post("http://localhost:8766/tts", json={"text": txt, "vhf": True},
-                          timeout=300)
+        wav_out = AI.tts(txt)
         dt = time.perf_counter() - t0
         import soundfile as sf
-        d, sr = sf.read(io.BytesIO(r.content))
+        d, sr = sf.read(io.BytesIO(wav_out))
         lat_t.append(dt)
         rtf_t.append(dt / (len(d) / sr))
 
-    # /scenario (Mistral) : 2 appels
+    # generation de scenario (prompt client + /v1/chat/completions) : 2 appels
     lat_s = []
     for d in DESCRIPTIONS[:2]:
         t0 = time.perf_counter()
-        requests.post("http://localhost:8765/scenario", json={"description": d}, timeout=300)
+        AI.scenario(d)
         lat_s.append(time.perf_counter() - t0)
 
     RESULTS["romeo"] = {

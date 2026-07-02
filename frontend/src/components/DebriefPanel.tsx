@@ -46,8 +46,7 @@ export default function DebriefPanel({ report }: { report: ExerciseReport | null
           <div>
             <div className={`font-mono text-xl font-bold ${scoreColor(sc.total)}`}>{sc.grade}</div>
             <div className="text-[11.5px] text-mut">
-              {report.auto_ended ? "temps écoulé" : "arrêt manuel"} ·
-              IA {report.mode_ia ?? "local"} · {report.aircraft?.length ?? 0} aéronefs
+              {report.auto_ended ? "temps écoulé" : "arrêt manuel"} · {report.aircraft?.length ?? 0} aéronefs
             </div>
           </div>
         </div>

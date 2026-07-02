@@ -11,6 +11,7 @@ fastapi
 uvicorn[standard]
 python-multipart
 websockets
+python-dotenv
 # Optionnel : pour le bouton "GUI BlueSky natif" (fenetre Qt/OpenGL officielle)
 #   pip install pyqt5 pyopengl
 # pyqt5

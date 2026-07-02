@@ -1,7 +1,7 @@
 """
 Validation 3 - Precision du parseur de clairances local (atc_ai.local_interpret)
 ================================================================================
-Jeu de test de 67 phrases avec verite terrain TrafScript, couvrant : cap,
+Jeu de test de 68 phrases avec verite terrain TrafScript, couvrant : cap,
 niveau, vitesse, direct (fix du secteur : ENTRY_W, BALMO, CROSS, DELTA,
 EXIT_E, ENTRY_S, NORTH), taux de montee/descente, multi-ordres, chiffres
 epeles vs compacts, indicatifs en telephonie, variantes francaises, et

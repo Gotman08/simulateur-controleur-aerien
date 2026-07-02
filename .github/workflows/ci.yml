@@ -16,7 +16,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Dependances de test (modules purs uniquement, sans BlueSky)
-        run: pip install pytest ruff requests
+        run: pip install pytest ruff requests numpy scipy soundfile python-dotenv
       - name: Ruff
         run: ruff check src tests validation tools
       - name: Pytest

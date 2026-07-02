@@ -1,206 +1,174 @@
 ---
 base_model: openai/whisper-small
 library_name: peft
+license: mit
+language:
+- en
+pipeline_tag: automatic-speech-recognition
 tags:
 - base_model:adapter:openai/whisper-small
 - lora
+- peft
 - transformers
+- whisper
+- automatic-speech-recognition
+- air-traffic-control
+- atc
+datasets:
+- Jzuluaga/uwb_atcc
+- Jzuluaga/atcosim_corpus
+- Jzuluaga/atco2_corpus_1h
+metrics:
+- wer
 ---
 
-# Model Card for Model ID
+# Whisper-small LoRA adapter — Air Traffic Control ASR
 
-<!-- Provide a quick summary of what the model is/does. -->
-
-
+LoRA (PEFT) adapter that fine-tunes [`openai/whisper-small`](https://huggingface.co/openai/whisper-small)
+for **English air traffic control (ATC) radiotelephony**, using real, noisy VHF recordings and a VHF
+band-pass front-end. It is the speech-to-text brick of an ATC controller **training simulator**: the
+controller speaks over a (simulated) VHF channel, Whisper transcribes, a rule-based NER + LLM (RAG on
+ICAO Doc 4444) turns the transcript into a validated JSON clearance, and the BlueSky simulator flies
+the aircraft with a synthesized pilot readback.
 
 ## Model Details
 
 ### Model Description
 
-<!-- Provide a longer summary of what this model is. -->
+- **Developed by:** Nicolas Marano (student internship project — ATC controller training simulator)
+- **Model type:** LoRA adapter (PEFT) over Whisper, an encoder–decoder ASR model
+- **Language(s):** English (ICAO aviation phraseology; some French phraseology is handled downstream)
+- **License:** MIT (same as the project; the base `whisper-small` is also MIT)
+- **Finetuned from model:** `openai/whisper-small`
 
+### Model Sources
 
-
-- **Developed by:** [More Information Needed]
-- **Funded by [optional]:** [More Information Needed]
-- **Shared by [optional]:** [More Information Needed]
-- **Model type:** [More Information Needed]
-- **Language(s) (NLP):** [More Information Needed]
-- **License:** [More Information Needed]
-- **Finetuned from model [optional]:** [More Information Needed]
-
-### Model Sources [optional]
-
-<!-- Provide the basic links for the model. -->
-
-- **Repository:** [More Information Needed]
-- **Paper [optional]:** [More Information Needed]
-- **Demo [optional]:** [More Information Needed]
+- **Repository:** the *ATC controller training simulator* project (see the project root `README.md`).
+  Training code: `src/08_finetune_whisper_lora.py`; shared ASR helpers: `src/atc_asr.py`;
+  data loading: `src/atc_data.py`.
 
 ## Uses
 
-<!-- Address questions around how the model is intended to be used, including the foreseeable users of the model and those affected by the model. -->
-
 ### Direct Use
 
-<!-- This section is for the model use without fine-tuning or plugging into a larger ecosystem/app. -->
+Transcribe short (~0.4–30 s) English ATC radio transmissions sampled at 16 kHz mono. For results
+consistent with training, apply the same VHF band-pass preprocessing (300–3400 Hz) used during
+fine-tuning (`src/atc_audio.py::preprocess_waveform`).
 
-[More Information Needed]
+### Downstream Use
 
-### Downstream Use [optional]
-
-<!-- This section is for the model use when fine-tuned for a task, or when plugged into a larger ecosystem/app -->
-
-[More Information Needed]
+STT front-end of the simulator's voice loop (served through the self-hosted
+OpenAI-compatible façade, `src/server.py`):
+`pilot/controller VHF → Whisper STT → NER + LLM (RAG, ICAO Doc 4444) → validated JSON → BlueSky`.
 
 ### Out-of-Scope Use
 
-<!-- This section addresses misuse, malicious use, and uses that the model will not work well for. -->
-
-[More Information Needed]
+Not certified and **not for operational or real air traffic control**. Not intended for
+general-purpose transcription outside the ATC domain, nor for non-English speech. It remains an
+imperfect transcriber (≈29 % WER on real-world ATCO2 audio) and must not be a single point of safety.
 
 ## Bias, Risks, and Limitations
 
-<!-- This section is meant to convey both technical and sociotechnical limitations. -->
-
-[More Information Needed]
+- Trained mainly on European and simulated ATC corpora (UWB-ATCC, ATCOSIM); accents, sectors, or radio
+  conditions outside this distribution can degrade accuracy.
+- Real-world noisy audio (ATCO2) still yields ≈29 % WER — expect transcription errors on callsigns and
+  numbers, which downstream parsing and safety checks must catch.
 
 ### Recommendations
 
-<!-- This section is meant to convey recommendations with respect to the bias, risk, and technical limitations. -->
-
-Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model. More information needed for further recommendations.
+Keep the downstream safety guard (out-of-bounds / unknown-callsign rejection) and give the controller
+a text fallback. Verify performance on your own audio before relying on it.
 
 ## How to Get Started with the Model
 
-Use the code below to get started with the model.
+```python
+import torch
+from transformers import WhisperProcessor, WhisperForConditionalGeneration
+from peft import PeftModel
 
-[More Information Needed]
+base = "openai/whisper-small"
+adapter = "model/whisper-lora-adapter"  # this folder
+
+processor = WhisperProcessor.from_pretrained(adapter, language="en", task="transcribe")
+model = WhisperForConditionalGeneration.from_pretrained(base, torch_dtype=torch.float32)
+model = PeftModel.from_pretrained(model, adapter).merge_and_unload()  # fuse LoRA for fast inference
+model.eval()
+
+# `wav` = 16 kHz mono float32 waveform (ideally after VHF band-pass preprocessing)
+feats = processor.feature_extractor(wav, sampling_rate=16000, return_tensors="pt").input_features
+ids = model.generate(feats, language="en", task="transcribe", max_new_tokens=128)
+print(processor.batch_decode(ids, skip_special_tokens=True)[0])
+```
+
+Or use the project helper: `src/atc_asr.py::build_inference_model(adapter_path=...)`.
 
 ## Training Details
 
 ### Training Data
 
-<!-- This should link to a Dataset Card, perhaps with a short stub of information on what the training data is all about as well as documentation related to data pre-processing or additional filtering. -->
+| Split | Source(s) |
+|---|---|
+| train / val | `Jzuluaga/uwb_atcc` + `Jzuluaga/atcosim_corpus` |
+| test | `Jzuluaga/atco2_corpus_1h` (fallback: `uwb_atcc[test]`) |
 
-[More Information Needed]
+Audio resampled to 16 kHz mono; clips filtered to 0.4–30 s with non-empty transcripts; 5 % of the
+concatenated training data held out as validation.
 
 ### Training Procedure
 
-<!-- This relates heavily to the Technical Specifications. Content here should link to that section when it is relevant to the training procedure. -->
+#### Preprocessing
 
-#### Preprocessing [optional]
-
-[More Information Needed]
-
+- VHF band-pass filter (300–3400 Hz) applied to every clip; random augmentation on the training split.
+- Whisper log-mel features (80 channels); text normalized with Whisper's `BasicTextNormalizer` for an
+  honest, tokenizer-agnostic WER (same normalization for baseline and fine-tuned).
 
 #### Training Hyperparameters
 
-- **Training regime:** [More Information Needed] <!--fp32, fp16 mixed precision, bf16 mixed precision, bf16 non-mixed precision, fp16 non-mixed precision, fp8 mixed precision -->
+- **LoRA:** r = 32, α = 64, dropout = 0.05, target modules = `q_proj`, `v_proj` (attention layers,
+  encoder + decoder), bias = none.
+- **Optimization:** 3 epochs, learning rate 1e-3, warmup 50 steps, train batch 48 / eval batch 24,
+  gradient accumulation 1.
+- **Training regime:** bf16 mixed precision (autocast); evaluation (`generate`) runs in fp32 to avoid
+  the input-features/weights dtype conflict. Best checkpoint selected by lowest WER.
+- **Framework:** PEFT + 🤗 Transformers `Seq2SeqTrainer` (`predict_with_generate`).
 
-#### Speeds, Sizes, Times [optional]
+#### Speeds, Sizes, Times
 
-<!-- This section provides information about throughput, start/end time, checkpoint size if relevant, etc. -->
-
-[More Information Needed]
+Trained on a single GH200 (96 GB) GPU node (HPC / SLURM). Only the LoRA adapter is saved (a few MB);
+the base `whisper-small` weights are unchanged.
 
 ## Evaluation
 
-<!-- This section describes the evaluation protocols and provides the results. -->
-
 ### Testing Data, Factors & Metrics
 
-#### Testing Data
-
-<!-- This should link to a Dataset Card if possible. -->
-
-[More Information Needed]
-
-#### Factors
-
-<!-- These are the things the evaluation is disaggregating by, e.g., subpopulations or domains. -->
-
-[More Information Needed]
-
-#### Metrics
-
-<!-- These are the evaluation metrics being used, ideally with a description of why. -->
-
-[More Information Needed]
+- **Testing data:** `Jzuluaga/atco2_corpus_1h` (real-world ATC audio) for the headline WER; the
+  held-out UWB + ATCOSIM validation split for in-domain WER.
+- **Metric:** Word Error Rate (WER) via `jiwer`, on normalized text.
 
 ### Results
 
-[More Information Needed]
+| Evaluation | WER |
+|---|---|
+| ATCO2 test — zero-shot `whisper-small` | 74.3 % |
+| ATCO2 test — after LoRA fine-tuning | **29.2 %** (≈60 % relative reduction) |
+| Validation (UWB + ATCOSIM), 3 epochs | **6.68 %** |
 
 #### Summary
 
+LoRA fine-tuning of `whisper-small` on domain ATC audio cuts real-world (ATCO2) WER by about 60 %
+relative, at the cost of a few-MB adapter, while leaving the base model intact.
 
+## Citation
 
-## Model Examination [optional]
+If you use this adapter, please cite the project and the underlying datasets, e.g. the ATCO2 corpus:
 
-<!-- Relevant interpretability work for the model goes here -->
+> Zuluaga-Gomez, J. et al. *ATCO2 corpus: A Large-Scale Dataset for Research on ASR and NLU of Air
+> Traffic Control Communications.* arXiv:2211.04054, 2023.
 
-[More Information Needed]
+## Model Card Authors
 
-## Environmental Impact
+Nicolas Marano.
 
-<!-- Total emissions (in grams of CO2eq) and additional considerations, such as electricity usage, go here. Edit the suggested text below accordingly -->
-
-Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
-
-- **Hardware Type:** [More Information Needed]
-- **Hours used:** [More Information Needed]
-- **Cloud Provider:** [More Information Needed]
-- **Compute Region:** [More Information Needed]
-- **Carbon Emitted:** [More Information Needed]
-
-## Technical Specifications [optional]
-
-### Model Architecture and Objective
-
-[More Information Needed]
-
-### Compute Infrastructure
-
-[More Information Needed]
-
-#### Hardware
-
-[More Information Needed]
-
-#### Software
-
-[More Information Needed]
-
-## Citation [optional]
-
-<!-- If there is a paper or blog post introducing the model, the APA and Bibtex information for that should go in this section. -->
-
-**BibTeX:**
-
-[More Information Needed]
-
-**APA:**
-
-[More Information Needed]
-
-## Glossary [optional]
-
-<!-- If relevant, include terms and calculations in this section that can help readers understand the model or model card. -->
-
-[More Information Needed]
-
-## More Information [optional]
-
-[More Information Needed]
-
-## Model Card Authors [optional]
-
-[More Information Needed]
-
-## Model Card Contact
-
-[More Information Needed]
 ### Framework versions
 
 - PEFT 0.19.1

@@ -1,10 +1,11 @@
 """
 Echange radio controleur <-> pilote (les avions PARLENT)
 ========================================================
-Pour chaque instruction : le controleur parle (TTS voix + VHF) -> /asr -> /interpret
+Pour chaque instruction : le controleur parle (TTS voix + VHF) -> STT -> interpretation
 -> BlueSky execute -> le PILOTE collationne (readback) dans la voix clonee de l'avion
-(+ VHF). On verifie que le readback est intelligible (re-/asr) et on assemble un
-fichier d'echange radio par instruction + une bande son de session complete.
+(+ VHF). On verifie que le readback est intelligible (re-transcription STT) et on
+assemble un fichier d'echange radio par instruction + une bande son de session complete.
+(Les appels passent par les helpers OpenAI-compatibles de pipeline_e2e.)
 
 Prerequis : tunnel + serveur actifs. Lancer : bluesky-env/Scripts/python.exe voice_exchange.py
 Sorties : demo_out/exchange_<i>.wav (ctrl+pilote), demo_out/session_radio.wav

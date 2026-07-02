@@ -1,41 +1,16 @@
-/** Voix : reconnaissance (Web Speech API), capture WAV 16 k (mode ROMEO),
- *  synthese du collationnement pilote et lecture des WAV renvoyes. */
-
-type SR = { lang: string; interimResults: boolean; maxAlternatives: number; continuous: boolean;
-  onresult: ((e: { results: { 0: { 0: { transcript: string } } } }) => void) | null;
-  onerror: ((e: { error: string }) => void) | null;
-  start(): void; stop(): void };
-
-export function getRecognition(): SR | null {
-  const w = window as unknown as { SpeechRecognition?: new () => SR; webkitSpeechRecognition?: new () => SR };
-  const Ctor = w.SpeechRecognition ?? w.webkitSpeechRecognition;
-  if (!Ctor) return null;
-  const r = new Ctor();
-  r.lang = "en-US";
-  r.interimResults = false;
-  r.maxAlternatives = 1;
-  r.continuous = false;
-  return r;
-}
-
-export function speak(text: string) {
-  if (!window.speechSynthesis) return;
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = "en-US";
-  u.rate = 1.05;
-  u.pitch = 0.9;
-  window.speechSynthesis.speak(u);
-}
+/** Audio : capture micro WAV mono 16 kHz (envoyee a l'API STT via /api/voice)
+ *  et lecture des WAV de collationnement renvoyes par l'API TTS. */
 
 export function playB64Wav(b64: string) {
   const bin = atob(b64);
   const arr = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
   const url = URL.createObjectURL(new Blob([arr], { type: "audio/wav" }));
-  void new Audio(url).play().catch(() => undefined);
+  // Lecture bloquee (politique autoplay...) : jamais totalement silencieux.
+  void new Audio(url).play().catch((e) => console.warn("[audio] lecture readback bloquee :", e));
 }
 
-/* ----- capture micro -> WAV mono 16 kHz (envoye a /api/voice en mode ROMEO) -- */
+/* ----- capture micro -> WAV mono 16 kHz (envoye a /api/voice) ---------------- */
 export class WavRecorder {
   private ctx: AudioContext | null = null;
   private stream: MediaStream | null = null;
@@ -43,9 +18,18 @@ export class WavRecorder {
   private src: MediaStreamAudioSourceNode | null = null;
   private chunks: Float32Array[] = [];
   private rate = 48000;
+  private cancelled = false;
 
   async start() {
-    this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    if (this.cancelled) {
+      // stop() est arrive PENDANT l'attente getUserMedia (appui bref sur V,
+      // popup de permission qui vole le focus...) : fermer le flux tout de
+      // suite, sinon le micro resterait ouvert sur un enregistreur orphelin.
+      stream.getTracks().forEach((t) => t.stop());
+      return;
+    }
+    this.stream = stream;
     this.ctx = new AudioContext();
     this.rate = this.ctx.sampleRate;
     this.src = this.ctx.createMediaStreamSource(this.stream);
@@ -57,12 +41,15 @@ export class WavRecorder {
     this.proc.connect(this.ctx.destination);
   }
 
-  /** Arrete la capture et renvoie le WAV (ou null si vide). */
+  /** Arrete la capture et renvoie le WAV (ou null si vide). Idempotent :
+   *  un second appel ne renvoie pas une seconde copie de l'audio. */
   async stop(): Promise<Blob | null> {
+    this.cancelled = true;
     this.proc?.disconnect();
     this.src?.disconnect();
     this.stream?.getTracks().forEach((t) => t.stop());
     const data = mergeFloat(this.chunks);
+    this.chunks = [];
     await this.ctx?.close().catch(() => undefined);
     this.ctx = this.stream = this.proc = this.src = null;
     if (!data.length) return null;

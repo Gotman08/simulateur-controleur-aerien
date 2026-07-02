@@ -75,17 +75,19 @@ export default function TopBar({ hub }: { hub: SimHub }) {
         >
           <RotateCcw size={15} />
         </Btn>
-        <Badge
-          tone={hub.mode === "romeo" ? "ok" : "warn"}
-          className="cursor-pointer"
-          title={hub.mode === "romeo"
-            ? "IA : serveur ROMEO (Whisper / Mistral / XTTS)"
-            : "IA : repli local (voix navigateur). Cliquer pour re-détecter ROMEO."}
-          onClick={() => { hub.pushLog("info", "Re-détection ROMEO…"); void hub.refreshHealth(); }}
-        >
-          <Satellite size={11} />
-          {hub.mode === "romeo" ? "ROMEO" : "LOCAL"}
-        </Badge>
+        {(["stt", "llm", "tts"] as const).map((p) => (
+          <Badge
+            key={p}
+            tone={hub.providers[p] ? "ok" : "dang"}
+            className="cursor-pointer"
+            title={`Fournisseur ${p.toUpperCase()} ${hub.providers[p] ? "joignable" : "injoignable"} `
+              + "(config .env — cliquer pour re-tester)"}
+            onClick={() => { hub.pushLog("info", "Test des fournisseurs IA…"); void hub.refreshHealth(); }}
+          >
+            <Satellite size={11} />
+            {p.toUpperCase()}
+          </Badge>
+        ))}
       </div>
     </header>
   );

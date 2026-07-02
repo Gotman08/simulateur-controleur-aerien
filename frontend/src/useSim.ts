@@ -3,9 +3,9 @@
  *  version React n'est rafraichie qu'a ~4 Hz pour ne pas re-rendre les panneaux
  *  a la cadence du serveur. */
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { Caps, Exchange, ExerciseReport, ExerciseScore, LogEntry, SimState } from "./types";
+import type { Exchange, ExerciseReport, ExerciseScore, LogEntry, Providers, SimState } from "./types";
 import { api } from "./api";
-import { speak } from "./audio";
+import { playB64Wav } from "./audio";
 
 const EMPTY: SimState = {
   t: 0, running: false, paused: false, speed: 1,
@@ -18,8 +18,7 @@ const now = () => new Date().toLocaleTimeString("fr-FR", { hour12: false });
 export interface SimHub {
   stateRef: React.RefObject<SimState>;
   state: SimState;                       // version throttlee (~4 Hz)
-  caps: Caps;
-  mode: string;
+  providers: Providers;                  // sante des fournisseurs IA (stt/llm/tts)
   log: LogEntry[];
   lastExchange: Exchange | null;
   report: ExerciseReport | null;
@@ -35,8 +34,7 @@ export interface SimHub {
 export function useSim(): SimHub {
   const stateRef = useRef<SimState>(EMPTY);
   const [state, setState] = useState<SimState>(EMPTY);
-  const [caps, setCaps] = useState<Caps>({ romeo: false, asr: false, llm: false, tts: false });
-  const [mode, setMode] = useState("local");
+  const [providers, setProviders] = useState<Providers>({ stt: false, llm: false, tts: false });
   const [log, setLog] = useState<LogEntry[]>([]);
   const [lastExchange, setLastExchange] = useState<Exchange | null>(null);
   const [report, setReport] = useState<ExerciseReport | null>(null);
@@ -49,14 +47,13 @@ export function useSim(): SimHub {
   const refreshHealth = useCallback(async () => {
     try {
       const h = await api.healthRefresh();
-      setCaps(h.caps);
-      setMode(h.mode);
+      setProviders(h.providers);
     } catch { /* serveur indisponible : on garde l'etat courant */ }
   }, []);
 
   // sante initiale + dernier rapport d'exercice eventuel
   useEffect(() => {
-    api.health().then((h) => { setCaps(h.caps); setMode(h.mode); }).catch(() => undefined);
+    api.health().then((h) => setProviders(h.providers)).catch(() => undefined);
     api.exerciseReport().then(setReport).catch(() => undefined);
   }, []);
 
@@ -82,6 +79,10 @@ export function useSim(): SimHub {
           if (m.readback) pushLog("pilot", `🔊 ${m.readback}`);
           (m.rejected ?? []).forEach((r) => pushLog("rej", `⊘ ${r}`));
           if (!m.trafscript?.length && !m.rejected?.length) pushLog("rej", "⊘ aucun ordre reconnu");
+          // Reponse vocale systematique : l'audio du collationnement (API TTS)
+          // est joue ICI, chemin unique pour les commandes tapees et vocales.
+          // (un echec TTS est deja journalise par l'event "error" du backend)
+          if (m.audio_b64) playB64Wav(m.audio_b64);
           break;
         }
         case "situation":
@@ -89,6 +90,10 @@ export function useSim(): SimHub {
           break;
         case "info":
           pushLog("info", String(msg.message ?? ""));
+          break;
+        case "error":
+          // Erreur d'un fournisseur IA : toujours VISIBLE (jamais avalee).
+          pushLog("rej", `⊘ ${String(msg.provider ?? "IA").toUpperCase()} : ${msg.message}`);
           break;
         case "exercise_started":
           pushLog("ok", `▶ Exercice ${msg.label ?? ""} démarré — ${((msg.aircraft as string[]) ?? []).length} aéronefs`);
@@ -112,6 +117,9 @@ export function useSim(): SimHub {
     const connect = () => {
       if (closed) return;
       ws = new WebSocket(`${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws`);
+      // (re)connexion : re-tester les fournisseurs (couvre un health initial
+      // rate ou un provider demarre apres l'application)
+      ws.onopen = () => { void refreshHealth(); };
       ws.onmessage = (ev) => {
         try { handle(JSON.parse(ev.data)); } catch { /* trame invalide ignoree */ }
       };
@@ -119,10 +127,10 @@ export function useSim(): SimHub {
     };
     connect();
     return () => { closed = true; ws?.close(); };
-  }, [pushLog]);
+  }, [pushLog, refreshHealth]);
 
   return {
-    stateRef, state, caps, mode, log, lastExchange, report,
+    stateRef, state, providers, log, lastExchange, report,
     exerciseLive: state.exercise ?? null,
     exerciseActive: !!state.exercise,
     pushLog,
@@ -131,9 +139,4 @@ export function useSim(): SimHub {
     setReport,
     onExerciseEnded: (cb) => { endedCb.current = cb; },
   };
-}
-
-/** Collationnement vocal cote navigateur quand ROMEO/XTTS est indisponible. */
-export function speakLocalReadback(mode: string, readback: string | undefined) {
-  if (mode !== "romeo" && readback) speak(readback);
 }

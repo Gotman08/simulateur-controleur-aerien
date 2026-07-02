@@ -1,5 +1,5 @@
 /** Client REST minimal vers le serveur FastAPI local. */
-import type { Caps, ExerciseReport, ExerciseState, NavData, ScenarioMeta } from "./types";
+import type { ExerciseReport, ExerciseState, NavData, Providers, ScenarioMeta } from "./types";
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const r = await fetch(url, init);
@@ -19,8 +19,8 @@ const post = <T>(url: string, body?: unknown) =>
   });
 
 export const api = {
-  health: () => request<{ mode: string; caps: Caps }>("/api/health"),
-  healthRefresh: () => post<{ mode: string; caps: Caps }>("/api/health/refresh"),
+  health: () => request<{ providers: Providers }>("/api/health"),
+  healthRefresh: () => post<{ providers: Providers }>("/api/health/refresh"),
   nav: () => request<NavData>("/api/nav"),
   scenarios: () => request<{ scenarios: ScenarioMeta[] }>("/api/scenarios"),
   generateScenario: (description: string) => post("/api/scenario", { description }),
@@ -56,5 +56,17 @@ export const api = {
       throw new Error(detail);
     }
     return r.json() as Promise<{ audio_b64?: string | null }>;
+  },
+
+  transcribe: async (wav: Blob) => {
+    const fd = new FormData();
+    fd.append("file", wav, "utt.wav");
+    const r = await fetch("/api/transcribe", { method: "POST", body: fd });
+    if (!r.ok) {
+      let detail = r.statusText;
+      try { detail = (await r.json()).detail ?? detail; } catch { /* ignore */ }
+      throw new Error(detail);
+    }
+    return r.json() as Promise<{ text: string }>;
   },
 };

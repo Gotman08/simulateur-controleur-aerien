@@ -5,9 +5,9 @@ Reprend la chaine validee en Semaine 2 (cf. 01_audio_preprocessing.py) :
 augmentation aleatoire (gain + bruit additif) PUIS filtre passe-bande de
 Butterworth 300-3400 Hz (bande passante d'une radio aero).
 
-Les deux fonctions de base (vhf_bandpass, augment) sont reprises a l'identique
-de la S2 ; on n'importe pas directement 01_audio_preprocessing.py pour eviter
-sa dependance matplotlib et son nom de module non importable (commence par "01_").
+Les deux fonctions de base (vhf_bandpass, augment) sont reprises de la S2 ; on
+n'importe pas directement 01_audio_preprocessing.py pour eviter sa dependance
+matplotlib (son prefixe numerique imposerait par ailleurs un import via importlib).
 
 Utilise par 06 (preparation), 07 (baseline) et 08 (fine-tuning).
 """
