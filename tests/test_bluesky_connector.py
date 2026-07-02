@@ -86,6 +86,39 @@ def test_addwpt_waypoint_manquant(bsky_conn):
         bsky_conn.json_to_trafscript({"callsign": "AFR1234", "action": "ADDWPT"})
 
 
+# --- coercition / validation de type de la valeur ---------------------------
+def test_valeur_flottante_arrondie_en_entier(bsky_conn):
+    # une valeur flottante ne doit jamais produire une ligne TrafScript decimale
+    out = bsky_conn.json_to_trafscript({"callsign": "AFR1", "action": "HDG", "value": 180.0})
+    assert out == "HDG AFR1 180" and "." not in out
+    out2 = bsky_conn.json_to_trafscript({"callsign": "AFR1", "action": "ALT", "value": 10000.4})
+    assert out2 == "ALT AFR1 10000" and "." not in out2
+
+
+def test_valeur_booleenne_rejetee(bsky_conn):
+    # True == 1 en Python : ne doit PAS franchir la borne
+    with pytest.raises(bsky_conn.CommandError):
+        bsky_conn.json_to_trafscript({"callsign": "AFR1", "action": "HDG", "value": True})
+
+
+def test_valeur_chaine_rejetee_proprement(bsky_conn):
+    # une string ne doit pas lever un TypeError brut mais un CommandError propre
+    with pytest.raises(bsky_conn.CommandError):
+        bsky_conn.json_to_trafscript({"callsign": "AFR1", "action": "ALT", "value": "35000"})
+
+
+def test_valeur_non_finie_rejetee(bsky_conn):
+    for v in (float("nan"), float("inf"), float("-inf")):
+        with pytest.raises(bsky_conn.CommandError):
+            bsky_conn.json_to_trafscript({"callsign": "AFR1", "action": "ALT", "value": v})
+
+
+def test_addwpt_altitude_flottante_arrondie(bsky_conn):
+    out = bsky_conn.json_to_trafscript(
+        {"callsign": "DLH88", "action": "ADDWPT", "wpt": "BALMO", "value": 24000.0})
+    assert out == "ADDWPT DLH88 BALMO 24000" and "." not in out
+
+
 # --- limites declarees -------------------------------------------------------
 def test_limits_constantes(bsky_conn):
     assert bsky_conn.LIMITS["ALT"][:2] == (0, 45000)

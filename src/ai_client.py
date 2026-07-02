@@ -86,12 +86,21 @@ def _require_url(cfg):
 
 
 def _http_detail(r):
-    """Message d'erreur court et lisible depuis une reponse HTTP non-2xx."""
+    """Message d'erreur court et lisible depuis une reponse HTTP non-2xx.
+    Robuste a un corps JSON non-objet (liste / chaine) : on ne suppose jamais
+    .get() sur le corps (sinon AttributeError -> 500 brut au lieu d'un 502)."""
     try:
         j = r.json()
-        return str(j.get("error", {}).get("message") or j.get("detail") or r.text[:200])
     except ValueError:
-        return r.text[:200] or r.reason
+        return (r.text or "")[:200] or r.reason
+    if isinstance(j, dict):
+        err = j.get("error")
+        if isinstance(err, dict):
+            err = err.get("message")
+        msg = err or j.get("detail")
+        if msg:
+            return str(msg)
+    return (r.text or "")[:200] or r.reason
 
 
 def ping(cfg):

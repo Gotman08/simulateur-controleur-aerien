@@ -110,6 +110,31 @@ def test_llm_reponse_sans_choices(monkeypatch):
         LlmClient(_cfg("llm")).chat([{"role": "user", "content": "x"}])
 
 
+def test_http_detail_corps_non_dict_ne_crashe_pas():
+    # un corps d'erreur JSON qui n'est PAS un objet (liste) ne doit pas lever
+    class R:
+        status_code = 500
+        text = "[]"
+        reason = "err"
+        ok = False
+
+        def json(self):
+            return [{"error": "boom"}]
+
+    d = ai_client._http_detail(R())
+    assert isinstance(d, str)
+
+
+def test_llm_http500_corps_liste_leve_provider_error(monkeypatch):
+    # provider en panne renvoyant un corps JSON LISTE -> ProviderError propre
+    # (et non AttributeError -> 500 brut cote serveur)
+    monkeypatch.setattr(requests, "post",
+                        lambda *a, **k: FakeResp(status=500, json_data=[{"x": 1}]))
+    with pytest.raises(ProviderError) as ei:
+        LlmClient(_cfg("llm")).chat([{"role": "user", "content": "x"}])
+    assert "500" in str(ei.value)
+
+
 # --------------------------------------------------------------------- TTS
 def test_tts_contrat_et_bytes(monkeypatch):
     seen = {}

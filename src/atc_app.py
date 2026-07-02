@@ -227,6 +227,28 @@ def _list_scenarios():
     return out
 
 
+# --- validation d'entree (payloads Body(dict) -> 400 propre, pas 500) --------
+def _flt(v, ctx):
+    try:
+        return float(v)
+    except (TypeError, ValueError) as e:
+        raise HTTPException(400, f"{ctx} doit etre numerique (recu {v!r})") from e
+
+
+def _req_flt(payload, key):
+    v = payload.get(key)
+    if v is None or v == "":
+        raise HTTPException(400, f"champ '{key}' requis")
+    return _flt(v, f"champ '{key}'")
+
+
+def _opt_flt(payload, key, default):
+    v = payload.get(key, default)
+    if v is None or v == "":
+        return default
+    return _flt(v, f"champ '{key}'")
+
+
 # --- API ---------------------------------------------------------------------
 @app.get("/api/health")
 def health():
@@ -297,14 +319,17 @@ def weather_wind(payload: dict = Body(...)):
         SIM.set_wind(None, None)
         emit({"type": "info", "message": "Vent supprimé."})
         return {"ok": True}
-    SIM.set_wind(d, payload.get("spd", 0), payload.get("alt"))
-    emit({"type": "info", "message": f"Vent réglé : {int(d):03d}°/{int(payload.get('spd', 0))} kt"})
+    dd = _flt(d, "champ 'dir'")
+    spd = _opt_flt(payload, "spd", 0.0)
+    alt = _opt_flt(payload, "alt", None)
+    SIM.set_wind(dd, spd, alt)
+    emit({"type": "info", "message": f"Vent réglé : {int(dd):03d}°/{int(spd)} kt"})
     return {"ok": True}
 
 
 @app.post("/api/weather/turbulence")
 def weather_turb(payload: dict = Body(...)):
-    lvl = float(payload.get("level", 0))
+    lvl = _opt_flt(payload, "level", 0.0)
     SIM.set_turbulence(lvl)
     emit({"type": "info", "message": f"Turbulence : {'OFF' if lvl <= 0 else str(lvl) + ' m/s'}"})
     return {"ok": True}
@@ -313,14 +338,21 @@ def weather_turb(payload: dict = Body(...)):
 @app.post("/api/weather/zone")
 def weather_zone(payload: dict = Body(...)):
     ztype = payload.get("ztype", "storm")
-    shape = payload.get("shape", "CIRCLE").upper()
+    shape = str(payload.get("shape", "CIRCLE")).upper()
     if shape == "CIRCLE":
-        lat, lon = atc_sim.from_nm(float(payload["x"]), float(payload["y"]))
-        coords = [lat, lon, float(payload.get("r", 12))]
+        lat, lon = atc_sim.from_nm(_req_flt(payload, "x"), _req_flt(payload, "y"))
+        coords = [lat, lon, _opt_flt(payload, "r", 12.0)]
     else:
+        pts = payload.get("points") or []
+        if not isinstance(pts, list):
+            raise HTTPException(400, "champ 'points' doit etre une liste [[x, y], ...]")
         coords = []
-        for px, py in payload.get("points", []):
-            la, lo = atc_sim.from_nm(float(px), float(py))
+        for p in pts:
+            try:
+                px, py = p
+            except (TypeError, ValueError) as e:
+                raise HTTPException(400, "chaque point doit etre [x, y]") from e
+            la, lo = atc_sim.from_nm(_flt(px, "point x"), _flt(py, "point y"))
             coords += [la, lo]
     SIM.add_zone(ztype, shape, coords)
     emit({"type": "info", "message": f"Zone {'orageuse' if ztype == 'storm' else 'interdite'} ajoutée."})
@@ -338,7 +370,10 @@ def weather_clearzones():
 def command(payload: dict = Body(...)):
     """Clairance TAPEE : interpretation (API LLM) -> sim -> readback texte + AUDIO
     (reponse vocale systematique, voix stable par indicatif)."""
-    return _handle_instruction(payload.get("text", ""))
+    text = payload.get("text", "")
+    if not isinstance(text, str):
+        raise HTTPException(400, "champ 'text' doit etre une chaine")
+    return _handle_instruction(text)
 
 
 @app.post("/api/voice")
@@ -388,7 +423,7 @@ def sim_resume():
 
 @app.post("/api/sim/speed")
 def sim_speed(payload: dict = Body(...)):
-    SIM.set_speed(payload.get("value", 1.0))
+    SIM.set_speed(_opt_flt(payload, "value", 1.0))
     return {"ok": True}
 
 
@@ -402,10 +437,14 @@ def exercise_state():
 def exercise_start(payload: dict = Body(default={})):
     if EX.active:
         raise HTTPException(409, "un exercice est déjà en cours")
+    dm = payload.get("duration_min")
+    dm = _flt(dm, "champ 'duration_min'") if dm not in (None, "") else None
+    seed = payload.get("seed")
+    if seed is not None and not isinstance(seed, (int, str)):
+        raise HTTPException(400, "champ 'seed' doit etre un entier ou une chaine")
     try:
         st = EX.start(difficulty=str(payload.get("difficulty", "moyen")),
-                      duration_min=payload.get("duration_min"),
-                      seed=payload.get("seed"))
+                      duration_min=dm, seed=seed)
     except ValueError as e:
         raise HTTPException(400, str(e)) from e
     except ai_client.ProviderError as e:

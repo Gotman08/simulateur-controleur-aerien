@@ -12,6 +12,7 @@ Exécution :  python 03_bluesky_connector.py
 Sorties   :  bluesky_demo_output.txt
 """
 import json
+import math
 
 # --- validation simple des bornes physiques / réglementaires --------------
 LIMITS = {
@@ -23,6 +24,22 @@ LIMITS = {
 
 class CommandError(ValueError):
     pass
+
+
+def _coerce_int(action: str, val) -> int:
+    """Valeur d'ordre -> entier (cap/FL/vitesse sont des entiers). Refuse les
+    booleens (True == 1 en Python) et les types non numeriques (ex. '35000'),
+    qui sinon franchiraient les bornes et produiraient une ligne TrafScript
+    invalide ('HDG X True', 'HDG X 180.5')."""
+    if isinstance(val, bool):
+        raise CommandError(f"{action}: valeur booleenne invalide")
+    if isinstance(val, int):
+        return val
+    if isinstance(val, float):
+        if not math.isfinite(val):
+            raise CommandError(f"{action}: valeur non finie invalide")
+        return int(round(val))
+    raise CommandError(f"{action}: valeur non numerique ({val!r})")
 
 
 def json_to_trafscript(order: dict) -> str:
@@ -37,15 +54,18 @@ def json_to_trafscript(order: dict) -> str:
         val = order.get("value")
         if val is None:
             raise CommandError(f"{action}: valeur manquante")
-        if not (lo <= val <= hi):
-            raise CommandError(f"{action}={val}{unit} hors limites [{lo},{hi}]")
-        return f"{action} {cs} {val}"
+        num = _coerce_int(action, val)
+        if not (lo <= num <= hi):
+            raise CommandError(f"{action}={num}{unit} hors limites [{lo},{hi}]")
+        return f"{action} {cs} {num}"
 
     if action == "ADDWPT":
         wpt = order.get("wpt")
         if not wpt:
             raise CommandError("ADDWPT: waypoint manquant")
         alt = order.get("value")
+        if alt is not None:
+            alt = _coerce_int("ADDWPT", alt)
         return f"ADDWPT {cs} {wpt}" + (f" {alt}" if alt is not None else "")
 
     raise CommandError(f"action inconnue : {action!r}")
