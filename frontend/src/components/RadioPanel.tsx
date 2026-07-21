@@ -37,7 +37,7 @@ export default function RadioPanel({ hub, prefill }: { hub: SimHub; prefill: str
   const startTalk = useCallback(async () => {
     if (wavRef.current) return;        // deja en cours d'emission
     if (!providersRef.current.stt) {
-      hub.pushLog("rej", "⊘ STT non configuré ou injoignable (voir .env) — tapez la clairance.");
+      hub.pushLog("rej", "⊘ STT non configuré ou injoignable (voir .env) - tapez la clairance.");
       return;
     }
     const rec = new WavRecorder();

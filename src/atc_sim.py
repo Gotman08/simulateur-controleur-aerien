@@ -161,7 +161,7 @@ class SimManager:
             snap["aircraft"] = [dict(a) for a in self._snapshot["aircraft"]]
             snap["conflicts"] = [list(c) for c in self._snapshot["conflicts"]]
         # temoin de vie : un thread sim mort (init BlueSky en echec...) rendrait
-        # l'app zombie — l'UI peut desormais l'afficher au lieu d'un radar fige.
+        # l'app zombie - l'UI peut desormais l'afficher au lieu d'un radar fige.
         snap["sim_alive"] = bool(self._thread and self._thread.is_alive())
         return snap
 
@@ -198,7 +198,7 @@ class SimManager:
                     # Log au 1er echec puis tous les 100 (boucle a ~8 Hz).
                     self._advance_failures = getattr(self, "_advance_failures", 0) + 1
                     if self._advance_failures == 1 or self._advance_failures % 100 == 0:
-                        _log.exception("bsk.advance en echec (x%d) — temps simule fige",
+                        _log.exception("bsk.advance en echec (x%d) - temps simule fige",
                                        self._advance_failures)
             self._update_snapshot(paused, speed)
             time.sleep(self._dt)

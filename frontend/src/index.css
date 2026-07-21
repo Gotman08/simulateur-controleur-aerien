@@ -8,12 +8,12 @@
   --color-edge: #233042;
   --color-ink: #d7e0ea;
   --color-mut: #7e90a5;
-  --color-acc: #3fc6d6;          /* cyan — selection / actions */
-  --color-rdr: #38d97f;          /* vert radar — trafic nominal */
-  --color-warn: #ffb454;         /* ambre — conflit predit */
-  --color-dang: #ff5868;         /* rouge — perte de separation */
-  --color-mag: #ff5ab0;          /* magenta — meteo / zones */
-  --color-wpt: #4f8fe8;          /* bleu — points de navigation */
+  --color-acc: #3fc6d6;          /* cyan - selection / actions */
+  --color-rdr: #38d97f;          /* vert radar - trafic nominal */
+  --color-warn: #ffb454;         /* ambre - conflit predit */
+  --color-dang: #ff5868;         /* rouge - perte de separation */
+  --color-mag: #ff5ab0;          /* magenta - meteo / zones */
+  --color-wpt: #4f8fe8;          /* bleu - points de navigation */
 
   --font-sans: "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-mono: "Cascadia Mono", "JetBrains Mono", Consolas, monospace;

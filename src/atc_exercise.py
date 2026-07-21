@@ -289,7 +289,7 @@ class ExerciseEngine:
                                 "pair": sorted(pair), "t": round(rel)})
                 else:
                     if not ev["open"]:
-                        # re-entree en LoS de la MEME paire : nouvel episode —
+                        # re-entree en LoS de la MEME paire : nouvel episode -
                         # la duree deja purgee est cumulee, t_start repart, sinon
                         # t_los engloberait tout l'intervalle correctement separe.
                         ev["dur_s"] = ev.get("dur_s", 0.0) + (ev["t_end"] - ev["t_start"])

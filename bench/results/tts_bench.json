@@ -4,7 +4,7 @@
  "protocole": {
   "phrases": "collationnements OACI de src/readback.py",
   "vhf": "atc_audio.preprocess_waveform (Butterworth 6, 300-3400 Hz)",
-  "wer": "bench_textnorm.norm_radio (nombres epeles -> chiffres, symetrique ref/hyp) + jiwer — metrique RELATIVE inter-moteurs"
+  "wer": "bench_textnorm.norm_radio (nombres epeles -> chiffres, symetrique ref/hyp) + jiwer - metrique RELATIVE inter-moteurs"
  },
  "engines": {
   "kokoro/af_bella": {

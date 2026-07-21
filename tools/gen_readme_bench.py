@@ -1,7 +1,7 @@
 """
 Injecte la synthese de la campagne bench/ dans le README (bloc BENCH:*).
 =======================================================================
-Source unique : bench/results/*.json — aucun chiffre saisi a la main.
+Source unique : bench/results/*.json - aucun chiffre saisi a la main.
 Execution :  python tools/gen_readme_bench.py
 """
 from __future__ import annotations
@@ -24,7 +24,7 @@ def load(name):
 
 
 def pc(x, nd=1):
-    return f"{100 * x:.{nd}f}%" if x is not None else "—"
+    return f"{100 * x:.{nd}f}%" if x is not None else "-"
 
 
 def build_block():
@@ -113,7 +113,7 @@ def build_block():
 def main():
     with open(README, encoding="utf-8") as f:
         md = f.read()
-    block = ("<!-- BENCH:START — bloc généré par tools/gen_readme_bench.py, "
+    block = ("<!-- BENCH:START - bloc généré par tools/gen_readme_bench.py, "
              "ne pas éditer à la main -->\n" + build_block() + "\n<!-- BENCH:END -->")
     out, n = re.subn(r"<!-- BENCH:START.*?<!-- BENCH:END -->", block, md, flags=re.S)
     if n != 1:

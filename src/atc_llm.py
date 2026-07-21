@@ -73,11 +73,11 @@ def validate_order(order):
             return False, str(e)
     if not _validateur_alerte:
         # sans le validateur, 100 % des ordres sont rejetes : l'app "tourne"
-        # mais n'execute plus rien — on le dit UNE fois, fort.
+        # mais n'execute plus rien - on le dit UNE fois, fort.
         import logging
         logging.getLogger("atc_llm").error(
             "03_bluesky_connector introuvable : TOUT ordre sera rejete "
-            "(« validateur S2 indisponible ») — verifier l'installation")
+            "(« validateur S2 indisponible ») - verifier l'installation")
         _validateur_alerte = True
     return False, "validateur S2 indisponible"
 
@@ -165,7 +165,7 @@ def _fix_leading_zeros(blob):
     """Nombres JSON a zero de tete ('"value": 090') -> valides ('90').
     Les LLM produisent volontiers des caps a trois chiffres (heading 090) ;
     json.loads rejette ces litteraux. On ne touche qu'aux nombres NUS apres
-    ':' / '[' / ',' — jamais au contenu des chaines ("ENTRY_090" intact)."""
+    ':' / '[' / ',' - jamais au contenu des chaines ("ENTRY_090" intact)."""
     return re.sub(r"([:\[,]\s*)0+(\d)", r"\g<1>\g<2>", blob)
 
 
@@ -222,7 +222,7 @@ def postprocess_orders(orders):
         if ok:
             # aligner la valeur de l'ordre sur l'ENTIER coerce du TrafScript
             # (source unique) : le JSON LLM peut porter 32000.0 la ou la ligne
-            # dit 32000 — les consommateurs aval (readback, garde-fous)
+            # dit 32000 - les consommateurs aval (readback, garde-fous)
             # comparent alors des types coherents.
             if str(o.get("action", "")).upper() in ("HDG", "ALT", "SPD"):
                 o["value"] = int(res.split()[2])
@@ -274,7 +274,7 @@ def build_scenario_messages(description):
 def _num_or(v, default):
     """float(v) tolerant : None / chaine invalide -> valeur par defaut.
     Un LLM qui renvoie un champ null ne doit pas faire disparaitre l'avion
-    entier — seul le champ fautif retombe sur son defaut."""
+    entier - seul le champ fautif retombe sur son defaut."""
     try:
         f = float(v)
         return f if f == f else default        # NaN -> defaut

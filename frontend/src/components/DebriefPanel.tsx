@@ -31,7 +31,7 @@ export default function DebriefPanel({ report }: { report: ExerciseReport | null
 
   return (
     <>
-      <Section title={`Débrief — ${report.label ?? ""} · ${fmtTime(report.elapsed_s)}`}
+      <Section title={`Débrief - ${report.label ?? ""} · ${fmtTime(report.elapsed_s)}`}
         right={
           <Btn
             variant="ghost" className="px-2! py-0.5!"
@@ -77,7 +77,7 @@ export default function DebriefPanel({ report }: { report: ExerciseReport | null
       </Section>
 
       {series.length > 1 && (
-        <Section title="Séparation minimale (NM) — seuil 5 NM">
+        <Section title="Séparation minimale (NM) - seuil 5 NM">
           <div className="h-44">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={series} margin={{ top: 6, right: 8, bottom: 0, left: -22 }}>
@@ -104,13 +104,13 @@ export default function DebriefPanel({ report }: { report: ExerciseReport | null
           <ul className="space-y-1 text-[12px]">
             {report.los_events.map((e, i) => (
               <li key={`l${i}`} className="text-dang">
-                ⚠ LoS {e.pair.join(" / ")} — t+{fmtTime(e.t_start)} → t+{fmtTime(e.t_end)}
+                ⚠ LoS {e.pair.join(" / ")} - t+{fmtTime(e.t_start)} → t+{fmtTime(e.t_end)}
                 {e.min_nm != null && <> · min {e.min_nm.toFixed(1)} NM</>}
               </li>
             ))}
             {report.zone_events.map((e, i) => (
               <li key={`z${i}`} className="text-warn">
-                △ {e.callsign} dans {e.zone} — t+{fmtTime(e.t_start)} → t+{fmtTime(e.t_end)}
+                △ {e.callsign} dans {e.zone} - t+{fmtTime(e.t_start)} → t+{fmtTime(e.t_end)}
               </li>
             ))}
           </ul>

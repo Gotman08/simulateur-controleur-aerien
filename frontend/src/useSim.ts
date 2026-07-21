@@ -98,7 +98,7 @@ export function useSim(): SimHub {
           break;
         }
         case "situation":
-          pushLog("ok", `✈ Situation : ${msg.description} → ${((msg.created as string[]) ?? []).join(", ") || "—"}`);
+          pushLog("ok", `✈ Situation : ${msg.description} → ${((msg.created as string[]) ?? []).join(", ") || "-"}`);
           break;
         case "info":
           pushLog("info", String(msg.message ?? ""));
@@ -108,18 +108,18 @@ export function useSim(): SimHub {
           pushLog("rej", `⊘ ${String(msg.provider ?? "IA").toUpperCase()} : ${msg.message}`);
           break;
         case "exercise_started":
-          pushLog("ok", `▶ Exercice ${msg.label ?? ""} démarré — ${((msg.aircraft as string[]) ?? []).length} aéronefs`);
+          pushLog("ok", `▶ Exercice ${msg.label ?? ""} démarré - ${((msg.aircraft as string[]) ?? []).length} aéronefs`);
           break;
         case "exercise_event": {
           const kind = msg.kind as string;
           if (kind === "los") pushLog("rej", `⚠ PERTE DE SÉPARATION ${(msg.pair as string[]).join(" / ")} (t=${msg.t}s)`);
-          else if (kind === "predicted") pushLog("warn", `△ Conflit prédit ${(msg.pair as string[]).join(" / ")} — CPA ${msg.dcpa} NM dans ${msg.tcpa}s`);
+          else if (kind === "predicted") pushLog("warn", `△ Conflit prédit ${(msg.pair as string[]).join(" / ")} - CPA ${msg.dcpa} NM dans ${msg.tcpa}s`);
           else if (kind === "zone") pushLog("warn", `△ ${msg.callsign} pénètre ${msg.zone} (t=${msg.t}s)`);
           break;
         }
         case "exercise_ended": {
           const sc = msg.score as ExerciseScore | undefined;
-          pushLog("ok", `■ Exercice terminé — score ${sc?.total ?? "?"}/100 (${sc?.grade ?? ""})`);
+          pushLog("ok", `■ Exercice terminé - score ${sc?.total ?? "?"}/100 (${sc?.grade ?? ""})`);
           api.exerciseReport().then((r) => { setReport(r); endedCb.current(); }).catch(() => undefined);
           break;
         }

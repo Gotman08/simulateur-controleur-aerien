@@ -1,5 +1,5 @@
 """
-Benchmark TTS — RTF, latence et intelligibilite objective
+Benchmark TTS - RTF, latence et intelligibilite objective
 =========================================================
 Moteurs evalues :
   - kokoro-82M (ONNX, local)     voix af_bella / am_adam / bf_emma / bm_george
@@ -245,7 +245,7 @@ def main():
                    "phrases": "collationnements OACI de src/readback.py",
                    "vhf": "atc_audio.preprocess_waveform (Butterworth 6, 300-3400 Hz)",
                    "wer": "bench_textnorm.norm_radio (nombres epeles -> chiffres, "
-                          "symetrique ref/hyp) + jiwer — metrique RELATIVE inter-moteurs"},
+                          "symetrique ref/hyp) + jiwer - metrique RELATIVE inter-moteurs"},
                "engines": {}}
 
     # --- kokoro -------------------------------------------------------------

@@ -302,7 +302,7 @@ function drawAircraft(
   }
 
   if (!opt.labels) return;
-  // bloc de donnees : CS / FL(tendance)CFL / GS — ligne d'attache + fond
+  // bloc de donnees : CS / FL(tendance)CFL / GS - ligne d'attache + fond
   const lx = x + 14, ly = y - 22;
   const trend = a.vs_fpm > 300 ? "↑" : a.vs_fpm < -300 ? "↓" : "";
   const cfl = a.sel_alt_ft != null && Math.abs(a.sel_alt_ft - a.alt_ft) > 200

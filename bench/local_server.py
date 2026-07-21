@@ -1,5 +1,5 @@
 """
-Facade d'inference OpenAI-compatible 100 % LOCALE — banc de benchmark
+Facade d'inference OpenAI-compatible 100 % LOCALE - banc de benchmark
 =====================================================================
 Miroir exact du contrat de src/server.py (facade ROMEO), mais adosse a des
 moteurs d'inference locaux grand public :

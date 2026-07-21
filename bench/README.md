@@ -6,14 +6,14 @@ Campagne de mesures **réelles et reproductibles** de chaque étage du système
 (`validation/results_perf.json`, `rapport_S6-S7`).
 
 Les chiffres publiés dans `docs/` et dans l'article (`docs/article/`) sont
-générés par ces scripts — aucune valeur n'est saisie à la main.
+générés par ces scripts - aucune valeur n'est saisie à la main.
 
 ## Principes de rigueur
 
 - **Chemin de production, pas de reconstitution** : le benchmark LLM passe par
   `atc_llm.build_messages` (prompt système + KB OACI inlinée + indices NER),
   `ai_client.LlmClient` (HTTP OpenAI-compatible, température 0) et
-  `atc_llm.postprocess_orders` (bornes + graphe secteur) — exactement le code
+  `atc_llm.postprocess_orders` (bornes + graphe secteur) - exactement le code
   exécuté par l'application. Idem STT (`atc_asr`) et TTS (`readback`,
   `voices`, dégradation VHF client).
 - **Vérité terrain annotée** : 116 clairances (68 historiques + 48 étendues
@@ -37,12 +37,12 @@ générés par ces scripts — aucune valeur n'est saisie à la main.
 | `e2e_bench.py` | bench | Boucle vocale complète (voix contrôleur SAPI + canal radio SNR 12 dB → STT → LLM → validation → TTS) : taux de réussite, attribution des échecs STT/LLM, latences par étage |
 | `figures.py` | bench | Toutes les figures (`bench/figures/*.png`) |
 | `run_all.py` | bench | Orchestrateur complet |
-| `local_server.py` | bench | Façade OpenAI-compatible **100 % locale** (llama.cpp GPU / faster-whisper / Kokoro) — miroir de `src/server.py`, utilisable aussi comme fournisseur de l'application |
+| `local_server.py` | bench | Façade OpenAI-compatible **100 % locale** (llama.cpp GPU / faster-whisper / Kokoro) - miroir de `src/server.py`, utilisable aussi comme fournisseur de l'application |
 
 ## Reproduire
 
 ```bat
-:: 1. venv de benchmark (une fois) — Python 3.12
+:: 1. venv de benchmark (une fois) - Python 3.12
 py -3.12 -m venv bench\bench-env
 bench\bench-env\Scripts\python -m pip install torch --index-url https://download.pytorch.org/whl/cu124
 bench\bench-env\Scripts\python -m pip install faster-whisper transformers peft datasets jiwer soundfile matplotlib scipy pandas httpx requests fastapi uvicorn python-multipart kokoro-onnx

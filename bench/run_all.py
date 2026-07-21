@@ -1,14 +1,14 @@
 """
-Orchestrateur du banc de benchmark — execution complete
+Orchestrateur du banc de benchmark - execution complete
 =======================================================
 Enchaine les benchmarks dans l'ordre (le GPU est serialise) :
 
-  1. sim_bench   (venv APPLICATION, BlueSky requis)   — CPA, conflits, charge
-  2. llm_bench   (venv bench, GPU)                    — 4 modeles + parseur
-  3. stt_bench   (venv bench, GPU)                    — 5 systemes x 2 corpus x 2 cond.
-  4. tts_bench   (venv bench, GPU juge)               — kokoro + SAPI
-  5. e2e_bench   (venv bench, GPU)                    — boucle vocale complete
-  6. figures     (venv bench)                         — toutes les figures
+  1. sim_bench   (venv APPLICATION, BlueSky requis)   - CPA, conflits, charge
+  2. llm_bench   (venv bench, GPU)                    - 4 modeles + parseur
+  3. stt_bench   (venv bench, GPU)                    - 5 systemes x 2 corpus x 2 cond.
+  4. tts_bench   (venv bench, GPU juge)               - kokoro + SAPI
+  5. e2e_bench   (venv bench, GPU)                    - boucle vocale complete
+  6. figures     (venv bench)                         - toutes les figures
 
 Usage :  bench\\bench-env\\Scripts\\python.exe bench\\run_all.py [--skip sim,llm,...]
 

@@ -13,7 +13,7 @@ la boucle d'entrainement :
     par l'API TTS avec une voix stable par indicatif.
 
 Backend IA UNIQUE (ai_client.AIClient) : trois services au contrat OpenAI
-(STT/LLM/TTS) configures par .env — facade auto-hebergee (server.py) ou cloud,
+(STT/LLM/TTS) configures par .env - facade auto-hebergee (server.py) ou cloud,
 interchangeables par URL + cle + modele. Toute erreur de fournisseur est
 VISIBLE (HTTP 502 + log UI) ; seule exception voulue : un indicatif inconnu
 au radar reste muet (realisme radio).
@@ -145,7 +145,7 @@ def _check_alt_coherence(text, orders, lines, rejected, cur_alt):
                 sens = "« descend »" if bad_up else "« climb »"
                 rejected.append(f"incohérence : {sens} entendu mais FL{int(o['value'] / 100):03d} "
                                 f"est {'au-dessus' if bad_up else 'au-dessous'} du niveau actuel "
-                                f"FL{int(cur / 100):03d} — ordre non exécuté")
+                                f"FL{int(cur / 100):03d} - ordre non exécuté")
                 continue
         kept.append(o)
         kept_lines.append(ln)

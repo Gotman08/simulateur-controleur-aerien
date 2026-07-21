@@ -14,7 +14,7 @@ validated command, executed in the BlueSky simulator, and answered by a synthesi
 voice. The full chain runs as a real time loop, with the AI models hosted on a GPU cluster and the
 simulator running on a local machine.
 
-![ATC Trainer — live radar with programmed conflicts, storm cell and flight strips](docs/assets/app_radar_live.gif)
+![ATC Trainer - live radar with programmed conflicts, storm cell and flight strips](docs/assets/app_radar_live.gif)
 
 > Internship project (10 week PoC), University of Reims Champagne-Ardenne (URCA). AI compute on the
 > ROMEO supercomputer (NVIDIA GH200, Grace-Hopper, aarch64). Author: Nicolas Marano.
@@ -61,7 +61,7 @@ Every brick is trained or grounded on its own, then assembled:
 
 **API-first, single mode.** The three AI services (STT, LLM, TTS) are consumed through the
 standard **OpenAI-compatible REST contract**, configured by URL + API key + model name in a `.env`
-file (see `.env.example`). Swapping a model — self-hosted or cloud — means changing three
+file (see `.env.example`). Swapping a model - self-hosted or cloud - means changing three
 environment variables, nothing else. The project's own models (fine-tuned Whisper, Mistral 7B,
 XTTS voice cloning) remain available behind a self-hosted façade (`src/server.py`) that speaks the
 same contract, typically reached through an SSH tunnel to the GPU cluster.
@@ -79,7 +79,7 @@ same contract, typically reached through an SSH tunnel to the GPU cluster.
 
 The prompt engineering stays **client-side** (ICAO knowledge base inlined in the system prompt,
 NER hints, sector graph) and every LLM output goes through the **deterministic safety validation**
-(bounds, known waypoints) — identical whatever the provider. The VHF radio degradation is also
+(bounds, known waypoints) - identical whatever the provider. The VHF radio degradation is also
 applied client-side, so the pilot voice sounds like a real radio with any TTS backend.
 
 ## Key results
@@ -103,25 +103,25 @@ applied client-side, so the pilot voice sounds like a real radio with any TTS ba
 The full mathematical derivation (CPA closed form, convexity proof, conflict
 predicate), the empirical campaign against BlueSky, the exercise scoring model
 and the guaranteed-conflict construction are documented with figures in
-**[docs/VALIDATION.md](docs/VALIDATION.md)** — reproducible with
+**[docs/VALIDATION.md](docs/VALIDATION.md)** - reproducible with
 `src\bluesky-env\Scripts\python.exe validation\run_all.py`.
 
 Performance, usefulness and limits (AI latency local vs ROMEO, ASR/TTS
 real-time factors, BlueSky scaling up to 200 aircraft at 55x real time, the
 multilayer safety net) are measured and discussed in
-**[docs/PERFORMANCE.md](docs/PERFORMANCE.md)** — reproducible with
+**[docs/PERFORMANCE.md](docs/PERFORMANCE.md)** - reproducible with
 `src\bluesky-env\Scripts\python.exe validation\05_performance.py`.
 
 ### Benchmark campaign on consumer hardware (July 2026)
 
 Every stage was re-measured **for real** on a local RTX 4070 Laptop (8 GB),
 through the production code path, with seeded protocols, bootstrap/Wilson 95% CIs
-and paired McNemar tests — see **[bench/README.md](bench/README.md)** (methodology),
+and paired McNemar tests - see **[bench/README.md](bench/README.md)** (methodology),
 `bench/results/*.json` (raw data) and the full research-style article
 **[docs/article/article.pdf](docs/article/article.pdf)**. Production-readiness
 review and fixes: **[docs/PRODUCTION.md](docs/PRODUCTION.md)**.
 
-<!-- BENCH:START — bloc généré par tools/gen_readme_bench.py, ne pas éditer à la main -->
+<!-- BENCH:START - bloc généré par tools/gen_readme_bench.py, ne pas éditer à la main -->
 | Stage | Protocol | Headline result |
 |---|---|---|
 | Conflict geometry | 1 000 000 Monte-Carlo geometries, 5 seeds, vs independent fine grid | **0 decision disagreement**, dCPA error bounded by display rounding |
@@ -145,7 +145,7 @@ shows velocity leaders, data blocks with climb/descend trends and cleared levels
 the strip bay sorts alerts first. The live score updates in the Exercice tab while the student
 works the frequency.
 
-![Exercise in progress — objectives and live scoring](docs/assets/app_exercice.png)
+![Exercise in progress - objectives and live scoring](docs/assets/app_exercice.png)
 
 ### Whisper fine tuning and RAG results
 
@@ -175,7 +175,7 @@ and the per exchange files in [audio/](audio/).
 The app consumes STT/LLM/TTS through OpenAI-compatible APIs. Pick a provider configuration in
 `.env` (copy `.env.example`), then launch the app. Two typical setups:
 
-### Option 1 — self-hosted façade on the ROMEO cluster (project models)
+### Option 1 - self-hosted façade on the ROMEO cluster (project models)
 
 ```bash
 # one time environment setup (Whisper + Mistral, then XTTS)
@@ -193,16 +193,16 @@ bash tunnel.sh <SERVER_NODE>    # forward ports 8765 and 8766
 #   ATC_TTS_URL=http://localhost:8766   ATC_TTS_VOICES=pilot_1,pilot_2,pilot_3
 ```
 
-### Option 2 — cloud providers (no cluster at all)
+### Option 2 - cloud providers (no cluster at all)
 
 Fill `.env` with any OpenAI-compatible service (config B/C of `.env.example`): e.g. OpenAI
 (`whisper-1` / `gpt-4o-mini` / `gpt-4o-mini-tts`), or a mix (Groq STT + Mistral API LLM + a
 compatible TTS server). **Changing provider = changing URL + key + model name.**
 
-### Option 3 — fully local façade (consumer GPU, no network at all)
+### Option 3 - fully local façade (consumer GPU, no network at all)
 
 The benchmark harness ships an OpenAI-compatible façade backed by local engines
-(llama.cpp CUDA, faster-whisper, Kokoro TTS) — same 4 routes as `src/server.py`.
+(llama.cpp CUDA, faster-whisper, Kokoro TTS) - same 4 routes as `src/server.py`.
 Measured on an RTX 4070 Laptop (8 GB): see the benchmark campaign below.
 
 ```bash
@@ -216,7 +216,7 @@ bench/bench-env/Scripts/python bench/local_server.py --role all --warm \
 
 This is also the proven continuity path: during the July 2026 ROMEO security
 maintenance (cluster fully down), the app stayed operational by switching `.env`
-to this façade — no code change.
+to this façade - no code change.
 
 ### Demos (need a configured provider)
 
@@ -228,15 +228,15 @@ bluesky-env/Scripts/python.exe voice_exchange.py      # controller and pilot rad
 bluesky-env/Scripts/python.exe radar_anim.py          # radar scope image + animation
 ```
 
-### Training app (interactive radar + voice) — recommended
+### Training app (interactive radar + voice) - recommended
 
 A single launchable application with a professional control-room interface (React + Tailwind,
-pre-built — **no Node.js needed to run it**): a live radar scope with zoom/pan and flight strips,
+pre-built - **no Node.js needed to run it**): a live radar scope with zoom/pan and flight strips,
 an instructor panel that turns a natural-language description into traffic, a push-to-talk
 controller position, and a full **exercise mode** where the AI builds the situation and the
 student is scored like in a real check-ride.
 
-![Training app — radar and flight strips](docs/assets/app_radar.png)
+![Training app - radar and flight strips](docs/assets/app_radar.png)
 
 ```bash
 cd src
@@ -247,10 +247,10 @@ bluesky-env/Scripts/python.exe atc_app.py                    # opens http://127.
 
 The AI backend is **API-first, single mode** (configured in `.env`):
 
-- **STT / LLM / TTS are three OpenAI-compatible endpoints** — the self-hosted façade (project
+- **STT / LLM / TTS are three OpenAI-compatible endpoints** - the self-hosted façade (project
   models: fine-tuned Whisper, Mistral, XTTS cloned voices) or any cloud service, interchangeable.
   Three status badges (STT / LLM / TTS) in the top bar show each provider's health; click to
-  re-test. Any provider error is **loudly visible** (UI log + HTTP 502) — never silent.
+  re-test. Any provider error is **loudly visible** (UI log + HTTP 502) - never silent.
 - **Every readback is spoken** through the TTS API, for typed *and* spoken clearances, and **each
   aircraft keeps its own stable voice** (deterministic callsign hash over the `ATC_TTS_VOICES`
   pool). The VHF radio degradation is applied client-side, whatever the TTS provider.
@@ -269,7 +269,7 @@ parser, kept for tests/validation), `frontend/` (UI).
 ### Exercise mode (the AI builds the situation, the student adapts)
 
 Pick a difficulty (Facile / Moyen / Difficile) and a duration: the engine constructs aircraft pairs
-that are **mathematically guaranteed to conflict** (same arrival time at a crossing point — proof in
+that are **mathematically guaranteed to conflict** (same arrival time at a crossing point - proof in
 [docs/VALIDATION.md](docs/VALIDATION.md) §7), adds AI-generated filler traffic, wind, storm cells
 and turbulence, then measures everything in real time: losses of separation (5 NM / 1000 ft),
 predicted conflicts resolved before they degenerate, weather-zone penetrations, radio quality. The
@@ -283,9 +283,9 @@ computes:
 
 - **Conflict detection (BlueSky CD&R, StateBased)**: predicted conflicts (amber, with time-to-CPA and
   minimum distance) and actual loss of separation (red), in 3D. The radar badge shows `CD BlueSky`.
-- **Weather — wind**: `WIND` from the instructor (e.g. `200/40`); aircraft crab and their **ground speed**
+- **Weather - wind**: `WIND` from the instructor (e.g. `200/40`); aircraft crab and their **ground speed**
   changes (shown in the data block); a wind vector is drawn on the scope.
-- **Weather — storm cells and restricted zones**: click the radar to drop a `CIRCLE` area; aircraft that
+- **Weather - storm cells and restricted zones**: click the radar to drop a `CIRCLE` area; aircraft that
   penetrate it are ringed and a banner fires (containment is computed locally because BlueSky's compiled
   `kwikdist` is incompatible with numpy 2.x).
 - **Turbulence**: BlueSky's turbulence model, set from a slider.

@@ -88,7 +88,7 @@ def paired_bootstrap_diff(values_a, values_b, b=BOOT_B, seed=BOOT_SEED, alpha=0.
 
 def latency_summary(seconds):
     """Resume de latences (s) : moyenne, mediane, p95 par interpolation lineaire
-    (numpy percentile, correct meme pour petits n — contrairement a un index
+    (numpy percentile, correct meme pour petits n - contrairement a un index
     approximatif), min, max, n, et IC bootstrap de la moyenne."""
     arr = np.asarray(list(seconds), dtype=float)
     if arr.size == 0:

@@ -1,5 +1,5 @@
 """
-Benchmark STT — WER multi-modeles sur corpus ATC reels
+Benchmark STT - WER multi-modeles sur corpus ATC reels
 ======================================================
 Corpus de test : enregistrements VHF REELS avec transcriptions de reference
   - Jzuluaga/atco2_corpus_1h  (ATCO2, domaine cible du projet)
@@ -9,7 +9,7 @@ src/atc_data.py. L'audio est decode via soundfile (decode=False + bytes),
 independant du backend de la librairie datasets.
 
 Systemes evalues :
-  - hf-small        : openai/whisper-small (transformers) — baseline exacte
+  - hf-small        : openai/whisper-small (transformers) - baseline exacte
   - hf-small-lora   : whisper-small + adaptateur LoRA ATC du depot
                       (model/whisper-lora-adapter), CHAINE D'EVALUATION DU
                       PROJET (atc_asr.build_inference_model/transcribe_arrays)

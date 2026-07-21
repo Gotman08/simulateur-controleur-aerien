@@ -1,5 +1,5 @@
 """
-Benchmark simulateur & geometrie — extension statistique de la validation
+Benchmark simulateur & geometrie - extension statistique de la validation
 =========================================================================
 Complements de rigueur a la campagne validation/ (qui reste la reference
 historique gelee) :
@@ -10,7 +10,7 @@ historique gelee) :
      predire. Robustesse au choix de graine.
 
   B. Conflit garanti par construction (NOUVEAU) : preuve statistique de la
-     garantie de atc_exercise.make_conflict_pair sur 2 000 tirages — dCPA
+     garantie de atc_exercise.make_conflict_pair sur 2 000 tirages - dCPA
      analytique ~= 0, tCPA ~= t_c annonce, t_c dans [240, 420] s.
 
   C. Montee en charge BlueSky REPETEE : 5 repetitions x N avions (5..200),
@@ -60,7 +60,7 @@ def cpa_campaign(seed, n):
     hdg = rng.uniform(0.0, 360.0, size=(n, 2))
     spd = rng.uniform(150.0, 550.0, size=(n, 2))      # kt (vitesse sol)
 
-    # cinematique relative (NM/s) — meme convention que _vel_nm_s (cap nautique)
+    # cinematique relative (NM/s) - meme convention que _vel_nm_s (cap nautique)
     v1 = np.stack([spd[:, 0] * np.sin(np.radians(hdg[:, 0])),
                    spd[:, 0] * np.cos(np.radians(hdg[:, 0]))], axis=1) / 3600.0
     v2 = np.stack([spd[:, 1] * np.sin(np.radians(hdg[:, 1])),

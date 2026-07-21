@@ -65,7 +65,7 @@ def test_postprocess_rejette_hors_bornes_meme_apres_reparation():
 
 def test_postprocess_coerce_value_en_entier():
     """La valeur de l'ordre valide est alignee sur l'entier du TrafScript
-    (le LLM peut renvoyer 32000.0) — coherence de type pour l'aval."""
+    (le LLM peut renvoyer 32000.0) - coherence de type pour l'aval."""
     valid, _ = atc_llm.postprocess_orders(
         [{"callsign": "AFR1234", "action": "ALT", "value": 32000.0}])
     assert valid[0]["order"]["value"] == 32000

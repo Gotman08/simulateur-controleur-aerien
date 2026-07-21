@@ -48,8 +48,8 @@ if ($existing) {
         if ($line -match "^RUNNING\s+(\S+)") { $node = $Matches[1]; break }
         Write-Host "  ... etat: $($line.Trim()) ($([int]($i*10/6))/120 min)"
     }
-    if (-not $node) { throw "le job $jobid n'a pas demarre (squeue) — reessayez plus tard." }
-    Write-Host "[romeo] job $jobid actif sur $node — chargement des modeles (~5-10 min au premier appel)"
+    if (-not $node) { throw "le job $jobid n'a pas demarre (squeue) - reessayez plus tard." }
+    Write-Host "[romeo] job $jobid actif sur $node - chargement des modeles (~5-10 min au premier appel)"
 }
 
 # --- 3. tunnel SSH (bloquant : laisser cette fenetre ouverte) ----------------

@@ -338,7 +338,7 @@ def main():
     gen_llm()
     gen_tts()
     gen_e2e()
-    lines = ["% GENERE par gen_tables.py — ne pas editer a la main"]
+    lines = ["% GENERE par gen_tables.py - ne pas editer a la main"]
     for name, val in sorted(MACROS.items()):
         lines.append(f"\\newcommand{{\\{name}}}{{{val}}}")
     write(os.path.join(HERE, "numbers.tex"), "\n".join(lines) + "\n")

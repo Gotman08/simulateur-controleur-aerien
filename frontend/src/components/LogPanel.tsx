@@ -37,7 +37,7 @@ export default function LogPanel({ log, onClear }: { log: LogEntry[]; onClear: (
         </Btn>
       </div>
       <div ref={boxRef} className="flex-1 select-text overflow-y-auto px-4 py-2 font-mono text-[11.5px] leading-relaxed">
-        {log.length === 0 && <span className="text-mut/60">— journal vide —</span>}
+        {log.length === 0 && <span className="text-mut/60">- journal vide -</span>}
         {log.map((l) => (
           <div key={l.id} className={COLOR[l.kind]}>
             <span className="mr-1.5 text-mut/50">{l.t}</span>

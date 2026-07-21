@@ -111,12 +111,14 @@
 {\color{atcblue}\rule{\textwidth}{2pt}}\\[0.9cm]
 
 \begin{tabular}{rl}
-\large\bfseries Auteur & \large Nicolas Marano\\[4pt]
-\large\bfseries Projet & \large Simulateur de contrôleur aérien (PoC, 10 semaines)\\[4pt]
-\large\bfseries Établissement & \large Université de Reims Champagne-Ardenne (URCA)\\[4pt]
-\large\bfseries Calcul (IA) & \large Supercalculateur ROMEO : NVIDIA GH200 (Grace-Hopper, aarch64)\\[4pt]
-\large\bfseries Domaine & \large Intelligence artificielle \& contrôle du trafic aérien\\[4pt]
-\large\bfseries Dépôt & \large \texttt{github.com/Gotman08/simulateur-controleur-aerien}\\
+\bfseries Auteur & Nicolas Marano\\[4pt]
+\bfseries Formation & Master 1 Calcul Haute Performance, Simulation (HPC, Image, IA), URCA\\[4pt]
+\bfseries Laboratoire d'accueil & LICIIS, UFR Sciences Exactes et Naturelles, Reims\\[4pt]
+\bfseries Tuteur de stage & Luiz Angelo Steffenel\\[4pt]
+\bfseries Enseignant référent & Christophe Jaillet\\[4pt]
+\bfseries Période & du 13 avril au 31 juillet 2026 (406~h effectives)\\[4pt]
+\bfseries Calcul (IA) & Supercalculateur ROMEO : NVIDIA GH200 (Grace-Hopper, aarch64)\\[4pt]
+\bfseries Dépôt & \texttt{github.com/Gotman08/simulateur-controleur-aerien}\\
 \end{tabular}
 
 \vfill
@@ -143,6 +145,21 @@ $F_1 = 1{,}0$ face à BlueSky ; boucle vocale complète à 76\,\% de réussite p
 \section{Introduction : contexte, mission et démarche}
 %=============================================================================
 
+\subsection{Structure d'accueil et environnement de travail}
+
+J'ai effectué ce stage au LICIIS, le Laboratoire d'Informatique en Calcul Intensif et Image pour la Simulation de l'Université de Reims Champagne-Ardenne (URCA), sur le campus Moulin de la Housse (UFR Sciences Exactes et Naturelles), du 13 avril au 31 juillet 2026 : 406 heures de présence effective, la convention prévoyant une interruption du 4 au 31 mai, et une période structurée côté projet en dix semaines de travail (S1 à S10) qui rythment ce rapport. Mon tuteur de stage était Luiz Angelo Steffenel ; Christophe Jaillet assurait le suivi côté formation (Master 1 Calcul Haute Performance, Simulation, parcours HPC, Image, IA). Le sujet officiel de la convention : << Développement d'un simulateur d'entraînement par IA pour contrôleurs aériens (PoC) >>. Pour ce projet, le laboratoire m'a donné accès à ROMEO, le centre de calcul régional hébergé par l'URCA, qui met un supercalculateur à la disposition des chercheurs et des partenaires du territoire : c'est lui qui a fourni la puissance de calcul.
+Concrètement, les modèles d'IA ont été entraînés et servis sur un n\oe ud NVIDIA GH200
+(architecture Grace-Hopper, aarch64, 96~Go de mémoire unifiée) alloué par
+l'ordonnanceur SLURM, avec des partitions de stockage à quota strict de 20~Go qui ont
+pesé sur plusieurs choix techniques ; le simulateur de trafic et l'application
+d'entraînement tournaient, eux, sur un poste local Windows. Cette répartition
+cluster / poste local, puis sa remise en cause forcée lors de l'indisponibilité de
+ROMEO en juillet, traversent tout ce rapport.
+
+Le travail présenté est individuel : j'ai assuré la conception, le développement, les campagnes de validation et la rédaction, dans le cadre du suivi de mon tuteur de stage.
+Les corpus, modèles et outils tiers sur lesquels je m'appuie sont crédités dans la
+bibliographie.
+
 \subsection{Le problème métier}
 
 Un élève contrôleur s'installe en salle de simulation. Face à lui, un scope radar et une dizaine d'étiquettes qui avancent en temps réel ; dans son casque, le grésillement d'une radio VHF et des pilotes qu'il doit séparer, séquencer et guider dans l'anglais codifié de l'OACI. Deux avions convergent : il a quelques dizaines de secondes pour percevoir le conflit, choisir une man\oe uvre et la transmettre sans ambiguïté. Pour que cette scène fonctionne, il faut aujourd'hui des \emph{pseudo-pilotes} : des opérateurs humains qui, derrière la cloison, prononcent les collationnements et exécutent chaque instruction de l'élève dans le simulateur.
@@ -151,7 +168,7 @@ Ce facteur humain domine le coût d'exploitation des simulateurs de formation. D
 
 \subsection{La mission et la chaîne cible}
 
-Le c\oe ur de ma mission, durant ces dix semaines (un PoC encadré par l'URCA), était donc ce dialogue vocal bidirectionnel : l'élève parle, l'avion man\oe uvre et répond. Mais un dialogue ne se teste pas dans le vide : pour que l'avion ait un ordre à exécuter et un état à collationner, il faut un trafic simulé, un espace aérien, un radar. C'est ce qui m'a conduit à construire et évaluer toute la chaîne suivante, avec les modèles d'IA hébergés sur le supercalculateur ROMEO (n\oe ud GH200 Grace-Hopper, aarch64, 96~Go) et le simulateur sur un poste local :
+Le c\oe ur de ma mission, durant ces dix semaines de projet, était donc ce dialogue vocal bidirectionnel : l'élève parle, l'avion man\oe uvre et répond. La convention détaillait trois activités confiées : apprendre à l'IA le vocabulaire du contrôleur aérien (termes, expressions, séquences typiques) ; créer une interface vocale avec simulation des détériorations audio des transmissions radio ; programmer un environnement multi-agents (pilotes, tour de contrôle, tuteur, évaluateur). On les retrouvera dans ce rapport sous leur forme réalisée : la base de phraséologie OACI et l'adaptation du modèle de reconnaissance au domaine pour la première ; la chaîne vocale et le canal VHF simulé pour la deuxième ; l'application d'entraînement, ses pilotes IA, son poste instructeur et son moteur d'exercices noté pour la troisième. Mais un dialogue ne se teste pas dans le vide : pour que l'avion ait un ordre à exécuter et un état à collationner, il faut un trafic simulé, un espace aérien, un radar. C'est ce qui m'a conduit à construire et évaluer toute la chaîne suivante, avec les modèles d'IA hébergés sur le supercalculateur ROMEO (n\oe ud GH200 Grace-Hopper, aarch64, 96~Go) et le simulateur sur un poste local :
 
 \begin{center}
 \fbox{\parbox{0.95\textwidth}{\centering\ttfamily\footnotesize
@@ -172,7 +189,7 @@ vol, poste instructeur et position contrôleur \emph{push-to-talk}.}
 
 \subsection{Organisation du rapport}
 
-J'ai organisé ce document autour de trois questions : \textbf{(i)} pourquoi mes choix scientifiques (articles de référence, corpus, modèles, simulateur) plutôt que leurs alternatives (section~\ref{sec:etat-art}) ; \textbf{(ii)} quelles difficultés j'ai rencontrées et comment je les ai résolues, preuves à l'appui (section~\ref{sec:problemes}) ; \textbf{(iii)} ce que je considère comme \emph{prouvé}, avec quelles limites documentées (sections~\ref{sec:validation} et \ref{sec:limites}). La section~\ref{sec:realisation} décrit au préalable comment j'ai construit le système, phase par phase.
+J'ai organisé ce document autour de trois questions : \textbf{(i)} pourquoi mes choix scientifiques (articles de référence, corpus, modèles, simulateur) plutôt que leurs alternatives (section~\ref{sec:etat-art}) ; \textbf{(ii)} quelles difficultés j'ai rencontrées et comment je les ai résolues, preuves à l'appui (section~\ref{sec:problemes}) ; \textbf{(iii)} ce que je considère comme \emph{prouvé}, avec quelles limites documentées (sections~\ref{sec:validation} et \ref{sec:limites}). La section~\ref{sec:realisation} décrit au préalable comment j'ai construit le système, phase par phase, et une annexe donne le corpus intégral de la contre-épreuve à locuteur humain, avec le verdict phrase par phrase.
 
 %=============================================================================
 \section{État de l'art et justification des choix scientifiques}
@@ -837,5 +854,9 @@ Text-to-Speech Model >>, \emph{INTERSPEECH}, 2024.
 projet est un contenu original, sans extrait verbatim.)
 
 \end{thebibliography}
+
+\clearpage
+\appendix
+\input{annexe_humaine}
 
 \end{document}

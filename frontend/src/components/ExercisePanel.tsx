@@ -58,7 +58,7 @@ export default function ExercisePanel({ hub, onDebrief }: { hub: SimHub; onDebri
     const total = (live.elapsed_s ?? 0) + (live.remaining_s ?? 0);
     const pct = total > 0 ? (100 * (live.elapsed_s ?? 0)) / total : 0;
     return (
-      <Section title={`Exercice en cours${exMeta?.label ? ` — ${exMeta.label}` : ""}`}>
+      <Section title={`Exercice en cours${exMeta?.label ? ` - ${exMeta.label}` : ""}`}>
         <div className="mb-2 flex items-center justify-between font-mono text-[12px] text-mut">
           <span>écoulé {fmtTime(live.elapsed_s)}</span>
           <span>reste {fmtTime(live.remaining_s)}</span>
@@ -71,8 +71,8 @@ export default function ExercisePanel({ hub, onDebrief }: { hub: SimHub; onDebri
           <div>
             <div className="text-[11px] uppercase tracking-wider text-mut">Score courant</div>
             <div className={`font-mono text-3xl font-bold ${scoreColor(sc?.total)}`}>
-              {sc?.total ?? "—"}
-              <span className="ml-1 text-base text-mut">/100 ({sc?.grade ?? "—"})</span>
+              {sc?.total ?? "-"}
+              <span className="ml-1 text-base text-mut">/100 ({sc?.grade ?? "-"})</span>
             </div>
           </div>
           <div className="mb-1 flex flex-wrap gap-1.5">

@@ -95,7 +95,7 @@ def _wav_duration(path):
 
 def bench_romeo():
     """Volet B : latences de la facade OpenAI-compatible (server.py via tunnel),
-    mesurees a travers le client unifie ai_client — equivalent fonctionnel des
+    mesurees a travers le client unifie ai_client - equivalent fonctionnel des
     anciens endpoints /interpret et /scenario (l'intelligence de prompt est
     desormais cote client)."""
     import requests

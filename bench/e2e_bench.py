@@ -1,5 +1,5 @@
 """
-Benchmark E2E — boucle vocale complete voix -> STT -> LLM -> validation -> TTS
+Benchmark E2E - boucle vocale complete voix -> STT -> LLM -> validation -> TTS
 ==============================================================================
 Reproduit la boucle de production de l'application (push-to-talk) :
 
@@ -11,7 +11,7 @@ Reproduit la boucle de production de l'application (push-to-talk) :
   3. interpretation via la chaine de production (prompt + KB + validation
      deterministe des bornes / graphe secteur)
   4. collationnement readback.py -> AIClient.tts (voix stable par indicatif,
-     degradation VHF cote client ATC_TTS_VHF=1) — chemin de production exact.
+     degradation VHF cote client ATC_TTS_VHF=1) - chemin de production exact.
 
 Verite terrain : TrafScript attendu du corpus (bench_corpus, cas EN in-grammar).
 Conditions : VOIX (pipeline complet) vs TEXTE (sans STT, condition temoin).

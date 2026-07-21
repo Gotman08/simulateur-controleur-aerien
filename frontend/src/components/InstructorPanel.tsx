@@ -56,7 +56,7 @@ export default function InstructorPanel({ hub, placeMode, setPlaceMode }: {
       return;
     }
     if (!hub.providers.stt) {
-      hub.pushLog("rej", "⊘ STT non configuré ou injoignable — tapez la situation.");
+      hub.pushLog("rej", "⊘ STT non configuré ou injoignable - tapez la situation.");
       return;
     }
     const rec = new WavRecorder();
@@ -77,7 +77,7 @@ export default function InstructorPanel({ hub, placeMode, setPlaceMode }: {
         <textarea
           className="min-h-[60px] w-full resize-y rounded-md border border-edge bg-panel2 px-2.5
             py-1.5 text-[13px] text-ink outline-none placeholder:text-mut/60 focus:border-acc/60"
-          placeholder="ex : three A320 from the north at FL300 heading 180, 8 miles apart — ou en français"
+          placeholder="ex : three A320 from the north at FL300 heading 180, 8 miles apart - ou en français"
           value={desc}
           onChange={(e) => setDesc(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter" && e.ctrlKey) void generate(); }}
@@ -101,7 +101,7 @@ export default function InstructorPanel({ hub, placeMode, setPlaceMode }: {
             value={scenario}
             onChange={(e) => setScenario(e.target.value)}
           >
-            <option value="">— scénarios sauvegardés —</option>
+            <option value="">- scénarios sauvegardés -</option>
             {scenarios.map((s) => (
               <option key={s.name} value={s.name} title={s.description}>{s.title}</option>
             ))}

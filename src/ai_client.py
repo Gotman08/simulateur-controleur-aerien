@@ -19,7 +19,7 @@ appel reseau (import instantane, testable sans reseau).
 
 L'intelligence de prompt reste dans le projet : la KB OACI (kb_oaci, ~2,5 Ko)
 est inlinee INTEGRALEMENT dans le prompt systeme et la validation deterministe
-des bornes (03_bluesky_connector) s'applique a toute sortie LLM — identique
+des bornes (03_bluesky_connector) s'applique a toute sortie LLM - identique
 pour tous les fournisseurs.
 """
 import io
@@ -43,7 +43,7 @@ _log = logging.getLogger("ai_client")
 # --- erreurs typees --------------------------------------------------------
 class ProviderError(RuntimeError):
     """Erreur d'un fournisseur IA (reseau, HTTP, reponse invalide). Toujours
-    remontee a l'appelant — jamais de repli silencieux."""
+    remontee a l'appelant - jamais de repli silencieux."""
 
     def __init__(self, provider, message, status=None):
         self.provider = provider
@@ -164,7 +164,7 @@ class LlmClient:
             raise ProviderError("llm", f"reponse chat.completion invalide : {r.text[:200]}") from e
         if content is None:
             # content:null (refus/tool-call) deviendrait la chaine 'None' puis
-            # silencieusement zero ordre — on prefere une erreur visible
+            # silencieusement zero ordre - on prefere une erreur visible
             raise ProviderError("llm", "reponse chat.completion sans contenu (content null)")
         return str(content)
 
@@ -197,7 +197,7 @@ class TtsClient:
 # --- degradation VHF cote client (provider-agnostique) -----------------------
 def _apply_vhf(audio_bytes):
     """Applique la bande passante radio 300-3400 Hz a un WAV (bytes -> bytes).
-    Contenu non-WAV (mp3...) : renvoye tel quel avec un avertissement — l'audio
+    Contenu non-WAV (mp3...) : renvoye tel quel avec un avertissement - l'audio
     reste jouable, seule la coloration radio est perdue (ATC_TTS_FORMAT=wav requis)."""
     if audio_bytes[:4] != b"RIFF":
         _log.warning("TTS : contenu non WAV, degradation VHF ignoree "
@@ -237,7 +237,7 @@ class AIClient:
 
     # --- sante ---------------------------------------------------------------
     def health(self):
-        """{'stt': bool, 'llm': bool, 'tts': bool} — pings legers, sans exception."""
+        """{'stt': bool, 'llm': bool, 'tts': bool} - pings legers, sans exception."""
         return {"stt": ping(self._stt.cfg), "llm": ping(self._llm.cfg), "tts": ping(self._tts.cfg)}
 
     # --- STT -------------------------------------------------------------------

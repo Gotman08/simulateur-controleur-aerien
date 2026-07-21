@@ -3,7 +3,7 @@ Facade d'inference OpenAI-compatible (auto-hebergee) - ATC
 ==========================================================
 Expose les modeles du projet (Whisper+LoRA, Mistral-7B, XTTS voix clonees)
 derriere le CONTRAT STANDARD OpenAI : c'est UN fournisseur possible parmi
-d'autres pour l'application (ai_client.py) — interchangeable avec un service
+d'autres pour l'application (ai_client.py) - interchangeable avec un service
 cloud en changeant simplement ATC_*_URL / ATC_*_KEY / ATC_*_MODEL dans .env.
 
   GET  /v1/models                      -> {"object":"list","data":[{"id":...}]}

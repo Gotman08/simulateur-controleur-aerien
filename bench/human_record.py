@@ -7,7 +7,7 @@ phrase. Les prises servent ensuite a bench/human_e2e.py (boucle complete
 avec locuteur humain reel).
 
 Regle de protocole : si la LECTURE est fausse (mot saute, mauvais chiffre),
-refaire la prise ('n') — une erreur de lecture n'est pas une erreur du
+refaire la prise ('n') - une erreur de lecture n'est pas une erreur du
 systeme, la verite terrain est la phrase ecrite.
 
 Execution (console PowerShell ou cmd, PAS via un IDE) :

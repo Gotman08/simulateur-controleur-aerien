@@ -28,7 +28,7 @@ frontend/node_modules/
 # Rapports d'exercice generes a l'usage
 reports/
 
-# Config providers IA (cles d'API locales — ne jamais versionner)
+# Config providers IA (cles d'API locales - ne jamais versionner)
 .env
 
 # Tests / outils

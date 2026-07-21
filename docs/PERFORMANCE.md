@@ -5,14 +5,14 @@ application sur le PC local (Windows, Python 3.12), modèles IA sur le
 supercalculateur **ROMEO** (nœud `armgpu` GH200, job SLURM `job_server.slurm`,
 accès par tunnel SSH). Depuis le passage à l'architecture **API-first**
 (2026-07-02), ces modèles sont servis par la façade OpenAI-compatible
-(`src/server.py`) — les latences mesurées restent représentatives de cette
+(`src/server.py`) - les latences mesurées restent représentatives de cette
 configuration « fournisseur auto-hébergé via tunnel » ; un fournisseur cloud
 aura son propre profil. Reproductible :
 `src\bluesky-env\Scripts\python.exe validation\05_performance.py`
 (le volet façade est ignoré automatiquement si le tunnel est fermé). Données
 brutes : [`validation/results_perf.json`](../validation/results_perf.json).
 
-## 1. Latence des briques IA — parseur local de référence vs façade auto-hébergée
+## 1. Latence des briques IA - parseur local de référence vs façade auto-hébergée
 
 ![Latences IA](assets/validation/fig_perf_latences.png)
 
@@ -20,15 +20,15 @@ brutes : [`validation/results_perf.json`](../validation/results_perf.json).
 |---|---|---|
 | Interprétation d'une clairance | **0,04 ms** (p95 : 0,05 ms, n = 200) | **5,2 s** en moyenne (0,98 – 8,4 s, n = 8, après chauffe) |
 | Génération de situation | **0,03 ms** (n = 100) | **17,1 s** en moyenne (max 22,7 s, n = 2) |
-| Reconnaissance vocale (STT) | — (bibliothèque texte uniquement) | **0,84 s** par message, **RTF 0,04** (≈ 25× plus rapide que le temps réel, n = 3) |
-| Synthèse voix pilote (TTS) | — | **3,9 s** par collationnement, **RTF 0,82** (XTTS sur CPU, n = 3) |
+| Reconnaissance vocale (STT) | - (bibliothèque texte uniquement) | **0,84 s** par message, **RTF 0,04** (≈ 25× plus rapide que le temps réel, n = 3) |
+| Synthèse voix pilote (TTS) | - | **3,9 s** par collationnement, **RTF 0,82** (XTTS sur CPU, n = 3) |
 
 Lecture :
 
-- Le **parseur à règles** (bibliothèque `atc_ai`, désormais hors runtime — il
+- Le **parseur à règles** (bibliothèque `atc_ai`, désormais hors runtime - il
   sert de référence aux tests et à la validation) est temps réel au sens
   strict : ~10⁵ fois plus rapide que le LLM, pour une exactitude de 100 % sur
-  la grammaire couverte ([VALIDATION.md](VALIDATION.md) § 4) — mais c'est une
+  la grammaire couverte ([VALIDATION.md](VALIDATION.md) § 4) - mais c'est une
   grammaire **fermée** (phraséologie standard EN/FR).
 - La **chaîne LLM** comprend des formulations libres (fiches OACI inlinées dans
   le prompt, validation déterministe des bornes en aval), transcrit l'audio
@@ -59,7 +59,7 @@ BlueSky headless (détection de conflits StateBased active) tient **200 avions �
 55× le temps réel** sur le PC local : la capacité du simulateur n'est jamais le
 facteur limitant (un exercice en comporte 3 à 9, l'accélération ×10 de
 l'interface reste donc sans risque). C'est cohérent avec la vectorisation
-numpy de BlueSky — le coût croît lentement avec N (la CD est en O(N²) mais
+numpy de BlueSky - le coût croît lentement avec N (la CD est en O(N²) mais
 vectorisée).
 
 ## 3. Utilité démontrée
@@ -69,17 +69,17 @@ vectorisée).
    jeu de validation), du collationnement vocal navigateur et du **mode
    exercice noté** (conflits garantis mathématiquement, § 7 de VALIDATION.md).
 2. **Immersion maximale avec ROMEO** : compréhension de formulations libres,
-   audio réel bruité, voix pilote clonée — la boucle complète
+   audio réel bruité, voix pilote clonée - la boucle complète
    *voix → Whisper → Mistral+RAG → BlueSky → readback vocal* a été rejouée et
    vérifiée le 2026-06-11 (descente FL280 → FL180 exécutée et collationnée) :
 
-   ![Application en mode ROMEO — AFR300 établi au FL180 après la clairance vocale](assets/app_romeo.png)
+   ![Application en mode ROMEO - AFR300 établi au FL180 après la clairance vocale](assets/app_romeo.png)
 3. **Sécurité multicouche prouvée** : bornes physiques (FL ≤ 450, vitesse
    ≤ 350 kt), waypoints validés par le graphe secteur, indicatif absent du
    radar = pas de réponse, et **garde-fou sémantique** : une transcription
    tronquée (« descend flight level one ») qui faisait halluciner un niveau au
    LLM est désormais **rejetée** (incohérence verbe/niveau détectée) au lieu de
-   faire monter l'avion — cas réel reproduit puis bloqué pendant cette campagne.
+   faire monter l'avion - cas réel reproduit puis bloqué pendant cette campagne.
 
 ## 4. Limites identifiées
 
@@ -96,7 +96,7 @@ vectorisée).
   de validation sur UWB+ATCOSIM).
 - **Génération de scénario LLM** : les caps proposés par Mistral ne sont pas
   toujours cohérents avec la direction d'arrivée (avion « venant du nord » avec
-  cap 0) — le générateur local validé à 100 % reste la référence ; la sortie
+  cap 0) - le générateur local validé à 100 % reste la référence ; la sortie
   LLM est néanmoins normalisée et bornée par `_items_to_aircraft`.
 - **Périmètre simulateur** : pas de gestion 4D complète (vent en altitude par
   couches unique, pas de profils SID/STAR), secteur unique centré Reims ;

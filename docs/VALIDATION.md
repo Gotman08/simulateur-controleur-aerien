@@ -64,7 +64,7 @@ $$
 
 **Convexité.** Le coefficient dominant de $d^2(t)$ est $\lVert \vec{v} \rVert^2 > 0$
 dès que la vitesse relative est non nulle : la parabole est **strictement
-convexe**, donc $t^{\ast}$ est **LE minimum global unique** — il n'existe ni autre
+convexe**, donc $t^{\ast}$ est **LE minimum global unique** - il n'existe ni autre
 minimum local, ni ambiguïté de branche. Si $\lVert \vec{v} \rVert = 0$ (vitesses
 identiques), la distance est constante et aucun CPA n'est défini (le code
 écarte ce cas dégénéré par le test `vv < 1e-9`).
@@ -104,18 +104,18 @@ en force brute** de $d(t)$ sur une grille fine : $t \in [0, 300]$ s par pas de
 | Quantité | Valeur |
 |---|---|
 | Géométries testées | 100 000 |
-| Erreur sur $d_{CPA}$ — maximum | **5,52 × 10⁻⁴ NM** (≈ 1 m) |
-| Erreur sur $d_{CPA}$ — moyenne | 7,5 × 10⁻⁸ NM |
-| Erreur sur $d_{CPA}$ — 99ᵉ centile | 7,6 × 10⁻⁷ NM |
+| Erreur sur $d_{CPA}$ - maximum | **5,52 × 10⁻⁴ NM** (≈ 1 m) |
+| Erreur sur $d_{CPA}$ - moyenne | 7,5 × 10⁻⁸ NM |
+| Erreur sur $d_{CPA}$ - 99ᵉ centile | 7,6 × 10⁻⁷ NM |
 | Minima intérieurs ($0 < t^{\ast} < 300$ s) | 21 185 cas |
-| Erreur sur $t^{\ast}$ — maximum | 0,025 s (= dt/2, résolution de la grille) |
+| Erreur sur $t^{\ast}$ - maximum | 0,025 s (= dt/2, résolution de la grille) |
 | Cas dégénérés $\lVert\vec{v}\rVert \approx 0$ | 0 (min observé $\lVert\vec{v}\rVert^2 = 7,1\times10^{-8} > 0$) |
 
 L'erreur maximale observée (5,5 × 10⁻⁴ NM, soit environ un mètre) est
 entièrement imputable à la **résolution de la grille** : au voisinage d'un CPA
 quasi nul, $d(t)$ varie comme $\lVert\vec{v}\rVert\,|t - t^{\ast}|$, soit au plus
 $0{,}306 \times 0{,}025 \approx 7{,}6\times10^{-3}$ NM pour la vitesse relative
-maximale (1 100 kt) — l'erreur mesurée reste un ordre de grandeur en dessous de
+maximale (1 100 kt) - l'erreur mesurée reste un ordre de grandeur en dessous de
 cette borne. La formule analytique est donc **exacte aux erreurs d'arrondi
 près**, comme attendu pour le minimum d'une parabole convexe.
 
@@ -137,7 +137,7 @@ l'implémentation. La formule **et** son codage sont validés.
 La formule étant exacte en MRU, la vraie question est : **les avions BlueSky
 volent-ils comme le suppose le prédicteur ?** BlueSky intègre un modèle de
 performance (OpenAP), vole en CAS/Mach avec conversion TAS dépendant de
-l'altitude, et suit son autopilote — autant d'écarts potentiels au MRU.
+l'altitude, et suit son autopilote - autant d'écarts potentiels au MRU.
 
 Protocole (un seul processus, une seule init BlueSky, `reset()` entre runs,
 graine 42) :
@@ -190,7 +190,7 @@ $$
 
 - **Modèle de performance.** Une fois stabilisé en palier, l'A320 OpenAP tient
   cap et CAS constants : en l'absence de vent, la TAS (donc la vitesse sol) est
-  constante et la trajectoire est réellement rectiligne — l'hypothèse MRU est
+  constante et la trajectoire est réellement rectiligne - l'hypothèse MRU est
   quasi exacte, d'où le très bon accord.
 - **Conversion CAS/TAS.** Le prédicteur lit la **TAS** dans l'état BlueSky
   (`gs = tas_kt`) ; la conversion CAS→TAS (×1,3 à ×1,6 entre FL200 et FL360)
@@ -204,7 +204,7 @@ $$
   (négligeable à < 70 NM du centre).
 - **Vent nul.** La campagne est jouée sans vent : avec vent, le cap (`hdg`)
   diffère de la route sol et le prédicteur doit utiliser la route et la vitesse
-  **sol** — c'est ce que fait l'application en lisant `traf.gs` et `traf.trk`
+  **sol** - c'est ce que fait l'application en lisant `traf.gs` et `traf.trk`
   (cf. `_enrich`), mais cette configuration n'est pas couverte ici (cf. § 8).
 - Le **biais négatif** (−0,036 NM) s'explique par l'échantillonnage discret de
   la vérité terrain : $d_{\min}$ mesuré toutes les 2 s est toujours ≥ au vrai
@@ -247,7 +247,7 @@ Exactitude sur les 58 cas positifs : **100 %**.
 
 Les 10 cas devant être rejetés le sont tous (**100 %**) : absence d'indicatif
 (« turn left heading 180 »), valeurs hors bornes réglementaires
-(FL999 → 99 900 ft > 45 000 ft ; vitesse 400 kt > 350 kt — bornes héritées de
+(FL999 → 99 900 ft > 45 000 ft ; vitesse 400 kt > 350 kt - bornes héritées de
 `03_bluesky_connector.LIMITS`), waypoint inconnu du secteur (« direct
 NOWHERE »), phrase vide et bruit. **Aucune commande dangereuse n'atteint le
 simulateur.** 7 cas sur 10 produisent en outre un message de rejet explicite
@@ -324,28 +324,28 @@ $$
 \text{Score} = \min\Big(100,\ \max\big(0,\ S_{sep} + S_{conf} + S_{zone} + S_{radio}\big)\Big)
 $$
 
-**Séparation (50 points)** — $N_{LoS}$ = nombre de pertes de séparation,
+**Séparation (50 points)** - $N_{LoS}$ = nombre de pertes de séparation,
 $T_{LoS}$ = secondes cumulées passées en perte de séparation :
 
 $$
 S_{sep} = \max\big(0,\ 50 - 25\,N_{LoS} - 0{,}5\,T_{LoS}\big)
 $$
 
-**Résolution de conflits (20 points)** — proportion des conflits prédits
+**Résolution de conflits (20 points)** - proportion des conflits prédits
 résolus sans perte de séparation (20 points si aucun conflit n'a été prédit) :
 
 $$
 S_{conf} = 20 \times \frac{\text{conflits prédits résolus sans LoS}}{\text{conflits prédits}}
 $$
 
-**Zones interdites (15 points)** — $N_{pen}$ = pénétrations de zone,
+**Zones interdites (15 points)** - $N_{pen}$ = pénétrations de zone,
 $T_{zone}$ = secondes cumulées en zone :
 
 $$
 S_{zone} = \max\big(0,\ 15 - 5\,N_{pen} - 0{,}1\,T_{zone}\big)
 $$
 
-**Phraséologie radio (15 points)** — proportion de commandes acceptées par la
+**Phraséologie radio (15 points)** - proportion de commandes acceptées par la
 validation (15 points si aucune commande émise n'a été rejetée et qu'au moins
 une commande a été émise ; 15 par défaut si aucune commande) :
 
@@ -361,7 +361,7 @@ $$
   contrôleur ; une seule LoS (−25) fait mécaniquement perdre la mention A, et
   la pénalité temporelle (−0,5/s) sanctionne une LoS non corrigée (2 points par
   tour d'antenne de 4 s environ).
-- $S_{conf}$ (20 %) : récompense l'**anticipation** — détecter et résoudre un
+- $S_{conf}$ (20 %) : récompense l'**anticipation** - détecter et résoudre un
   conflit avant la LoS est précisément la compétence entraînée par le STCA
   pédagogique ; le ratio rapporte la performance au nombre d'occasions réelles.
 - $S_{zone}$ (15 %) : le respect des espaces réservés/orageux est une
@@ -404,7 +404,7 @@ $\vec{p}_i(t) = P + (v_i t - D_i)\,\vec{u}_i = P + v_i (t - t_c)\,\vec{u}_i$.
    c'est-à-dire caps non identiques à vitesses égales).
 
 En pratique le moteur ajoute un léger bruit (caps, décalage d'arrivée) pour
-moduler la sévérité du conflit autour du seuil de 5 NM — c'est exactement la
+moduler la sévérité du conflit autour du seuil de 5 NM - c'est exactement la
 construction utilisée pour les cas « biaisés » de la campagne du § 3
 (intersection de cercles de rayons $v_1 t_c$ et $v_2 t_c$), où elle a produit
 les 113 conflits réels observés.
@@ -435,7 +435,7 @@ les 113 conflits réels observés.
 - graines fixées : `random.seed(42)` et `numpy.random.default_rng(42)` dans
   tous les scripts ;
 - environnement : Python 3.12, `bluesky-simulator` 1.1.1 (mode `sim` détaché,
-  headless), NumPy 2.x, Matplotlib (backend Agg) — l'environnement du projet
+  headless), NumPy 2.x, Matplotlib (backend Agg) - l'environnement du projet
   `src\bluesky-env` ;
 - BlueSky n'est initialisé qu'**une fois par processus** ; la campagne du § 3
   enchaîne les 200 rencontres dans un seul processus avec `reset()` entre

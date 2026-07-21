@@ -22,7 +22,7 @@ metrics:
 - wer
 ---
 
-# Whisper-small LoRA adapter — Air Traffic Control ASR
+# Whisper-small LoRA adapter - Air Traffic Control ASR
 
 LoRA (PEFT) adapter that fine-tunes [`openai/whisper-small`](https://huggingface.co/openai/whisper-small)
 for **English air traffic control (ATC) radiotelephony**, using real, noisy VHF recordings and a VHF
@@ -35,7 +35,7 @@ the aircraft with a synthesized pilot readback.
 
 ### Model Description
 
-- **Developed by:** Nicolas Marano (student internship project — ATC controller training simulator)
+- **Developed by:** Nicolas Marano (student internship project - ATC controller training simulator)
 - **Model type:** LoRA adapter (PEFT) over Whisper, an encoder–decoder ASR model
 - **Language(s):** English (ICAO aviation phraseology; some French phraseology is handled downstream)
 - **License:** MIT (same as the project; the base `whisper-small` is also MIT)
@@ -71,7 +71,7 @@ imperfect transcriber (≈29 % WER on real-world ATCO2 audio) and must not be a 
 
 - Trained mainly on European and simulated ATC corpora (UWB-ATCC, ATCOSIM); accents, sectors, or radio
   conditions outside this distribution can degrade accuracy.
-- Real-world noisy audio (ATCO2) still yields ≈29 % WER — expect transcription errors on callsigns and
+- Real-world noisy audio (ATCO2) still yields ≈29 % WER - expect transcription errors on callsigns and
   numbers, which downstream parsing and safety checks must catch.
 
 ### Recommendations
@@ -149,8 +149,8 @@ the base `whisper-small` weights are unchanged.
 
 | Evaluation | WER |
 |---|---|
-| ATCO2 test — zero-shot `whisper-small` | 74.3 % |
-| ATCO2 test — after LoRA fine-tuning | **29.2 %** (≈60 % relative reduction) |
+| ATCO2 test - zero-shot `whisper-small` | 74.3 % |
+| ATCO2 test - after LoRA fine-tuning | **29.2 %** (≈60 % relative reduction) |
 | Validation (UWB + ATCOSIM), 3 epochs | **6.68 %** |
 
 #### Summary

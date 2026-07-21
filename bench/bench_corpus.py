@@ -1,5 +1,5 @@
 """
-Corpus de clairances avec verite terrain — banc de benchmark LLM
+Corpus de clairances avec verite terrain - banc de benchmark LLM
 ================================================================
 Deux strates :
 
@@ -126,7 +126,7 @@ EXTRA_CASES = [
 
 
 def all_cases():
-    """[{categorie, phrase, attendu, negatif, in_grammar}] — BASE puis EXTRA."""
+    """[{categorie, phrase, attendu, negatif, in_grammar}] - BASE puis EXTRA."""
     cases = []
     for cat, phrase, attendu, negatif in _load_base_cases():
         cases.append({"categorie": cat, "phrase": phrase, "attendu": list(attendu),

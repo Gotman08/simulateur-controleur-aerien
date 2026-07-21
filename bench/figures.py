@@ -89,7 +89,7 @@ def fig_stt():
         ax.set_xticks(xs)
         ax.set_xticklabels(systems, rotation=20, ha="right")
         ax.set_title(f"{ckey} (n={d['corpora'][ckey]['n']})")
-    axes[0].set_ylabel("WER moyen par extrait (%) — IC 95 % bootstrap")
+    axes[0].set_ylabel("WER moyen par extrait (%) - IC 95 % bootstrap")
     axes[0].legend(fontsize=8)
     fig.suptitle("STT : WER par modele, corpus ATC reels, avec/sans passe-bande VHF", y=1.02)
     save(fig, "fig_stt_wer.png")
@@ -107,7 +107,7 @@ def fig_stt():
     ax.set_xticks(xs)
     ax.set_xticklabels(systems, rotation=20, ha="right")
     ax.set_ylabel("RTF (traitement / duree audio, log)")
-    ax.set_title(f"STT : facteur temps reel — {d['protocole'].get('gpu', '?')}")
+    ax.set_title(f"STT : facteur temps reel - {d['protocole'].get('gpu', '?')}")
     ax.legend(fontsize=8)
     save(fig, "fig_stt_rtf.png")
 
@@ -156,7 +156,7 @@ def fig_llm():
                label=lbl, color=C[k + 1], edgecolor="white")
     ax.set_xticks(xs)
     ax.set_xticklabels(labels, rotation=15, ha="right")
-    ax.set_ylabel("Exactitude TrafScript exacte (%) — IC 95 % Wilson")
+    ax.set_ylabel("Exactitude TrafScript exacte (%) - IC 95 % Wilson")
     ax.set_ylim(0, 105)
     ax.set_title("Extraction d'intention : exactitude par systeme (chaine de production complete)")
     ax.legend(fontsize=8, loc="lower right")
@@ -225,7 +225,7 @@ def fig_llm():
                     ha="center", fontsize=7)
         ax.set_xticks(xs)
         ax.set_xticklabels([_sysname(s) for s in have], rotation=15, ha="right")
-        ax.set_ylabel("Contraintes respectees (%) — IC 95 % Wilson")
+        ax.set_ylabel("Contraintes respectees (%) - IC 95 % Wilson")
         ax.set_ylim(0, 105)
         ax.set_title("Generation de situations : conformite aux contraintes (20 descriptions)")
         save(fig, "fig_llm_scenarios.png")
@@ -294,7 +294,7 @@ def fig_e2e():
     ax1.set_xticklabels([lbl for _, lbl in conds], fontsize=8)
     ax1.set_ylabel("Clairances correctement executees (%)")
     ax1.set_ylim(0, 105)
-    ax1.set_title("Reussite E2E — IC 95 % Wilson")
+    ax1.set_title("Reussite E2E - IC 95 % Wilson")
     # latences par etage
     stages = [("stt", "STT"), ("llm", "LLM"), ("tts", "TTS")]
     means = [d["latences"][s]["moyenne_s"] for s, _ in stages]
@@ -310,7 +310,7 @@ def fig_e2e():
     ax2.set_ylabel("Latence (s)")
     ax2.set_title("Decomposition de la latence vocale")
     ax2.legend(fontsize=8, loc="center right")
-    fig.suptitle(f"Boucle vocale complete — STT={d['config']['stt'].split(':')[0]}, "
+    fig.suptitle(f"Boucle vocale complete - STT={d['config']['stt'].split(':')[0]}, "
                  f"LLM={_sysname(d['config']['llm'])}, TTS=kokoro, SNR {d['config']['snr_db']} dB",
                  y=1.03, fontsize=9)
     save(fig, "fig_e2e.png")
@@ -352,7 +352,7 @@ def fig_sim():
         ax.set_xticks(xs)
         ax.set_xticklabels([f"graine {s}" for s in seeds])
         ax.set_ylabel("Erreur dCPA vs grille fine (NM, log)")
-        ax.set_title(f"Prediction CPA vs verite numerique — "
+        ax.set_title(f"Prediction CPA vs verite numerique - "
                      f"{d['cpa_multi_graines']['total_geometries']:,} geometries, "
                      f"{d['cpa_multi_graines']['total_desaccords']} desaccords".replace(",", " "))
         ax.legend(fontsize=8)

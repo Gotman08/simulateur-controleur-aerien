@@ -45,7 +45,7 @@ export default function App() {
 
   useEffect(() => {
     // ré-essaye tant que la carte n'est pas chargée : couvre un backend qui
-    // démarre APRÈS le front (ou redémarre) — sinon radar sans secteur/routes
+    // démarre APRÈS le front (ou redémarre) - sinon radar sans secteur/routes
     // jusqu'à un rechargement manuel.
     let cancelled = false;
     let timer: number | undefined;

@@ -42,7 +42,7 @@ async function loadScenarioList() {
   try {
     const r = await (await fetch("/api/scenarios")).json();
     const sel = $("scenario-list");
-    sel.innerHTML = '<option value="">— scénarios sauvegardés —</option>';
+    sel.innerHTML = '<option value="">- scénarios sauvegardés -</option>';
     (r.scenarios || []).forEach(s => {
       const o = document.createElement("option");
       o.value = s.name; o.textContent = s.title;
@@ -81,7 +81,7 @@ function onState(s) {
     bn.textContent = `⚠ PERTE DE SÉPARATION (${nlos})`; bn.className = "los"; bn.style.display = "block";
   } else if (npred) {
     const tmin = Math.min(...s.predicted.map(p => p.t));
-    bn.textContent = `⚠ CONFLIT PRÉVU — impact possible dans ${tmin}s`; bn.className = "predicted"; bn.style.display = "block";
+    bn.textContent = `⚠ CONFLIT PRÉVU - impact possible dans ${tmin}s`; bn.className = "predicted"; bn.style.display = "block";
   } else if (nzone) {
     bn.textContent = `⚠ TRAFIC EN ZONE MÉTÉO / INTERDITE (${nzone})`; bn.className = "zone"; bn.style.display = "block";
   } else {
@@ -110,7 +110,7 @@ function onExchange(m) {
 }
 
 function onSituation(m) {
-  logLine(`✈ situation : ${m.description} → ${(m.created || []).join(", ") || "—"}`, "o");
+  logLine(`✈ situation : ${m.description} → ${(m.created || []).join(", ") || "-"}`, "o");
 }
 
 /* ============================ rendu radar ============================ */
@@ -460,7 +460,7 @@ function getRecognition() {
 }
 function startRecognition() {
   recog = getRecognition();
-  if (!recog) { logLine("Reconnaissance vocale indisponible — tapez la clairance.", "r"); stopTalk(); return; }
+  if (!recog) { logLine("Reconnaissance vocale indisponible - tapez la clairance.", "r"); stopTalk(); return; }
   recog.onresult = (e) => { const t = e.results[0][0].transcript; if (t) sendCommand(t); };
   recog.onerror = (e) => logLine("STT : " + e.error, "r");
   try { recog.start(); } catch (e) {}

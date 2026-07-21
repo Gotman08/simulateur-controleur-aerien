@@ -1,5 +1,5 @@
 """
-Benchmark LLM — extraction d'intention ATC multi-modeles
+Benchmark LLM - extraction d'intention ATC multi-modeles
 ========================================================
 Pour CHAQUE modele GGUF (llama.cpp derriere la facade OpenAI-compatible
 locale), execute les 116 clairances du corpus (bench_corpus) a travers LA
@@ -128,7 +128,7 @@ def eval_clairances_llm(cases, port, model_name):
     os.environ["ATC_LLM_KEY"] = ""
     os.environ["ATC_LLM_MODEL"] = model_name
     client = LlmClient(ProviderConfig.from_env("llm"))
-    # echauffement (compilation du template, caches) — non compte
+    # echauffement (compilation du template, caches) - non compte
     try:
         client.chat([{"role": "user", "content": "ready?"}], max_tokens=8)
     except ProviderError:

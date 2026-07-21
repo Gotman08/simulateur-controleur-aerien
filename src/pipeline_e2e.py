@@ -2,7 +2,7 @@
 Pipeline bout-en-bout - Semaines 6&8 (V6/V7/V8)
 ===============================================
 Orchestrateur LOCAL qui ferme la boucle via la facade OpenAI-compatible
-(server.py, tunnel SSH localhost:8765/8766 — ou tout autre fournisseur) et
+(server.py, tunnel SSH localhost:8765/8766 - ou tout autre fournisseur) et
 BlueSky local :
 
   texte ATC --/v1/audio/speech (voix clonee) + VHF client--> audio

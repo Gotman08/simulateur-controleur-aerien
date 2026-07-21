@@ -1,0 +1,57 @@
+% Tableau genere automatiquement depuis bench/results/human_e2e.json - ne pas editer a la main
+\section{Annexe : corpus de la contre-épreuve à locuteur humain}
+\label{sec:annexe-humain}
+
+Le tableau~\ref{tab:annexe-humain} donne le corpus intégral de la contre-épreuve à
+locuteur humain réel (section~\ref{sec:res-e2e}) : les 25 clairances dans leur forme
+écrite du corpus annoté, l'ordre TrafScript attendu après validation, et le verdict
+d'exécution exacte dans les deux conditions (prises micro brutes ; canal radio simulé,
+bruit SNR 12~dB puis passe-bande VHF). Les clairances écrites en abrégé
+(\texttt{AFR1234}, \texttt{FL320}, \texttt{hdg}) ont été prononcées en phraséologie
+parlée (\emph{air france one two three four}, \emph{flight level three two zero},
+\emph{heading}). Ce tableau est généré automatiquement depuis les données brutes
+versionnées (\texttt{bench/results/human\_e2e.json}), comme toutes les valeurs
+chiffrées du document.
+
+\begin{table}[h]
+\centering
+\footnotesize
+\begin{tabular}{>{\raggedright}p{0.5cm} >{\raggedright}p{6.6cm} >{\raggedright}p{4.4cm} c c}
+\toprule
+\rowcolor{lightgray}\textbf{\#} & \textbf{Clairance (forme écrite du corpus)} & \textbf{Ordre attendu (TrafScript)} & \textbf{Micro} & \textbf{Radio}\\
+\midrule
+1 & air france one two three four turn left heading two seven zero & \texttt{HDG AFR1234 270} & OK & OK\\
+2 & speedbird five seven turn right heading 090 & \texttt{HDG BAW57 90} & OK & OK\\
+3 & AFR1234 fly heading three six zero & \texttt{HDG AFR1234 360} & OK & KO\\
+4 & EZY21 fly heading 100 & \texttt{HDG EZY21 100} & OK & OK\\
+5 & lufthansa eight eight heading one eight zero & \texttt{HDG DLH88 180} & OK & OK\\
+6 & ryanair niner turn right heading two two five & \texttt{HDG RYR9 225} & KO & KO\\
+7 & AFR1234 hdg 045 & \texttt{HDG AFR1234 45} & OK & OK\\
+8 & BAW57 turn left heading 310 & \texttt{HDG BAW57 310} & OK & OK\\
+9 & air france one two three four descend flight level one zero zero & \texttt{ALT AFR1234 10000} & OK & OK\\
+10 & csa one delta zulu climb flight level two four zero & \texttt{ALT CSA1DZ 24000} & KO & KO\\
+11 & AFR1234 climb FL320 & \texttt{ALT AFR1234 32000} & OK & OK\\
+12 & BAW57 descend to flight level 80 & \texttt{ALT BAW57 8000} & OK & OK\\
+13 & EZY21 climb 5 thousand feet & \texttt{ALT EZY21 5000} & OK & KO\\
+14 & AFR1234 descend altitude 6000 feet & \texttt{ALT AFR1234 6000} & OK & OK\\
+15 & air france one two three four climb to flight level three two zero & \texttt{ALT AFR1234 32000} & OK & OK\\
+16 & BAW57 maintain flight level 100 & \texttt{ALT BAW57 10000} & OK & OK\\
+17 & DLH88 descend 4000 feet & \texttt{ALT DLH88 4000} & OK & OK\\
+18 & speedbird five seven climb flight level one five zero & \texttt{ALT BAW57 15000} & OK & OK\\
+19 & AFR1234 reduce speed two five zero knots & \texttt{SPD AFR1234 250} & KO & KO\\
+20 & AFR1234 increase speed 300 & \texttt{SPD AFR1234 300} & OK & OK\\
+21 & RYR9 increase speed to 280 knots & \texttt{SPD RYR9 280} & KO & KO\\
+22 & easyjet two one reduce speed two two zero & \texttt{SPD EZY21 220} & OK & OK\\
+23 & BAW57 speed 250 & \texttt{SPD BAW57 250} & OK & OK\\
+24 & csa one delta zulu reduce 230 & \texttt{SPD CSA1DZ 230} & KO & KO\\
+25 & AFR1234 maintain 250 knots & \texttt{SPD AFR1234 250} & OK & OK\\
+\midrule
+ & \multicolumn{2}{l}{\textbf{Total d'exécutions exactes}} & \textbf{20/25} & \textbf{18/25}\\
+\bottomrule
+\end{tabular}
+\caption{Contre-épreuve à locuteur humain réel : verdict phrase par phrase dans les
+deux conditions. OK = ordre exécuté exactement conforme à l'attendu ; KO = écart
+(transcription déviée ou interprétation erronée, détail en
+section~\ref{sec:res-e2e}).}
+\label{tab:annexe-humain}
+\end{table}

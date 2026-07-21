@@ -1,5 +1,5 @@
 """
-Enregistrement des 25 clairances par un locuteur humain — via NAVIGATEUR
+Enregistrement des 25 clairances par un locuteur humain - via NAVIGATEUR
 ========================================================================
 Alternative a human_record.py pour les machines ou la capture PortAudio est
 bloquee (protection micro antivirus, pile d'effets constructeur...). Le
@@ -10,7 +10,7 @@ ce poste.
 Lance un petit serveur local, ouvre la page dans le navigateur : la page
 affiche chaque phrase, enregistre le micro, permet de reecouter et refaire,
 puis envoie la prise au serveur qui la sauvegarde en WAV 16 kHz mono
-(bench/results/human_audio/<locuteur>/cNN_clean.wav — meme format que
+(bench/results/human_audio/<locuteur>/cNN_clean.wav - meme format que
 human_record.py ; bench/human_e2e.py s'utilise ensuite a l'identique).
 
 Execution :
@@ -39,7 +39,7 @@ OUT_SR = 16000
 
 PAGE = """<!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8">
-<title>Enregistrement des clairances — locuteur humain</title>
+<title>Enregistrement des clairances - locuteur humain</title>
 <style>
  body{font-family:system-ui,Segoe UI,sans-serif;max-width:860px;margin:2rem auto;
       padding:0 1rem;background:#0d1526;color:#e8edf6}
@@ -57,7 +57,7 @@ PAGE = """<!DOCTYPE html>
  .done{color:#3fa060}.todo{color:#68789a}.cur{color:#7fb2ff;font-weight:600}
  .warn{color:#e0a03f}
 </style></head><body>
-<h1>Boucle vocale avec locuteur humain — enregistrement (__SPEAKER__)</h1>
+<h1>Boucle vocale avec locuteur humain - enregistrement (__SPEAKER__)</h1>
 <p>Pièce calme, débit naturel de phraséologie. Si tu te trompes en lisant,
 refais la prise : la vérité terrain est la phrase écrite.</p>
 <div id="phrase">…</div>

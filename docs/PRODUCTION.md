@@ -12,7 +12,7 @@ radar temps réel (BlueSky), poste instructeur (génération de trafic en
 langage naturel, météo, zones), poste élève (clairances tapées **et
 parlées**, collationnement vocal), exercices notés avec débrief. Les trois
 briques IA (STT/LLM/TTS) sont des services externes au contrat
-OpenAI-compatible, configurés par `.env` — trois points de déploiement
+OpenAI-compatible, configurés par `.env` - trois points de déploiement
 validés : façade cluster (ROMEO), **façade 100 % locale** (`bench/local_server.py`,
 llama.cpp + faster-whisper + Kokoro sur GPU grand public), API cloud.
 
@@ -61,7 +61,7 @@ bord de fuite ; validation des saisies vent ; auto-scroll du journal
 respectueux de la lecture.
 
 Améliorations issues du banc de mesure : `parse_orders` répare les nombres
-JSON à zéro de tête (`"value": 090`, produit par de vrais modèles — cas
+JSON à zéro de tête (`"value": 090`, produit par de vrais modèles - cas
 mesuré) ; compagnies d'exercice alignées avec la téléphonie du readback et la
 normalisation d'indicatifs ; collationnement limité au premier indicatif
 (une transmission = un aéronef) ; `run_all.py` de validation muni de
@@ -69,7 +69,7 @@ normalisation d'indicatifs ; collationnement limité au premier indicatif
 
 ## 4. Vérification continue
 
-- `pytest` : 209 tests (modules purs, sans réseau ni GPU) — CI GitHub.
+- `pytest` : 209 tests (modules purs, sans réseau ni GPU) - CI GitHub.
 - `ruff` : zéro erreur (config unifiée `pyproject.toml`).
 - `tsc --noEmit` : zéro erreur ; `npm run build` reproductible.
 - `validation/run_all.py` : campagne de justesse **avec portes** (CPA, F1,
@@ -102,14 +102,14 @@ Pendant la campagne de mesure de juillet 2026, le supercalculateur ROMEO
 était **entièrement indisponible** (maintenance de sécurité : logins et
 nœuds ARM GPU down dans l'attente des correctifs RedHat). L'application est
 restée pleinement opérationnelle en basculant la configuration `.env` vers la
-façade 100 % locale (RTX 4070) — sans toucher au code. C'est précisément le
+façade 100 % locale (RTX 4070) - sans toucher au code. C'est précisément le
 scénario de continuité que le contrat OpenAI-compatible garantit : la panne
 d'un fournisseur (cluster, cloud) est un risque opérationnel réel, couvert
 par bascule de configuration.
 
 ## 7. Limites assumées (documentées)
 
-- **Mono-poste local** : pas d'authentification ni de TLS — l'app écoute sur
+- **Mono-poste local** : pas d'authentification ni de TLS - l'app écoute sur
   127.0.0.1 par défaut. Une exposition réseau exigerait un reverse-proxy
   authentifiant (hors périmètre actuel).
 - `t_cross_s` des conflits construits est calculé sur la vitesse CAS donnée à
@@ -117,7 +117,7 @@ par bascule de configuration.
   (dCPA ≈ 0) est démontrée insensible à ce facteur (`bench/sim_bench.py`,
   2 000 tirages, 100 %), l'horodatage annoncé est nominal.
 - Le scoring d'exercice inclut tout trafic présent (y compris ajouté en cours
-  d'exercice par l'instructeur) : comportement assumé — le secteur entier est
+  d'exercice par l'instructeur) : comportement assumé - le secteur entier est
   sous responsabilité de l'élève.
-- Façade `server.py` (cluster) : inférence synchrone dans l'event loop —
+- Façade `server.py` (cluster) : inférence synchrone dans l'event loop -
   dimensionnée pour un poste unique, pas pour la concurrence (documenté).

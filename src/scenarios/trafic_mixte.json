@@ -1,6 +1,6 @@
 {
   "title": "Trafic mixte (5 avions)",
-  "description": "Cinq avions, types et niveaux variés, répartis tout autour du secteur — vacation chargée.",
+  "description": "Cinq avions, types et niveaux variés, répartis tout autour du secteur - vacation chargée.",
   "aircraft": [
     {"callsign": "AFR410", "type": "A320", "bearing_deg": 10,  "dist_nm": 55, "hdg": 190, "alt_ft": 30000, "spd_kt": 300},
     {"callsign": "EZY420", "type": "A319", "bearing_deg": 80,  "dist_nm": 40, "hdg": 250, "alt_ft": 18000, "spd_kt": 270},

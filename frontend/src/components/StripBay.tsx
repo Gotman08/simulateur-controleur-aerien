@@ -47,7 +47,7 @@ function Strip({ a, sel, onSelect, onCenter }: {
     >
       <div className="flex items-center justify-between">
         <span className="font-mono text-[13.5px] font-bold tracking-wide text-ink">{a.id}</span>
-        <span className="font-mono text-[11px] text-mut">{a.type || "—"}</span>
+        <span className="font-mono text-[11px] text-mut">{a.type || "-"}</span>
         <div className="flex items-center gap-1">
           {a.alert === "los" && <Badge tone="dang">LoS</Badge>}
           {a.alert === "predicted" && <Badge tone="warn">CONF</Badge>}

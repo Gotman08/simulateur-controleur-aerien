@@ -42,11 +42,11 @@ export default function TopBar({ hub }: { hub: SimHub }) {
           <Badge tone="dang" className="animate-alert text-[12px]!">⚠ PERTE DE SÉPARATION ({nlos})</Badge>
         ) : npred > 0 ? (
           <Badge tone="warn" className="text-[12px]!">
-            △ conflit prédit — CPA dans {Math.min(...st.predicted.map((p) => p.t))}s
+            △ conflit prédit - CPA dans {Math.min(...st.predicted.map((p) => p.t))}s
           </Badge>
         ) : ex ? (
           <Badge tone="acc" className="text-[12px]!">
-            <Gauge size={12} /> exercice — reste {fmtTime(ex.remaining_s)} · score {ex.score?.total ?? "—"}
+            <Gauge size={12} /> exercice - reste {fmtTime(ex.remaining_s)} · score {ex.score?.total ?? "-"}
           </Badge>
         ) : null}
       </div>
@@ -92,7 +92,7 @@ export default function TopBar({ hub }: { hub: SimHub }) {
             tone={hub.providers[p] ? "ok" : "dang"}
             className="cursor-pointer"
             title={`Fournisseur ${p.toUpperCase()} ${hub.providers[p] ? "joignable" : "injoignable"} `
-              + "(config .env — cliquer pour re-tester)"}
+              + "(config .env - cliquer pour re-tester)"}
             onClick={() => { hub.pushLog("info", "Test des fournisseurs IA…"); void hub.refreshHealth(); }}
           >
             <Satellite size={11} />
