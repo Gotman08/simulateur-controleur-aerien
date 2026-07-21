@@ -16,7 +16,15 @@ const COLOR: Record<LogEntry["kind"], string> = {
 
 export default function LogPanel({ log, onClear }: { log: LogEntry[]; onClear: () => void }) {
   const endRef = useRef<HTMLDivElement>(null);
-  useEffect(() => { endRef.current?.scrollIntoView({ block: "end" }); }, [log]);
+  const boxRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // auto-scroll UNIQUEMENT si on est deja (proche) du bas : ne pas
+    // interrompre la lecture de l'historique pendant un trafic dense.
+    const box = boxRef.current;
+    if (!box) return;
+    const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 40;
+    if (nearBottom) endRef.current?.scrollIntoView({ block: "end" });
+  }, [log]);
 
   return (
     <div className="flex h-full flex-col">
@@ -28,7 +36,7 @@ export default function LogPanel({ log, onClear }: { log: LogEntry[]; onClear: (
           <Eraser size={13} />
         </Btn>
       </div>
-      <div className="flex-1 select-text overflow-y-auto px-4 py-2 font-mono text-[11.5px] leading-relaxed">
+      <div ref={boxRef} className="flex-1 select-text overflow-y-auto px-4 py-2 font-mono text-[11.5px] leading-relaxed">
         {log.length === 0 && <span className="text-mut/60">— journal vide —</span>}
         {log.map((l) => (
           <div key={l.id} className={COLOR[l.kind]}>

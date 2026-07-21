@@ -140,7 +140,10 @@ async def transcriptions(file: UploadFile = File(...), model: str = Form(default
                          response_format: str = Form(default="json")):
     if ROLE not in ("all", "asrllm"):
         raise HTTPException(503, "role != asrllm (STT indisponible sur ce port)")
-    arr = _to_16k_mono(await file.read())
+    try:
+        arr = _to_16k_mono(await file.read())
+    except Exception:
+        raise HTTPException(400, "fichier audio illisible (WAV/FLAC/OGG attendu)") from None
     proc, mdl = get_asr()
     text = atc_asr.transcribe_arrays(mdl, proc, [arr], bandpass=True)[0]
     return {"text": text}
@@ -151,9 +154,13 @@ def chat_completions(payload: dict = Body(...)):
     if ROLE not in ("all", "asrllm"):
         raise HTTPException(503, "role != asrllm (LLM indisponible sur ce port)")
     messages = payload.get("messages") or []
-    if not messages:
-        raise HTTPException(400, "messages vide")
-    max_new = int(payload.get("max_tokens") or payload.get("max_completion_tokens") or 512)
+    if not isinstance(messages, list) or not messages:
+        raise HTTPException(400, "messages doit etre une liste non vide")
+    try:
+        max_new = int(payload.get("max_tokens") or payload.get("max_completion_tokens") or 512)
+    except (TypeError, ValueError):
+        raise HTTPException(400, "max_tokens doit etre un entier") from None
+    max_new = max(1, min(4096, max_new))
     content = atc_llm.generate_from_messages(messages, max_new_tokens=max_new)
     return {"id": f"chatcmpl-{int(time.time() * 1000)}",
             "object": "chat.completion",

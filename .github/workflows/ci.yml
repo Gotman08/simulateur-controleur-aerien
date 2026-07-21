@@ -18,7 +18,7 @@ jobs:
       - name: Dependances de test (modules purs uniquement, sans BlueSky)
         run: pip install pytest ruff requests numpy scipy soundfile python-dotenv
       - name: Ruff
-        run: ruff check src tests validation tools
+        run: ruff check src tests validation tools bench
       - name: Pytest
         run: pytest
 

@@ -132,9 +132,14 @@ class SttClient:
         if not r.ok:
             raise ProviderError("stt", _http_detail(r), r.status_code)
         try:
-            return str(r.json().get("text", "")).strip()
+            j = r.json()
         except ValueError as e:
             raise ProviderError("stt", f"reponse non JSON : {r.text[:200]}") from e
+        if not isinstance(j, dict):
+            # un 200 au corps JSON non-objet (liste, chaine) leverait sinon
+            # AttributeError -> 500 brut au lieu d'un 502 type
+            raise ProviderError("stt", f"reponse JSON inattendue (objet requis) : {r.text[:200]}")
+        return str(j.get("text", "")).strip()
 
 
 class LlmClient:
@@ -154,9 +159,14 @@ class LlmClient:
         if not r.ok:
             raise ProviderError("llm", _http_detail(r), r.status_code)
         try:
-            return str(r.json()["choices"][0]["message"]["content"])
+            content = r.json()["choices"][0]["message"]["content"]
         except (ValueError, KeyError, IndexError, TypeError) as e:
             raise ProviderError("llm", f"reponse chat.completion invalide : {r.text[:200]}") from e
+        if content is None:
+            # content:null (refus/tool-call) deviendrait la chaine 'None' puis
+            # silencieusement zero ordre — on prefere une erreur visible
+            raise ProviderError("llm", "reponse chat.completion sans contenu (content null)")
+        return str(content)
 
 
 class TtsClient:
@@ -175,6 +185,12 @@ class TtsClient:
             raise ProviderError("tts", f"{self.cfg.url} injoignable : {e}") from e
         if not r.ok:
             raise ProviderError("tts", _http_detail(r), r.status_code)
+        if not r.content:
+            raise ProviderError("tts", "reponse audio vide")
+        if r.headers.get("content-type", "").lower().startswith("application/json"):
+            # certains fournisseurs renvoient 200 + corps JSON d'erreur :
+            # sans cette garde l'UI recevrait un 'audio' injouable sans message
+            raise ProviderError("tts", f"reponse JSON au lieu d'audio : {_http_detail(r)}")
         return r.content
 
 
@@ -215,7 +231,8 @@ class AIClient:
         self._llm = LlmClient(ProviderConfig.from_env("llm"))
         self._tts = TtsClient(ProviderConfig.from_env("tts"))
         self.tts_pool = voices.parse_pool(os.environ.get("ATC_TTS_VOICES"))
-        self._tts_vhf = os.environ.get("ATC_TTS_VHF", "1").strip().lower() not in ("0", "false", "")
+        self._tts_vhf = (os.environ.get("ATC_TTS_VHF", "1").strip().lower()
+                         not in ("0", "false", "no", "off", ""))
         self._tts_format = os.environ.get("ATC_TTS_FORMAT", "wav").strip() or "wav"
 
     # --- sante ---------------------------------------------------------------

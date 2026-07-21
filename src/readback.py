@@ -16,7 +16,9 @@ LETTER = {"A": "alfa", "B": "bravo", "C": "charlie", "D": "delta", "E": "echo",
           "P": "papa", "Q": "quebec", "R": "romeo", "S": "sierra", "T": "tango",
           "U": "uniform", "V": "victor", "W": "whiskey", "X": "xray", "Y": "yankee", "Z": "zulu"}
 CODE2TEL = {"AFR": "air france", "BAW": "speedbird", "DLH": "lufthansa", "RYR": "ryanair",
-            "EZY": "easyjet", "KLM": "klm", "AAL": "american", "UAL": "united", "DAL": "delta"}
+            "EZY": "easyjet", "KLM": "klm", "AAL": "american", "UAL": "united", "DAL": "delta",
+            "SWR": "swiss", "AUA": "austrian", "THY": "turkish", "UAE": "emirates",
+            "QTR": "qatari", "CSA": "csa"}
 
 
 def num_words(s):
@@ -56,11 +58,15 @@ def readback_for_order(o, cur_alt_ft=None):
 
 
 def readback_text(orders, cur_alt=None):
+    """Collationnement du PREMIER indicatif uniquement : une transmission
+    radio s'adresse a un seul aeronef (les ordres d'autres indicatifs dans le
+    meme lot ne sont ni melanges ni collationnes avec la mauvaise altitude)."""
     cur_alt = cur_alt or {}
     if not orders:
         return ""
     cs = orders[0].get("callsign", "")
-    phr = [p for p in (readback_for_order(o, cur_alt.get(cs)) for o in orders) if p]
+    mine = [o for o in orders if o.get("callsign", "") == cs]
+    phr = [p for p in (readback_for_order(o, cur_alt.get(cs)) for o in mine) if p]
     if not phr:
         return ""
     return ", ".join(phr) + ", " + callsign_telephony(cs)

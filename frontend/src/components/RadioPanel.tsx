@@ -75,11 +75,15 @@ export default function RadioPanel({ hub, prefill }: { hub: SimHub; prefill: str
   useEffect(() => {
     const isTyping = (t: EventTarget | null) =>
       t instanceof HTMLElement && (t.tagName === "INPUT" || t.tagName === "TEXTAREA");
+    // Ctrl+V / Cmd+V / Alt+V restent des raccourcis systeme (coller...) :
+    // seul « V » nu declenche l'alternat.
+    const plainV = (e: KeyboardEvent) =>
+      e.code === "KeyV" && !e.ctrlKey && !e.metaKey && !e.altKey;
     const down = (e: KeyboardEvent) => {
-      if (e.code === "KeyV" && !isTyping(e.target) && !e.repeat) { e.preventDefault(); void startTalk(); }
+      if (plainV(e) && !isTyping(e.target) && !e.repeat) { e.preventDefault(); void startTalk(); }
     };
     const up = (e: KeyboardEvent) => {
-      if (e.code === "KeyV" && !isTyping(e.target)) { e.preventDefault(); void stopTalk(); }
+      if (plainV(e) && !isTyping(e.target)) { e.preventDefault(); void stopTalk(); }
     };
     // Si le focus est perdu pendant la transmission (alt-tab, popup permission
     // micro...), le keyup « V » peut ne jamais arriver : on coupe le micro pour

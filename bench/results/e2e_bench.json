@@ -1,0 +1,537 @@
+{
+ "config": {
+  "stt": "hf-lora:C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\model\\whisper-lora-adapter",
+  "llm": "mistral-7b-instruct-v0.3-q4_k_m",
+  "tts": "kokoro-82m",
+  "voix_controleur_sapi": "Microsoft Zira Desktop",
+  "snr_db": 12.0,
+  "seed_bruit": 7,
+  "n": 25
+ },
+ "voix": {
+  "reussite": 0.76,
+  "ic95": [
+   0.5657031664457093,
+   0.8850368630659855
+  ],
+  "k": 19,
+  "n": 25
+ },
+ "texte_temoin": {
+  "reussite": 0.88,
+  "ic95": [
+   0.7004420607907267,
+   0.9583318284955964
+  ],
+  "k": 22,
+  "n": 25
+ },
+ "attribution_echecs": {
+  "stt": 3,
+  "llm": 3,
+  "provider": 0
+ },
+ "stt_wer_moyen": 0.20812,
+ "latences": {
+  "stt": {
+   "n": 25,
+   "moyenne_s": 0.36048476800788193,
+   "mediane_s": 0.31753420003224164,
+   "p95_s": 0.4169890400022267,
+   "min_s": 0.26438430009875447,
+   "max_s": 1.2220738000469282,
+   "ic95_moyenne_s": [
+    0.3126735425092047,
+    0.4405884184107417
+   ]
+  },
+  "llm": {
+   "n": 25,
+   "moyenne_s": 1.0617839280003682,
+   "mediane_s": 0.9803410000167787,
+   "p95_s": 1.4208425399847324,
+   "min_s": 0.8712518999818712,
+   "max_s": 2.073944399948232,
+   "ic95_moyenne_s": [
+    0.9826990220117149,
+    1.1703874302961632
+   ]
+  },
+  "tts": {
+   "n": 25,
+   "moyenne_s": 1.1466526279924438,
+   "mediane_s": 1.183233099989593,
+   "p95_s": 1.3566215400351211,
+   "min_s": 0.7137247999198735,
+   "max_s": 1.4728057000320405,
+   "ic95_moyenne_s": [
+    1.0752737251895015,
+    1.2133460063008823
+   ]
+  },
+  "totale": {
+   "n": 25,
+   "moyenne_s": 2.568921324000694,
+   "mediane_s": 2.5218869999516755,
+   "p95_s": 3.1956653799861656,
+   "min_s": 1.9229275999823585,
+   "max_s": 4.601674499921501,
+   "ic95_moyenne_s": [
+    2.404113780695479,
+    2.7902962431950726
+   ]
+  }
+ },
+ "rows": [
+  {
+   "phrase": "air france one two three four turn left heading two seven zero",
+   "attendu": [
+    "HDG AFR1234 270"
+   ],
+   "transcript": "air france one two three four turn left heading two seven zero",
+   "obtenu": [
+    "HDG AFR1234 270"
+   ],
+   "correct": true,
+   "stt_wer": 0.0,
+   "etage_echec": null,
+   "readback": "heading two seven zero, air france one two three four",
+   "latence_stt_s": 1.2220738000469282,
+   "latence_llm_s": 2.073944399948232,
+   "latence_tts_s": 1.3056562999263406,
+   "latence_totale_s": 4.601674499921501
+  },
+  {
+   "phrase": "speedbird five seven turn right heading 090",
+   "attendu": [
+    "HDG BAW57 90"
+   ],
+   "transcript": "speed bird five seven turn right heading zero ninety",
+   "obtenu": [
+    "HDG BAW57 90"
+   ],
+   "correct": true,
+   "stt_wer": 0.5,
+   "etage_echec": null,
+   "readback": "heading zero niner zero, speedbird five seven",
+   "latence_stt_s": 0.30511200008913875,
+   "latence_llm_s": 0.8712518999818712,
+   "latence_tts_s": 0.9817997000645846,
+   "latence_totale_s": 2.1581636001355946
+  },
+  {
+   "phrase": "AFR1234 fly heading three six zero",
+   "attendu": [
+    "HDG AFR1234 360"
+   ],
+   "transcript": "a one two three four fly heading three six zero",
+   "obtenu": [
+    "HDG AFR1234 360"
+   ],
+   "correct": true,
+   "stt_wer": 0.2,
+   "etage_echec": null,
+   "readback": "heading three six zero, air france one two three four",
+   "latence_stt_s": 0.2812866000458598,
+   "latence_llm_s": 0.9711294999578968,
+   "latence_tts_s": 1.005643800017424,
+   "latence_totale_s": 2.2580599000211805
+  },
+  {
+   "phrase": "EZY21 fly heading 100",
+   "attendu": [
+    "HDG EZY21 100"
+   ],
+   "transcript": "easy one two one fly heading one hundred",
+   "obtenu": [
+    "HDG EZY121 100"
+   ],
+   "correct": false,
+   "stt_wer": 0.4,
+   "etage_echec": "stt",
+   "readback": "heading one zero zero, easyjet one two one",
+   "latence_stt_s": 0.36146799998823553,
+   "latence_llm_s": 0.9782970000524074,
+   "latence_tts_s": 1.2243679000530392,
+   "latence_totale_s": 2.564132900093682
+  },
+  {
+   "phrase": "lufthansa eight eight heading one eight zero",
+   "attendu": [
+    "HDG DLH88 180"
+   ],
+   "transcript": "lufthansa eight eight heading one eight zero",
+   "obtenu": [
+    "HDG DLH88 180"
+   ],
+   "correct": true,
+   "stt_wer": 0.0,
+   "etage_echec": null,
+   "readback": "heading one eight zero, lufthansa eight eight",
+   "latence_stt_s": 0.29315130005124956,
+   "latence_llm_s": 0.9028538999846205,
+   "latence_tts_s": 0.875895099947229,
+   "latence_totale_s": 2.071900299983099
+  },
+  {
+   "phrase": "ryanair niner turn right heading two two five",
+   "attendu": [
+    "HDG RYR9 225"
+   ],
+   "transcript": "ryan air nine turn right heading two two five",
+   "obtenu": [
+    "HDG RYR9 225"
+   ],
+   "correct": true,
+   "stt_wer": 0.333,
+   "etage_echec": null,
+   "readback": "heading two two five, ryanair niner",
+   "latence_stt_s": 0.26438430009875447,
+   "latence_llm_s": 0.9448184999637306,
+   "latence_tts_s": 0.7137247999198735,
+   "latence_totale_s": 1.9229275999823585
+  },
+  {
+   "phrase": "AFR1234 hdg 045",
+   "attendu": [
+    "HDG AFR1234 45"
+   ],
+   "transcript": "a one two three four HDG zero forty five",
+   "obtenu": [
+    "HDG AFR1234 45"
+   ],
+   "correct": true,
+   "stt_wer": 0.5,
+   "etage_echec": null,
+   "readback": "heading zero four five, air france one two three four",
+   "latence_stt_s": 0.28171820007264614,
+   "latence_llm_s": 0.9488921000156552,
+   "latence_tts_s": 1.083801099914126,
+   "latence_totale_s": 2.3144114000024274
+  },
+  {
+   "phrase": "BAW57 turn left heading 310",
+   "attendu": [
+    "HDG BAW57 310"
+   ],
+   "transcript": "b eight double u five seven turn left heading three hundred and ten",
+   "obtenu": [
+    "HDG B8U57 310"
+   ],
+   "correct": false,
+   "stt_wer": 0.667,
+   "etage_echec": "stt",
+   "readback": "heading three one zero, bravo eight uniform five seven",
+   "latence_stt_s": 0.3833127999678254,
+   "latence_llm_s": 1.2995547000318766,
+   "latence_tts_s": 1.0874721999280155,
+   "latence_totale_s": 2.7703396999277174
+  },
+  {
+   "phrase": "air france one two three four descend flight level one zero zero",
+   "attendu": [
+    "ALT AFR1234 10000"
+   ],
+   "transcript": "air france one two three four descend flight level one zero zero",
+   "obtenu": [
+    "ALT AFR1234 10000"
+   ],
+   "correct": true,
+   "stt_wer": 0.0,
+   "etage_echec": null,
+   "readback": "climb flight level one zero zero, air france one two three four",
+   "latence_stt_s": 0.3448720999294892,
+   "latence_llm_s": 1.0450468000490218,
+   "latence_tts_s": 1.236967800068669,
+   "latence_totale_s": 2.62688670004718
+  },
+  {
+   "phrase": "csa one delta zulu climb flight level two four zero",
+   "attendu": [
+    "ALT CSA1DZ 24000"
+   ],
+   "transcript": "csa one delta zulu climb flight level two four zero",
+   "obtenu": [
+    "ALT CSAD12Z 24000"
+   ],
+   "correct": false,
+   "stt_wer": 0.0,
+   "etage_echec": "llm",
+   "readback": "climb flight level two four zero, charlie sierra alfa delta one two zulu",
+   "latence_stt_s": 0.3780265999957919,
+   "latence_llm_s": 1.451164499972947,
+   "latence_tts_s": 1.4728057000320405,
+   "latence_totale_s": 3.3019968000007793
+  },
+  {
+   "phrase": "AFR1234 climb FL320",
+   "attendu": [
+    "ALT AFR1234 32000"
+   ],
+   "transcript": "a one two three four climb FL three two zero",
+   "obtenu": [
+    "ALT AFR1234 32000"
+   ],
+   "correct": true,
+   "stt_wer": 0.2,
+   "etage_echec": null,
+   "readback": "climb flight level three two zero, air france one two three four",
+   "latence_stt_s": 0.2716179999988526,
+   "latence_llm_s": 1.047256699996069,
+   "latence_tts_s": 1.2566637999843806,
+   "latence_totale_s": 2.5755384999793023
+  },
+  {
+   "phrase": "BAW57 descend to flight level 80",
+   "attendu": [
+    "ALT BAW57 8000"
+   ],
+   "transcript": "csa five seven descend to flight level eighty",
+   "obtenu": [
+    "ALT CSAL57 8000"
+   ],
+   "correct": false,
+   "stt_wer": 0.143,
+   "etage_echec": "llm",
+   "readback": "climb flight level zero eight zero, charlie sierra alfa lima five seven",
+   "latence_stt_s": 0.3229210999561474,
+   "latence_llm_s": 0.9596770000644028,
+   "latence_tts_s": 1.326244099996984,
+   "latence_totale_s": 2.608842200017534
+  },
+  {
+   "phrase": "EZY21 climb 5 thousand feet",
+   "attendu": [
+    "ALT EZY21 5000"
+   ],
+   "transcript": "easy one two one climb five thousand feet",
+   "obtenu": [
+    "ALT EZY121 5000"
+   ],
+   "correct": false,
+   "stt_wer": 0.4,
+   "etage_echec": "stt",
+   "readback": "climb flight level zero five zero, easyjet one two one",
+   "latence_stt_s": 0.28805350000038743,
+   "latence_llm_s": 1.0118903999682516,
+   "latence_tts_s": 1.3251675999490544,
+   "latence_totale_s": 2.6251114999176934
+  },
+  {
+   "phrase": "AFR1234 descend altitude 6000 feet",
+   "attendu": [
+    "ALT AFR1234 6000"
+   ],
+   "transcript": "a one two three four descend altitude six thousand feet",
+   "obtenu": [
+    "ALT AFR1234 6000"
+   ],
+   "correct": true,
+   "stt_wer": 0.167,
+   "etage_echec": null,
+   "readback": "climb flight level zero six zero, air france one two three four",
+   "latence_stt_s": 0.2987932999385521,
+   "latence_llm_s": 1.034112700028345,
+   "latence_tts_s": 1.2512765999417752,
+   "latence_totale_s": 2.5841825999086723
+  },
+  {
+   "phrase": "air france one two three four climb to flight level three two zero",
+   "attendu": [
+    "ALT AFR1234 32000"
+   ],
+   "transcript": "air france one two three four climb to flight level three two zero",
+   "obtenu": [
+    "ALT AFR1234 32000"
+   ],
+   "correct": true,
+   "stt_wer": 0.0,
+   "etage_echec": null,
+   "readback": "climb flight level three two zero, air france one two three four",
+   "latence_stt_s": 0.37239370006136596,
+   "latence_llm_s": 1.0428042999701574,
+   "latence_tts_s": 1.352127299993299,
+   "latence_totale_s": 2.7673253000248224
+  },
+  {
+   "phrase": "BAW57 maintain flight level 100",
+   "attendu": [
+    "ALT BAW57 10000"
+   ],
+   "transcript": "baw five seven maintain flight level one hundred",
+   "obtenu": [
+    "ALT BAW57 10000"
+   ],
+   "correct": true,
+   "stt_wer": 0.0,
+   "etage_echec": null,
+   "readback": "climb flight level one zero zero, speedbird five seven",
+   "latence_stt_s": 0.3308023000136018,
+   "latence_llm_s": 0.94108719995711,
+   "latence_tts_s": 1.2499974999809638,
+   "latence_totale_s": 2.5218869999516755
+  },
+  {
+   "phrase": "DLH88 descend 4000 feet",
+   "attendu": [
+    "ALT DLH88 4000"
+   ],
+   "transcript": "dlh eight eight descend four thousand feet",
+   "obtenu": [
+    "ALT DLH88 4000"
+   ],
+   "correct": true,
+   "stt_wer": 0.0,
+   "etage_echec": null,
+   "readback": "climb flight level zero four zero, lufthansa eight eight",
+   "latence_stt_s": 0.31753420003224164,
+   "latence_llm_s": 1.2508329999400303,
+   "latence_tts_s": 1.1410586000420153,
+   "latence_totale_s": 2.7094258000142872
+  },
+  {
+   "phrase": "speedbird five seven climb flight level one five zero",
+   "attendu": [
+    "ALT BAW57 15000"
+   ],
+   "transcript": "speed bird five seven climb flight level one five zero",
+   "obtenu": [
+    "ALT BAW57 15000"
+   ],
+   "correct": true,
+   "stt_wer": 0.333,
+   "etage_echec": null,
+   "readback": "climb flight level one five zero, speedbird five seven",
+   "latence_stt_s": 0.31459219998214394,
+   "latence_llm_s": 1.005268899956718,
+   "latence_tts_s": 1.1844328000443056,
+   "latence_totale_s": 2.5042938999831676
+  },
+  {
+   "phrase": "AFR1234 reduce speed two five zero knots",
+   "attendu": [
+    "SPD AFR1234 250"
+   ],
+   "transcript": "a one two three four reduce speed two five zero knots",
+   "obtenu": [
+    "SPD AFR1234 250"
+   ],
+   "correct": true,
+   "stt_wer": 0.167,
+   "etage_echec": null,
+   "readback": "speed two five zero knots, air france one two three four",
+   "latence_stt_s": 0.4254081000108272,
+   "latence_llm_s": 1.005101199960336,
+   "latence_tts_s": 1.0824739000527188,
+   "latence_totale_s": 2.512983200023882
+  },
+  {
+   "phrase": "AFR1234 increase speed 300",
+   "attendu": [
+    "SPD AFR1234 300"
+   ],
+   "transcript": "a one two three four increase speed three hundred",
+   "obtenu": [
+    "SPD AFR1234 300"
+   ],
+   "correct": true,
+   "stt_wer": 0.2,
+   "etage_echec": null,
+   "readback": "speed three zero zero knots, air france one two three four",
+   "latence_stt_s": 0.2752087999833748,
+   "latence_llm_s": 1.0065302000148222,
+   "latence_tts_s": 1.1145495999371633,
+   "latence_totale_s": 2.3962885999353603
+  },
+  {
+   "phrase": "RYR9 increase speed to 280 knots",
+   "attendu": [
+    "SPD RYR9 280"
+   ],
+   "transcript": "ryn nine increase speed to two hundred and eighty knots",
+   "obtenu": [
+    "SPD RYR9 280"
+   ],
+   "correct": true,
+   "stt_wer": 0.143,
+   "etage_echec": null,
+   "readback": "speed two eight zero knots, ryanair niner",
+   "latence_stt_s": 0.35857359995134175,
+   "latence_llm_s": 0.9323719000676647,
+   "latence_tts_s": 0.9168824000516906,
+   "latence_totale_s": 2.207827900070697
+  },
+  {
+   "phrase": "easyjet two one reduce speed two two zero",
+   "attendu": [
+    "SPD EZY21 220"
+   ],
+   "transcript": "easy jet two one reduce speed two two zero",
+   "obtenu": [
+    "SPD EZY21 220"
+   ],
+   "correct": true,
+   "stt_wer": 0.4,
+   "etage_echec": null,
+   "readback": "speed two two zero knots, easyjet two one",
+   "latence_stt_s": 0.29831080010626465,
+   "latence_llm_s": 0.9594058999791741,
+   "latence_tts_s": 0.8894087999360636,
+   "latence_totale_s": 2.1471255000215024
+  },
+  {
+   "phrase": "BAW57 speed 250",
+   "attendu": [
+    "SPD BAW57 250"
+   ],
+   "transcript": "baa five seven speed two hundred and fifty",
+   "obtenu": [
+    "SPD BAW57 250"
+   ],
+   "correct": true,
+   "stt_wer": 0.25,
+   "etage_echec": null,
+   "readback": "speed two five zero knots, speedbird five seven",
+   "latence_stt_s": 0.3373685999540612,
+   "latence_llm_s": 0.9405941000441089,
+   "latence_tts_s": 1.0469200999941677,
+   "latence_totale_s": 2.324882799992338
+  },
+  {
+   "phrase": "csa one delta zulu reduce 230",
+   "attendu": [
+    "SPD CSA1DZ 230"
+   ],
+   "transcript": "csa one delta zulu reduce two hundred and thirty",
+   "obtenu": [
+    "SPD CSAD12Z 230"
+   ],
+   "correct": false,
+   "stt_wer": 0.0,
+   "etage_echec": "llm",
+   "readback": "speed two three zero knots, charlie sierra alfa delta one two zulu",
+   "latence_stt_s": 0.3681556999217719,
+   "latence_llm_s": 0.9403704000869766,
+   "latence_tts_s": 1.3577451000455767,
+   "latence_totale_s": 2.666271200054325
+  },
+  {
+   "phrase": "AFR1234 maintain 250 knots",
+   "attendu": [
+    "SPD AFR1234 250"
+   ],
+   "transcript": "a one two three four maintain two hundred and fifty knots",
+   "obtenu": [
+    "SPD AFR1234 250"
+   ],
+   "correct": true,
+   "stt_wer": 0.2,
+   "etage_echec": null,
+   "readback": "speed two five zero knots, air france one two three four",
+   "latence_stt_s": 0.3169796000001952,
+   "latence_llm_s": 0.9803410000167787,
+   "latence_tts_s": 1.183233099989593,
+   "latence_totale_s": 2.480553700006567
+  }
+ ]
+}

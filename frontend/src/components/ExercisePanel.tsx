@@ -1,6 +1,6 @@
 /** Mode exercice : l'IA cree la situation (conflits garantis + meteo), l'eleve
  *  la resout ; score en direct et acces au debrief. */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CircleStop, Loader2, Play, Target } from "lucide-react";
 import { api } from "../api";
 import type { SimHub } from "../useSim";
@@ -19,6 +19,16 @@ export default function ExercisePanel({ hub, onDebrief }: { hub: SimHub; onDebri
   const [exMeta, setExMeta] = useState<{ objectives?: string[]; label?: string } | null>(null);
   const live = hub.exerciseLive;
   const active = hub.exerciseActive;
+
+  // le panneau est monte conditionnellement (changement d'onglet = demontage) :
+  // les objectifs sont re-lus depuis le serveur si l'exercice tourne deja.
+  useEffect(() => {
+    if (active && !exMeta) {
+      api.exercise()
+        .then((st) => setExMeta({ objectives: st.objectives, label: st.label }))
+        .catch(() => undefined);
+    }
+  }, [active, exMeta]);
 
   const start = async () => {
     setBusy(true);

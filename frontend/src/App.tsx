@@ -44,7 +44,18 @@ export default function App() {
   const [prefill, setPrefill] = useState("");
 
   useEffect(() => {
-    api.nav().then(setNav).catch(() => undefined);
+    // ré-essaye tant que la carte n'est pas chargée : couvre un backend qui
+    // démarre APRÈS le front (ou redémarre) — sinon radar sans secteur/routes
+    // jusqu'à un rechargement manuel.
+    let cancelled = false;
+    let timer: number | undefined;
+    const tryNav = () => {
+      api.nav()
+        .then((n) => { if (!cancelled) setNav(n); })
+        .catch(() => { if (!cancelled) timer = window.setTimeout(tryNav, 2000); });
+    };
+    tryNav();
+    return () => { cancelled = true; if (timer !== undefined) window.clearTimeout(timer); };
   }, []);
 
   // fin d'exercice -> ouverture automatique du debrief
@@ -53,13 +64,14 @@ export default function App() {
   }, [hub]);
 
   const onPlace = useCallback((x: number, y: number) => {
-    setPlaceMode((mode) => {
-      if (mode) {
-        void api.addZone(mode, x, y, mode === "storm" ? 14 : 10);
-      }
-      return null;
-    });
-  }, []);
+    // effet de bord HORS de l'updater setState (un updater doit rester pur :
+    // React StrictMode peut le rejouer, donc doubler la requete addZone)
+    setPlaceMode(null);
+    if (placeMode) {
+      void api.addZone(placeMode, x, y, placeMode === "storm" ? 14 : 10)
+        .catch((e) => hub.pushLog("rej", `⊘ zone : ${e}`));
+    }
+  }, [placeMode, hub]);
 
   const onSelect = useCallback((id: string | null) => {
     setSelected(id);

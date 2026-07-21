@@ -126,12 +126,23 @@ export default function InstructorPanel({ hub, placeMode, setPlaceMode }: {
           <Btn
             onClick={() => {
               if (windDir === "") return;
-              void api.setWind(+windDir, +(windSpd || 0), windFl ? +windFl * 100 : undefined);
+              const dir = Number(windDir);
+              const spd = Number(windSpd || 0);
+              const fl = windFl ? Number(windFl) : undefined;
+              // saisie non numerique -> NaN serialise null -> 400 backend :
+              // on valide ICI avec un message clair, sans requete inutile.
+              if (!Number.isFinite(dir) || !Number.isFinite(spd) || (fl !== undefined && !Number.isFinite(fl))) {
+                hub.pushLog("rej", "⊘ Vent : direction/vitesse/FL doivent être numériques");
+                return;
+              }
+              void api.setWind(dir, spd, fl !== undefined ? fl * 100 : undefined)
+                .catch((e) => hub.pushLog("rej", `⊘ Vent : ${e}`));
             }}
           >
             <Wind size={13} className="mr-1 inline" />Vent
           </Btn>
-          <Btn variant="ghost" title="Effacer le vent" onClick={() => void api.setWind("")}>
+          <Btn variant="ghost" title="Effacer le vent"
+            onClick={() => void api.setWind("").catch((e) => hub.pushLog("rej", `⊘ Vent : ${e}`))}>
             <X size={13} />
           </Btn>
         </Row>

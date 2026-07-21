@@ -1,0 +1,228 @@
+{
+ "cpa_multi_graines": {
+  "campagnes": [
+   {
+    "seed": 42,
+    "n": 200000,
+    "n_los_initial": 598,
+    "n_predictions": 817,
+    "n_predictions_attendues": 817,
+    "n_desaccords": 0,
+    "erreur_dcpa_nm": {
+     "max": 0.049827320662998,
+     "moyenne": 0.02442460379994626,
+     "p99": 0.0492279797579675
+    },
+    "erreur_tcpa_s": {
+     "max": 0.5,
+     "moyenne": 0.2553855569155445
+    }
+   },
+   {
+    "seed": 43,
+    "n": 200000,
+    "n_los_initial": 620,
+    "n_predictions": 825,
+    "n_predictions_attendues": 825,
+    "n_desaccords": 0,
+    "erreur_dcpa_nm": {
+     "max": 0.05000057881148767,
+     "moyenne": 0.024327930991565036,
+     "p99": 0.04956114660006142
+    },
+    "erreur_tcpa_s": {
+     "max": 0.5,
+     "moyenne": 0.25
+    }
+   },
+   {
+    "seed": 44,
+    "n": 200000,
+    "n_los_initial": 642,
+    "n_predictions": 883,
+    "n_predictions_attendues": 883,
+    "n_desaccords": 0,
+    "erreur_dcpa_nm": {
+     "max": 0.049859153507882836,
+     "moyenne": 0.025834750923561717,
+     "p99": 0.04943270174522131
+    },
+    "erreur_tcpa_s": {
+     "max": 0.5,
+     "moyenne": 0.24303510758776903
+    }
+   },
+   {
+    "seed": 45,
+    "n": 200000,
+    "n_los_initial": 603,
+    "n_predictions": 864,
+    "n_predictions_attendues": 864,
+    "n_desaccords": 0,
+    "erreur_dcpa_nm": {
+     "max": 0.04996675271575812,
+     "moyenne": 0.025260664878156296,
+     "p99": 0.04971056426687561
+    },
+    "erreur_tcpa_s": {
+     "max": 0.5,
+     "moyenne": 0.24583333333333318
+    }
+   },
+   {
+    "seed": 46,
+    "n": 200000,
+    "n_los_initial": 600,
+    "n_predictions": 817,
+    "n_predictions_attendues": 817,
+    "n_desaccords": 0,
+    "erreur_dcpa_nm": {
+     "max": 0.04995297376035879,
+     "moyenne": 0.024179854215738792,
+     "p99": 0.049449903476669055
+    },
+    "erreur_tcpa_s": {
+     "max": 0.5,
+     "moyenne": 0.24461444308445543
+    }
+   }
+  ],
+  "total_geometries": 1000000,
+  "total_desaccords": 0,
+  "pire_erreur_dcpa_nm": 0.05000057881148767,
+  "grille": {
+   "dt_s": 0.05,
+   "horizon_s": 300.0
+  },
+  "duree_s": 123.9
+ },
+ "conflit_garanti": {
+  "n": 2000,
+  "taux_garantie": 1.0,
+  "dcpa_nm": {
+   "max": 0.08160456497917311,
+   "moyenne": 0.017948226037998814,
+   "p99": 0.0649710530896697
+  },
+  "abs_err_tcpa_vs_tc_s": {
+   "max": 0.7131869706943235,
+   "moyenne": 0.20386257290178572,
+   "p99": 0.5948355920010675
+  },
+  "t_c_s": {
+   "min": 240.0661381116247,
+   "max": 419.8625084917111
+  },
+  "critere": "dCPA < 5 NM, t_c dans [240,420] s, |tCPA - t_c| < 10 s"
+ },
+ "latence_parseur": {
+  "n": 400,
+  "moyenne_s": 7.277125001110108e-05,
+  "mediane_s": 7.140000070648966e-05,
+  "p95_s": 0.0001025050000862393,
+  "min_s": 2.750000021478627e-05,
+  "max_s": 0.00021180000112508424,
+  "ic95_moyenne_s": [
+   7.063318752000214e-05,
+   7.50420312750748e-05
+  ]
+ },
+ "bluesky_scaling": [
+  {
+   "avions": 5,
+   "reps": 5,
+   "facteur_temps_reel_moyen": 104.94953668378267,
+   "ic95": [
+    93.99816210864347,
+    114.91065216253632
+   ],
+   "facteurs": [
+    99.2,
+    121.0,
+    112.3,
+    106.7,
+    85.5
+   ]
+  },
+  {
+   "avions": 10,
+   "reps": 5,
+   "facteur_temps_reel_moyen": 93.57497817540673,
+   "ic95": [
+    83.0540143378079,
+    106.30921624166747
+   ],
+   "facteurs": [
+    116.3,
+    91.9,
+    92.1,
+    90.5,
+    77.1
+   ]
+  },
+  {
+   "avions": 25,
+   "reps": 5,
+   "facteur_temps_reel_moyen": 93.88297577465451,
+   "ic95": [
+    79.52461046274291,
+    109.20423054412845
+   ],
+   "facteurs": [
+    120.1,
+    104.1,
+    92.9,
+    78.0,
+    74.3
+   ]
+  },
+  {
+   "avions": 50,
+   "reps": 5,
+   "facteur_temps_reel_moyen": 94.20693117004544,
+   "ic95": [
+    84.36697477160457,
+    104.9736630206462
+   ],
+   "facteurs": [
+    77.1,
+    97.4,
+    112.9,
+    90.5,
+    93.0
+   ]
+  },
+  {
+   "avions": 100,
+   "reps": 5,
+   "facteur_temps_reel_moyen": 85.35357016864596,
+   "ic95": [
+    75.5846871272192,
+    92.43559571716204
+   ],
+   "facteurs": [
+    84.9,
+    91.5,
+    94.9,
+    89.4,
+    66.0
+   ]
+  },
+  {
+   "avions": 200,
+   "reps": 5,
+   "facteur_temps_reel_moyen": 66.73872696015634,
+   "ic95": [
+    54.218641169429205,
+    76.74160060193465
+   ],
+   "facteurs": [
+    42.9,
+    80.5,
+    75.7,
+    71.2,
+    63.3
+   ]
+  }
+ ]
+}

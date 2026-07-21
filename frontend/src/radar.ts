@@ -33,6 +33,7 @@ const C = {
   sel: "#9ad9ff",
   fms: "#8f7bff",
   wind: "#69d0ff",
+  mag: "#ff5ab0",                     // marqueur "aeronef dans une zone"
 };
 
 export const colorOf = (a: Aircraft) =>
@@ -290,8 +291,7 @@ function drawAircraft(
   ctx.lineWidth = 1.7;
   ctx.strokeRect(x - 4, y - 4, 8, 8);
   if (a.inzone) {
-    ctx.strokeStyle = C.fms;
-    ctx.strokeStyle = "#ff5ab0";
+    ctx.strokeStyle = C.mag;          // marqueur "dans une zone" (palette)
     ctx.lineWidth = 1.2;
     ctx.beginPath(); ctx.arc(x, y, 10, 0, 2 * Math.PI); ctx.stroke();
   }

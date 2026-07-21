@@ -1,0 +1,13 @@
+{
+ "date_reexecution": "2026-07-03",
+ "conclusion": "Reproductibilite exacte : tous les champs de validation/results.json identiques a la version commitee, seuls duree_totale_s et date different.",
+ "champs_differents_hors_duree": [
+  "meta.date"
+ ],
+ "synthese": {
+  "cpa_analytique": "erreur max 5.52e-04 NM / 100000 geometries, 0 desaccord",
+  "cpa_vs_bluesky": "MAE dCPA 0.067 NM, MAE tCPA 0.7 s, precision/rappel/F1 = 1.0 (200 rencontres)",
+  "parseur": "100.0% (68 phrases), rejet negatifs 100%",
+  "generateur": "116/116 contraintes (20 descriptions)"
+ }
+}

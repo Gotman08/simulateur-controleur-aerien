@@ -56,22 +56,33 @@ export default function TopBar({ hub }: { hub: SimHub }) {
         <Btn
           variant="ghost"
           title={st.paused ? "Reprendre" : "Pause"}
-          onClick={() => (st.paused ? api.resume() : api.pause())}
+          onClick={() => {
+            void (st.paused ? api.resume() : api.pause())
+              .catch((e) => hub.pushLog("rej", `⊘ pause/reprise : ${e}`));
+          }}
         >
           {st.paused ? <Play size={15} /> : <Pause size={15} />}
         </Btn>
         <label className="flex items-center gap-1.5 text-[12px] text-mut" title="Vitesse de simulation">
           <input
-            type="range" min={1} max={10} step={1} defaultValue={1}
+            type="range" min={1} max={10} step={1}
+            value={Math.round(st.speed ?? 1)}
             className="w-20"
-            onChange={(e) => api.setSpeed(+e.target.value)}
+            onChange={(e) => {
+              void api.setSpeed(+e.target.value)
+                .catch((err) => hub.pushLog("rej", `⊘ vitesse : ${err}`));
+            }}
           />
           <span className="w-6 font-mono text-acc">{st.speed}×</span>
         </label>
         <Btn
           variant="ghost"
           title="Vider le radar (RESET)"
-          onClick={() => { if (confirm("Réinitialiser la simulation ?")) api.reset(); }}
+          onClick={() => {
+            if (confirm("Réinitialiser la simulation ?")) {
+              void api.reset().catch((e) => hub.pushLog("rej", `⊘ reset : ${e}`));
+            }
+          }}
         >
           <RotateCcw size={15} />
         </Btn>

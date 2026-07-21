@@ -62,13 +62,25 @@ export function useSim(): SimHub {
     let ws: WebSocket | null = null;
     let closed = false;
     let lastPush = -1e9;          // le tout premier etat est rendu immediatement
+    let trailing: number | null = null;   // bord de fuite du throttle
 
     const handle = (msg: Record<string, unknown>) => {
       switch (msg.type) {
         case "state": {
           stateRef.current = msg as unknown as SimState;
           const t = performance.now();
-          if (t - lastPush > 240) { lastPush = t; setState(stateRef.current); }
+          if (t - lastPush > 240) {
+            lastPush = t;
+            setState(stateRef.current);
+          } else if (trailing === null) {
+            // bord de fuite : le DERNIER etat d'une rafale est toujours rendu
+            // (sinon les panneaux restent figes sur l'avant-dernier etat)
+            trailing = window.setTimeout(() => {
+              trailing = null;
+              lastPush = performance.now();
+              setState(stateRef.current);
+            }, 240 - (t - lastPush) + 10);
+          }
           break;
         }
         case "exchange": {
@@ -126,7 +138,11 @@ export function useSim(): SimHub {
       ws.onclose = () => { if (!closed) setTimeout(connect, 1500); };
     };
     connect();
-    return () => { closed = true; ws?.close(); };
+    return () => {
+      closed = true;
+      if (trailing !== null) window.clearTimeout(trailing);
+      ws?.close();
+    };
   }, [pushLog, refreshHealth]);
 
   return {

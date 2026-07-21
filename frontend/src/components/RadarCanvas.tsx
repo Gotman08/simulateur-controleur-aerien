@@ -128,7 +128,9 @@ export default function RadarCanvas({
     const onUp = (e: PointerEvent) => {
       const wasDrag = drag?.moved;
       drag = null;
-      canvas.releasePointerCapture(e.pointerId);
+      // pointerup synthetique / capture deja perdue : releasePointerCapture
+      // leverait NotFoundError et casserait la selection au clic
+      try { canvas.releasePointerCapture(e.pointerId); } catch { /* deja relachee */ }
       if (wasDrag) return;
       // clic simple : placement de zone ou selection d'avion
       const v = makeView();

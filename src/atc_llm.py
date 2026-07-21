@@ -60,13 +60,25 @@ def ner_extract(text):
     return {"text": text, "callsign": None, "entities": []}
 
 
+_validateur_alerte = False
+
+
 def validate_order(order):
     """(ok, trafscript|erreur) via la validation de securite S2 (bornes, actions)."""
+    global _validateur_alerte
     if _bsky and hasattr(_bsky, "json_to_trafscript"):
         try:
             return True, _bsky.json_to_trafscript(order)
         except Exception as e:
             return False, str(e)
+    if not _validateur_alerte:
+        # sans le validateur, 100 % des ordres sont rejetes : l'app "tourne"
+        # mais n'execute plus rien — on le dit UNE fois, fort.
+        import logging
+        logging.getLogger("atc_llm").error(
+            "03_bluesky_connector introuvable : TOUT ordre sera rejete "
+            "(« validateur S2 indisponible ») — verifier l'installation")
+        _validateur_alerte = True
     return False, "validateur S2 indisponible"
 
 
@@ -149,8 +161,17 @@ def generate_text(transcription, retrieved, ner, max_new_tokens=256):
                                   max_new_tokens=max_new_tokens)
 
 
+def _fix_leading_zeros(blob):
+    """Nombres JSON a zero de tete ('"value": 090') -> valides ('90').
+    Les LLM produisent volontiers des caps a trois chiffres (heading 090) ;
+    json.loads rejette ces litteraux. On ne touche qu'aux nombres NUS apres
+    ':' / '[' / ',' — jamais au contenu des chaines ("ENTRY_090" intact)."""
+    return re.sub(r"([:\[,]\s*)0+(\d)", r"\g<1>\g<2>", blob)
+
+
 def parse_orders(text):
-    """Extrait un tableau JSON d'ordres, tolerant (code fences, prose autour, objets isoles)."""
+    """Extrait un tableau JSON d'ordres, tolerant (code fences, prose autour,
+    objets isoles, zeros de tete)."""
     t = text.strip()
     t = re.sub(r"^```(?:json)?", "", t).strip()
     t = re.sub(r"```$", "", t).strip()
@@ -159,12 +180,15 @@ def parse_orders(text):
     try:
         data = json.loads(blob)
     except Exception:
-        data = []
-        for o in re.findall(r"\{[^{}]*\}", t, re.S):
-            try:
-                data.append(json.loads(o))
-            except Exception:
-                pass
+        try:
+            data = json.loads(_fix_leading_zeros(blob))
+        except Exception:
+            data = []
+            for o in re.findall(r"\{[^{}]*\}", t, re.S):
+                try:
+                    data.append(json.loads(_fix_leading_zeros(o)))
+                except Exception:
+                    pass
     if isinstance(data, dict):
         data = [data]
     return data if isinstance(data, list) else []
@@ -180,6 +204,7 @@ def postprocess_orders(orders):
         if not isinstance(o, dict):
             rejected.append({"order": o, "erreur": "format invalide"})
             continue
+        o = dict(o)                        # copie : pas d'effet de bord sur l'appelant
         if o.get("callsign"):
             o["callsign"] = atc_callsign.normalize_callsign(str(o["callsign"]))   # indicatif canonique
         # validation graphe : un ADDWPT doit cibler un fix CONNU du secteur
@@ -195,6 +220,12 @@ def postprocess_orders(orders):
                     continue
         ok, res = validate_order(o)
         if ok:
+            # aligner la valeur de l'ordre sur l'ENTIER coerce du TrafScript
+            # (source unique) : le JSON LLM peut porter 32000.0 la ou la ligne
+            # dit 32000 — les consommateurs aval (readback, garde-fous)
+            # comparent alors des types coherents.
+            if str(o.get("action", "")).upper() in ("HDG", "ALT", "SPD"):
+                o["value"] = int(res.split()[2])
             valid.append({"order": o, "trafscript": res})
         else:
             rejected.append({"order": o, "erreur": res})
@@ -240,6 +271,17 @@ def build_scenario_messages(description):
     return [{"role": "system", "content": SCENARIO_SYSTEM}, {"role": "user", "content": user}]
 
 
+def _num_or(v, default):
+    """float(v) tolerant : None / chaine invalide -> valeur par defaut.
+    Un LLM qui renvoie un champ null ne doit pas faire disparaitre l'avion
+    entier — seul le champ fautif retombe sur son defaut."""
+    try:
+        f = float(v)
+        return f if f == f else default        # NaN -> defaut
+    except (TypeError, ValueError):
+        return default
+
+
 def clean_scenario_items(items):
     """Nettoyage PUR de la sortie LLM scenario : normalisation des indicatifs
     + bornes (bearing/dist/alt/spd). Sans GPU : reutilisable par ai_client."""
@@ -247,21 +289,18 @@ def clean_scenario_items(items):
     for it in items:
         if not isinstance(it, dict):
             continue
-        try:
-            cs = atc_callsign.normalize_callsign(str(it.get("callsign", "")))
-            if not cs:
-                continue
-            clean.append({
-                "callsign": cs,
-                "type": str(it.get("type", "A320")).upper(),
-                "bearing_deg": int(float(it.get("bearing_deg", 270))) % 360,
-                "dist_nm": max(10.0, min(65.0, float(it.get("dist_nm", 40)))),
-                "hdg": int(float(it.get("hdg", 0))) % 360,
-                "alt_ft": max(1000.0, min(45000.0, float(it.get("alt_ft", 24000)))),
-                "spd_kt": max(120.0, min(350.0, float(it.get("spd_kt", 280)))),
-            })
-        except Exception:
+        cs = atc_callsign.normalize_callsign(str(it.get("callsign") or ""))
+        if not cs:
             continue
+        clean.append({
+            "callsign": cs,
+            "type": str(it.get("type") or "A320").upper(),
+            "bearing_deg": int(_num_or(it.get("bearing_deg"), 270)) % 360,
+            "dist_nm": max(10.0, min(65.0, _num_or(it.get("dist_nm"), 40))),
+            "hdg": int(_num_or(it.get("hdg"), 0)) % 360,
+            "alt_ft": max(1000.0, min(45000.0, _num_or(it.get("alt_ft"), 24000))),
+            "spd_kt": max(120.0, min(350.0, _num_or(it.get("spd_kt"), 280))),
+        })
     return clean
 
 

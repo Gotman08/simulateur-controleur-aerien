@@ -26,8 +26,15 @@ class SectorGraph:
         self.adj = {nid: [] for nid in self.nodes}
         for s in self.segments:
             a, b, d = s.get("de"), s.get("vers"), float(s.get("dist_nm", 0))
-            self.adj.setdefault(a, []).append((b, d))
-            self.adj.setdefault(b, []).append((a, d))
+            if a not in self.nodes or b not in self.nodes:
+                # un segment vers un noeud absent creerait sinon un noeud
+                # fantome traversable par Dijkstra mais rejete par is_fix()
+                import logging
+                logging.getLogger("graph_secteur").warning(
+                    "segment ignore (noeud inconnu) : %r -> %r", a, b)
+                continue
+            self.adj[a].append((b, d))
+            self.adj[b].append((a, d))
 
     def fixes(self):
         return list(self.nodes.keys())

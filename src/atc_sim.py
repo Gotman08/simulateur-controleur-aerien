@@ -160,7 +160,10 @@ class SimManager:
             snap = dict(self._snapshot)
             snap["aircraft"] = [dict(a) for a in self._snapshot["aircraft"]]
             snap["conflicts"] = [list(c) for c in self._snapshot["conflicts"]]
-            return snap
+        # temoin de vie : un thread sim mort (init BlueSky en echec...) rendrait
+        # l'app zombie — l'UI peut desormais l'afficher au lieu d'un radar fige.
+        snap["sim_alive"] = bool(self._thread and self._thread.is_alive())
+        return snap
 
     def nav_static(self):
         """Donnees statiques de carte (calculees une fois par le thread sim)."""
@@ -189,8 +192,14 @@ class SimManager:
             if not paused and wall > 0:
                 try:
                     bsk.advance(wall * speed)
+                    self._advance_failures = 0
                 except Exception:
-                    pass
+                    # jamais avale en silence : le temps sim figerait sans trace.
+                    # Log au 1er echec puis tous les 100 (boucle a ~8 Hz).
+                    self._advance_failures = getattr(self, "_advance_failures", 0) + 1
+                    if self._advance_failures == 1 or self._advance_failures % 100 == 0:
+                        _log.exception("bsk.advance en echec (x%d) — temps simule fige",
+                                       self._advance_failures)
             self._update_snapshot(paused, speed)
             time.sleep(self._dt)
 
@@ -203,7 +212,9 @@ class SimManager:
             try:
                 self._apply(item)
             except Exception:
-                pass
+                # la file a deja ete acquittee cote HTTP : sans log, l'echec
+                # d'une commande serait strictement invisible.
+                _log.exception("commande sim en echec (ignoree) : %r", item)
 
     def _apply(self, item):
         kind = item.get("kind")
@@ -241,11 +252,11 @@ class SimManager:
             self._wind = None
             return
         d, s = int(round(float(direction))) % 360, max(0, int(round(float(speed))))
-        if alt:
+        if alt is not None:                # alt=0 ft est une altitude valide
             bsk.cmd(f"WIND {CLAT:.4f} {CLON:.4f} {float(alt)} {d} {s}")
         else:
             bsk.cmd(f"WIND {CLAT:.4f} {CLON:.4f} {d} {s}")
-        self._wind = {"dir": d, "spd": s, "alt": (int(alt) if alt else None)}
+        self._wind = {"dir": d, "spd": s, "alt": (int(alt) if alt is not None else None)}
 
     def _apply_turb(self, level):
         try:

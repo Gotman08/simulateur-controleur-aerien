@@ -25,13 +25,27 @@ def bs():
 
 
 def advance(seconds):
-    """Avance la simulation d'environ `seconds` (boucle de pas)."""
+    """Avance la simulation d'environ `seconds` (boucle de pas).
+
+    Garde anti-blocage : si simt ne progresse plus (sim en hold / etat
+    d'erreur interne), on sort apres 10 000 pas immobiles au lieu de bruler
+    500 000 step() a CHAQUE appel (spin CPU quasi permanent)."""
     b = bs()
     t0 = float(b.sim.simt)
     guard = 0
+    last_t = t0
+    stalled = 0
     while float(b.sim.simt) - t0 < seconds and guard < 500000:
         b.sim.step()
         guard += 1
+        t = float(b.sim.simt)
+        if t <= last_t:
+            stalled += 1
+            if stalled >= 10000:
+                break
+        else:
+            stalled = 0
+            last_t = t
     return float(b.sim.simt) - t0
 
 

@@ -98,7 +98,7 @@ applied client-side, so the pilot voice sounds like a real radio with any TTS ba
 | Conflict prediction (CPA) | Predicted vs measured in BlueSky, 200 encounters | MAE 0.067 NM, precision = recall = F1 = **1.000** |
 | Clearance parser (local) | 68 annotated phrases (EN + FR), 10 negative/safety cases | **100%** exact, 100% unsafe rejected |
 | Scenario generator (local) | 20 descriptions, 116 constraints | **100%** conformity |
-| Unit tests | pytest suite over the pure modules | 110 / 110 pass |
+| Unit tests | pytest suite over the pure modules | 209 / 209 pass |
 
 The full mathematical derivation (CPA closed form, convexity proof, conflict
 predicate), the empirical campaign against BlueSky, the exercise scoring model
@@ -111,6 +111,29 @@ real-time factors, BlueSky scaling up to 200 aircraft at 55x real time, the
 multilayer safety net) are measured and discussed in
 **[docs/PERFORMANCE.md](docs/PERFORMANCE.md)** — reproducible with
 `src\bluesky-env\Scripts\python.exe validation\05_performance.py`.
+
+### Benchmark campaign on consumer hardware (July 2026)
+
+Every stage was re-measured **for real** on a local RTX 4070 Laptop (8 GB),
+through the production code path, with seeded protocols, bootstrap/Wilson 95% CIs
+and paired McNemar tests — see **[bench/README.md](bench/README.md)** (methodology),
+`bench/results/*.json` (raw data) and the full research-style article
+**[docs/article/article.pdf](docs/article/article.pdf)**. Production-readiness
+review and fixes: **[docs/PRODUCTION.md](docs/PRODUCTION.md)**.
+
+<!-- BENCH:START — bloc généré par tools/gen_readme_bench.py, ne pas éditer à la main -->
+| Stage | Protocol | Headline result |
+|---|---|---|
+| Conflict geometry | 1 000 000 Monte-Carlo geometries, 5 seeds, vs independent fine grid | **0 decision disagreement**, dCPA error bounded by display rounding |
+| Guaranteed exercise conflicts | 2 000 seeded draws | **100.0%** guarantee (max dCPA 0.082 NM ≪ 5 NM) |
+| BlueSky scaling | 5 reps x 5..200 aircraft | x105 real-time @5 → x67 @200 |
+| STT (real VHF audio) | ATCO2 + UWB-ATCC samples (n=150 each), production bandpass, project WER protocol | LoRA **28.5%** vs vanilla 71.9% on ATCO2 (paired bootstrap: significant); UWB 19.2% |
+| Clearance interpretation | 116 annotated clearances (standard + out-of-grammar + adversarial), full production chain, 5 local LLMs | best local **Mistral-7B-v0.3 81.9%** (rules parser 87.9%; out-of-grammar: LLM 77% vs parser 71%) |
+| TTS (local Kokoro-82M, 4 voices) | 30 ICAO readbacks, round-trip intelligibility (fixed STT judge, semantic normalization) | RTF **0.34**, round-trip WER after VHF **21.4%** |
+| Full voice loop (E2E) | 25 spoken clearances through radio channel (SNR 12 dB), STT→LLM→validation→TTS | **76%** exact execution (text control: 88%), mean voice latency **2.6 s** |
+
+Historical ROMEO (GH200) reference figures remain in the table above; the July 2026 campaign proves the same architecture on consumer hardware.
+<!-- BENCH:END -->
 
 ## Demos
 
@@ -175,6 +198,25 @@ bash tunnel.sh <SERVER_NODE>    # forward ports 8765 and 8766
 Fill `.env` with any OpenAI-compatible service (config B/C of `.env.example`): e.g. OpenAI
 (`whisper-1` / `gpt-4o-mini` / `gpt-4o-mini-tts`), or a mix (Groq STT + Mistral API LLM + a
 compatible TTS server). **Changing provider = changing URL + key + model name.**
+
+### Option 3 — fully local façade (consumer GPU, no network at all)
+
+The benchmark harness ships an OpenAI-compatible façade backed by local engines
+(llama.cpp CUDA, faster-whisper, Kokoro TTS) — same 4 routes as `src/server.py`.
+Measured on an RTX 4070 Laptop (8 GB): see the benchmark campaign below.
+
+```bash
+# once: bench venv + models (see bench/README.md for the full list)
+bench/bench-env/Scripts/python bench/local_server.py --role all --warm \
+  --llm-gguf bench/models/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf \
+  --stt hf-lora:model/whisper-lora-adapter --merge-system
+# .env : ATC_STT_URL=ATC_LLM_URL=ATC_TTS_URL=http://127.0.0.1:8901
+#        ATC_TTS_MODEL=kokoro-82m  ATC_TTS_VOICES=af_bella,am_adam,bm_george
+```
+
+This is also the proven continuity path: during the July 2026 ROMEO security
+maintenance (cluster fully down), the app stayed operational by switching `.env`
+to this façade — no code change.
 
 ### Demos (need a configured provider)
 
@@ -268,7 +310,11 @@ simulateur-controleur-aerien/
   start_romeo.ps1               one-command self-hosted facade (sbatch + tunnel, Windows)
   pytest.ini / tests/           unit tests (pure modules + mocked API client)
   validation/                   mathematical + empirical validation campaign (reproducible)
+  bench/                        scientific benchmark harness (STT/LLM/TTS/E2E/simulator)
+  bench/results/                raw measurement JSONs (source of every published figure)
   docs/VALIDATION.md            CPA derivation, BlueSky campaign, scoring model, proofs
+  docs/PRODUCTION.md            production-readiness review, fixes, deployment guide
+  docs/article/                 research-style article (LaTeX -> article.pdf, auto-injected numbers)
   docs/assets/                  figures, screenshots and radar GIFs used in this page
   frontend/                     web UI source (React + TypeScript + Tailwind)
   frontend/dist/                pre-built UI served by atc_app.py (no Node.js needed)
@@ -300,7 +346,10 @@ cd frontend && npm install && npm run build      # output goes to frontend/dist
 - Serving: FastAPI and Uvicorn, WebSocket state streaming, SSH tunnel between the cluster and the local PC.
 - Web UI: React 19 + TypeScript, Vite, Tailwind CSS 4, Recharts (debrief charts), lucide icons;
   canvas-rendered radar scope at 60 fps (zoom, pan, selection, trails, data blocks).
-- Quality: pytest unit suite (110 tests), reproducible validation campaign (`validation/run_all.py`).
+- Quality: pytest unit suite (209 tests), reproducible validation campaign with regression
+  gates (`validation/run_all.py`), full local benchmark harness (`bench/run_all.py`).
+- Local inference (option 3 / benchmarks): llama.cpp (CUDA), faster-whisper (CTranslate2),
+  Kokoro-82M (ONNX) behind the same OpenAI-compatible façade.
 - Datasets: ATCO2, UWB-ATCC, ATCOSIM (public ATC speech corpora).
 - HPC: ROMEO (URCA), NVIDIA GH200 (Grace-Hopper, aarch64), SLURM.
 

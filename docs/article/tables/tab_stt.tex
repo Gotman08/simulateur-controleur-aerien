@@ -1,0 +1,16 @@
+\begin{table}[t]\centering\small
+\caption{STT : WER corpus (\%) et RTF par système, corpus VHF réels, sans/avec passe-bande VHF d'inférence. Normalisation du protocole historique du projet ; décodage greedy.}
+\label{tab:stt}
+\begin{tabular}{lrrrrrr}
+\toprule
+ & \multicolumn{3}{c}{atco2 (n=150)} & \multicolumn{3}{c}{uwb\_atcc (n=150)} \\
+ & brut & VHF & RTF & brut & VHF & RTF \\
+\midrule
+hf-small & 71,1 & 71,9 & 0,018 & 101,2 & 91,9 & 0,023 \\
+hf-small-lora & 29,7 & 28,5 & 0,017 & 19,3 & 19,2 & 0,020 \\
+fw-tiny & 100,9 & 106,0 & 0,106 & 120,1 & 123,3 & 0,112 \\
+fw-base & 88,1 & 90,1 & 0,091 & 107,4 & 110,8 & 0,148 \\
+fw-small & 70,6 & 71,5 & 0,092 & 93,2 & 92,3 & 0,130 \\
+\bottomrule
+\end{tabular}
+\end{table}

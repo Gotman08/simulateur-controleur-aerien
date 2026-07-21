@@ -24,6 +24,7 @@ import os
 import re
 import sys
 import json
+import math
 import queue
 import base64
 import asyncio
@@ -124,13 +125,18 @@ _VERB_CLIMB = re.compile(r"\b(climb|climbing|monte[zr]|monter)\b", re.I)
 def _check_alt_coherence(text, orders, lines, rejected, cur_alt):
     """Garde-fou semantique : si la phrase dit 'descend' (sans 'climb'), un ordre
     ALT au-dessus du niveau actuel est incoherent (transcription tronquee ou
-    hallucination du LLM) -> rejete plutot qu'execute. Et symetriquement."""
+    hallucination du LLM) -> rejete plutot qu'execute. Et symetriquement.
+
+    orders et lines sont PARALLELES (contrat AI.interpret, preserve par le
+    filtre indicatif inconnu) : on retire l'ordre ET sa ligne par position,
+    jamais par reconstruction de chaine (le type brut de o['value'] rendrait
+    la comparaison fragile : 32000.0 != '32000')."""
     want_desc = _VERB_DESC.search(text) and not _VERB_CLIMB.search(text)
     want_climb = _VERB_CLIMB.search(text) and not _VERB_DESC.search(text)
-    if not (want_desc or want_climb):
+    if not (want_desc or want_climb) or len(orders) != len(lines):
         return orders, lines
-    kept = []
-    for o in orders:
+    kept, kept_lines = [], []
+    for o, ln in zip(orders, lines):
         cur = cur_alt.get(o.get("callsign"))
         if o.get("action") == "ALT" and cur is not None:
             bad_up = want_desc and o["value"] > cur + 200
@@ -140,10 +146,10 @@ def _check_alt_coherence(text, orders, lines, rejected, cur_alt):
                 rejected.append(f"incohérence : {sens} entendu mais FL{int(o['value'] / 100):03d} "
                                 f"est {'au-dessus' if bad_up else 'au-dessous'} du niveau actuel "
                                 f"FL{int(cur / 100):03d} — ordre non exécuté")
-                lines = [ln for ln in lines if ln != f"ALT {o['callsign']} {o['value']}"]
                 continue
         kept.append(o)
-    return kept, lines
+        kept_lines.append(ln)
+    return kept, kept_lines
 
 
 def process_instruction(text):
@@ -230,9 +236,14 @@ def _list_scenarios():
 # --- validation d'entree (payloads Body(dict) -> 400 propre, pas 500) --------
 def _flt(v, ctx):
     try:
-        return float(v)
+        f = float(v)
     except (TypeError, ValueError) as e:
         raise HTTPException(400, f"{ctx} doit etre numerique (recu {v!r})") from e
+    if not math.isfinite(f):
+        # NaN/Inf passent float() mais corrompent l'etat (JSON invalide,
+        # exercice sans fin, vent aberrant) -> rejet explicite.
+        raise HTTPException(400, f"{ctx} doit etre un nombre fini (recu {v!r})")
+    return f
 
 
 def _req_flt(payload, key):
@@ -297,8 +308,13 @@ def scenario_load(payload: dict = Body(...)):
     path = os.path.join(SCEN_DIR, name + ".json")
     if not os.path.isfile(path):
         raise HTTPException(404, "scenario inconnu")
-    with open(path, encoding="utf-8") as f:
-        d = json.load(f)
+    try:
+        with open(path, encoding="utf-8") as f:
+            d = json.load(f)
+        if not isinstance(d, dict):
+            raise ValueError("le scenario doit etre un objet JSON")
+    except (ValueError, OSError) as e:
+        raise HTTPException(400, f"scenario '{name}' illisible : {e}") from e
     if d.get("aircraft"):
         ac = atc_ai._items_to_aircraft(d["aircraft"])
     else:
@@ -376,10 +392,22 @@ def command(payload: dict = Body(...)):
     return _handle_instruction(text)
 
 
+MAX_UPLOAD_BYTES = 20 * 1024 * 1024      # ~10 min de WAV 16 kHz mono : tres large
+
+
+def _read_upload(file):
+    """Lecture bornee d'un upload audio : refuse les fichiers aberrants AVANT
+    de les charger entierement en memoire (413, pas d'OOM)."""
+    data = file.file.read(MAX_UPLOAD_BYTES + 1)
+    if len(data) > MAX_UPLOAD_BYTES:
+        raise HTTPException(413, f"audio trop volumineux (> {MAX_UPLOAD_BYTES // (1024 * 1024)} Mo)")
+    return data
+
+
 @app.post("/api/voice")
 def voice(file: UploadFile = File(...)):
     """Clairance PARLEE : audio -> STT (API) -> interpretation -> readback texte + AUDIO."""
-    wav = file.file.read()
+    wav = _read_upload(file)
     try:
         text = AI.asr(wav)
     except ai_client.ProviderError as e:
@@ -392,7 +420,7 @@ def voice(file: UploadFile = File(...)):
 @app.post("/api/transcribe")
 def transcribe(file: UploadFile = File(...)):
     """Transcription SEULE (dictee de situation instructeur) : audio -> texte (API STT)."""
-    wav = file.file.read()
+    wav = _read_upload(file)
     try:
         return {"text": AI.asr(wav)}
     except ai_client.ProviderError as e:
@@ -439,6 +467,8 @@ def exercise_start(payload: dict = Body(default={})):
         raise HTTPException(409, "un exercice est déjà en cours")
     dm = payload.get("duration_min")
     dm = _flt(dm, "champ 'duration_min'") if dm not in (None, "") else None
+    if dm is not None and not (1.0 <= dm <= 180.0):
+        raise HTTPException(400, "champ 'duration_min' doit etre entre 1 et 180 minutes")
     seed = payload.get("seed")
     if seed is not None and not isinstance(seed, (int, str)):
         raise HTTPException(400, "champ 'seed' doit etre un entier ou une chaine")
@@ -447,6 +477,9 @@ def exercise_start(payload: dict = Body(default={})):
                       duration_min=dm, seed=seed)
     except ValueError as e:
         raise HTTPException(400, str(e)) from e
+    except RuntimeError as e:
+        # course entre le pre-check EX.active et start() : double POST simultane
+        raise HTTPException(409, str(e)) from e
     except ai_client.ProviderError as e:
         # le trafic de remplissage vient de l'API LLM : panne -> erreur claire
         emit({"type": "error", "provider": e.provider, "message": str(e)})

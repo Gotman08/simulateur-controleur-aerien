@@ -85,6 +85,24 @@ def main():
     if manquantes or figs_absentes:
         print(f"  [ATTENTION] sections manquantes: {manquantes}, figures absentes: {figs_absentes}")
         sys.exit(1)
+
+    # --- portes de non-regression : les METRIQUES elles-memes sont verifiees --
+    # (auparavant seule la presence des sections l'etait : une regression de
+    # justesse passait inapercue). Seuils = valeurs de reference historiques.
+    portes = [
+        ("CPA erreur max < 1e-3 NM", c["erreur_dcpa_nm"]["max"] < 1e-3),
+        ("CPA desaccords == 0", c["coherence_implementation"]["n_desaccords"] == 0),
+        ("BlueSky F1 == 1.0", b["confusion"]["f1"] == 1.0),
+        ("BlueSky MAE dCPA < 0.2 NM", b["conflits_predits"]["mae_dcpa_nm"] < 0.2),
+        ("Parseur exactitude == 100%", p["exactitude_globale"] == 1.0),
+        ("Parseur rejet negatifs == 100%", p["taux_rejet_negatifs"] == 1.0),
+        ("Generateur conformite == 100%", g["taux_global"] == 1.0),
+    ]
+    echecs = [nom for nom, ok in portes if not ok]
+    if echecs:
+        print(f"  [REGRESSION] portes en echec : {echecs}")
+        sys.exit(2)
+    print(f"  Portes de non-regression OK ({len(portes)})")
     print(f"  Figures OK ({len(FIGURES)}) dans docs/assets/validation/")
     print("  (performance : lancer separement 05_performance.py -> results_perf.json)")
     print(f"[OK] campagne justesse (01-04) en {data['meta']['duree_totale_s']:.0f}s -> {res_path}")

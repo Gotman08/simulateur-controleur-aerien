@@ -38,3 +38,18 @@ reports/
 # OS
 .DS_Store
 Thumbs.db
+
+# Banc de benchmark : environnements, poids de modeles et artefacts audio lourds
+bench/bench-env/
+bench/models/
+bench/results/tts_audio/
+bench/results/e2e_audio/*_clean.wav
+
+# artefacts de compilation LaTeX (docs/article)
+docs/article/*.aux
+docs/article/*.log
+docs/article/*.out
+docs/article/figures/
+# journaux de serveurs de bench (diagnostic uniquement)
+bench/results/server_*.log
+bench/results/llm_usage.jsonl

@@ -45,3 +45,5 @@ ignore = [
 "src/atc_llm.py" = ["E402"]
 "src/tts_atc.py" = ["E402"]
 "validation/*.py" = ["E402"]
+# banc de benchmark : sys.path/DLL AVANT les imports (meme motif que validation)
+"bench/*.py" = ["E402"]

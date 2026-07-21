@@ -1,0 +1,17 @@
+\begin{table}[t]\centering\small
+\caption{Interprétation : exactitude TrafScript exacte (IC Wilson 95\,\%), par strate, rejet des négatifs de sécurité, JSON strict, latence et débit (116 clairances ; chaîne de production complète).}
+\label{tab:llm}
+\begin{tabular}{lrrrrrrr}
+\toprule
+Système & Globale & IC 95\,\% & Std. & Hors gr. & Nég. rejetés & JSON & Lat. moy. \\
+\midrule
+Parseur à règles & 87,9 & \ic{81}{93} & 100 & 71 & 96 & 100 & 0,00\,s \\
+\midrule
+Llama-3.2-1b & 3,4 & \ic{1}{9} & 1 & 6 & 17 & 22 & 2,81\,s \\
+Mistral-7B & 81,9 & \ic{74}{88} & 85 & 77 & 75 & 100 & 0,82\,s \\
+Qwen2.5-3b-bartowski & 23,3 & \ic{17}{32} & 21 & 27 & 96 & 69 & 0,42\,s \\
+Qwen2.5-1.5b & 75,0 & \ic{66}{82} & 79 & 69 & 75 & 97 & 0,32\,s \\
+Qwen2.5-3b & 24,1 & \ic{17}{33} & 19 & 31 & 100 & 46 & 0,34\,s \\
+\bottomrule
+\end{tabular}
+\end{table}

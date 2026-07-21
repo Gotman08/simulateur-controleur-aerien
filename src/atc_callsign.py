@@ -21,6 +21,8 @@ DIGI = {"zero": "0", "oh": "0", "one": "1", "two": "2", "three": "3", "four": "4
 # la lettre phonetique D (ex. 'csa one delta zulu' -> CSA1DZ), cf. _map_tokens.
 AIRLINE = {"air france": "AFR", "speedbird": "BAW", "lufthansa": "DLH", "ryanair": "RYR",
            "easyjet": "EZY", "easy": "EZY", "klm": "KLM", "csa": "CSA", "delta": "DAL",
+           "american": "AAL", "united": "UAL", "swiss": "SWR", "austrian": "AUA",
+           "turkish": "THY", "emirates": "UAE", "qatari": "QTR",
            "oscar kilo": "OK"}
 
 

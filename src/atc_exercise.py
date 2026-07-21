@@ -105,6 +105,7 @@ class ExerciseEngine:
         self._lock = threading.Lock()
         self._thread = None
         self._active = False
+        self._starting = False          # construction d'exercice en cours (anti-course)
         self._last_report = None
         self._reset_metrics()
 
@@ -127,8 +128,19 @@ class ExerciseEngine:
 
     # ----------------------------------------------------------------- start
     def start(self, difficulty="moyen", duration_min=None, seed=None):
-        if self.active:
-            raise RuntimeError("un exercice est deja en cours")
+        # check-and-set ATOMIQUE : deux POST simultanes ne peuvent pas
+        # entrelacer deux constructions d'exercice.
+        with self._lock:
+            if self._active or self._starting:
+                raise RuntimeError("un exercice est deja en cours")
+            self._starting = True
+        try:
+            return self._start_impl(difficulty, duration_min, seed)
+        finally:
+            with self._lock:
+                self._starting = False
+
+    def _start_impl(self, difficulty, duration_min, seed):
         cfg = DIFFICULTIES.get(difficulty)
         if not cfg:
             raise ValueError(f"difficulte inconnue : {difficulty!r} "
@@ -136,7 +148,6 @@ class ExerciseEngine:
         rng = random.Random(seed)
         duration_min = float(duration_min or cfg["duration_min"])
 
-        self._sim.reset()                          # radar vierge (vide la file avant)
         aircraft, conflicts = [], []
         used = set()
 
@@ -154,6 +165,8 @@ class ExerciseEngine:
             conflicts.append({"pair": [a["callsign"] for a in pair_ac],
                               "fl": fl // 100, "t_cross_s": round(t_c)})
 
+        # trafic de remplissage via l'API LLM AVANT tout reset : une panne
+        # fournisseur (ProviderError) laisse alors le radar intact.
         filler = []
         for _ in range(cfg["filler"]):
             tpl = rng.choice(_FILLER_TEMPLATES)
@@ -162,11 +175,17 @@ class ExerciseEngine:
                               hdg=rng.choice([90, 180, 270, 360]))
             filler += self._ai.scenario(desc)
         # remplissage : indicatifs uniques + FL disjoints des conflits (figurants)
-        filler = [f for f in filler if f["callsign"] not in used]
+        # unicite AUSSI entre fillers : deux avions LLM au meme indicatif ne
+        # doivent pas passer tous les deux (le second serait ignore par le sim
+        # mais fausserait la liste 'aircraft' de l'exercice)
+        dedup = []
         for f in filler:
-            used.add(f["callsign"])
-        aircraft += filler
+            if f["callsign"] not in used:
+                used.add(f["callsign"])
+                dedup.append(f)
+        aircraft += dedup
 
+        self._sim.reset()                          # radar vierge (vide la file avant)
         created = self._sim.create_aircraft(aircraft)
 
         wind = None
@@ -206,6 +225,10 @@ class ExerciseEngine:
                           "conflicts_built": conflicts, "wind": wind, "storm": storm,
                           "turbulence": cfg["turb"], "objectives": objectives}
             self._active = True
+        if self._thread and self._thread.is_alive():
+            # jamais deux echantillonneurs : on attend la fin du precedent
+            # (restart < 1 s apres stop) avant de lancer le notre.
+            self._thread.join(timeout=3.0)
         self._thread = threading.Thread(target=self._run, name="atc-exercise", daemon=True)
         self._thread.start()
         self._emit({"type": "exercise_started", **self.state()})
@@ -213,6 +236,16 @@ class ExerciseEngine:
 
     # ------------------------------------------------------- boucle de mesure
     def _run(self):
+        # echauffement : reset/create sont ASYNCHRONES (file du thread sim) ;
+        # sans cette garde, le 1er echantillon peut capturer l'etat d'AVANT le
+        # reset (LoS fantome heritee du trafic precedent).
+        t0 = time.monotonic()
+        while self.active:
+            snap = self._sim.snapshot()
+            ids = {a.get("id") for a in snap.get("aircraft", [])}
+            if (ids & self._watch) or time.monotonic() - t0 > 10.0:
+                break
+            time.sleep(0.2)
         while self.active:
             try:
                 self._sample(self._sim.snapshot())
@@ -250,10 +283,20 @@ class ExerciseEngine:
                 ev = self._los.get(key)
                 if ev is None:
                     self._los[key] = {"pair": sorted(pair), "t_start": round(rel, 1),
-                                      "t_end": None, "min_nm": d, "open": True}
+                                      "t_end": None, "min_nm": d, "open": True,
+                                      "episodes": 1, "dur_s": 0.0}
                     self._emit({"type": "exercise_event", "kind": "los",
                                 "pair": sorted(pair), "t": round(rel)})
                 else:
+                    if not ev["open"]:
+                        # re-entree en LoS de la MEME paire : nouvel episode —
+                        # la duree deja purgee est cumulee, t_start repart, sinon
+                        # t_los engloberait tout l'intervalle correctement separe.
+                        ev["dur_s"] = ev.get("dur_s", 0.0) + (ev["t_end"] - ev["t_start"])
+                        ev["t_start"] = round(rel, 1)
+                        ev["episodes"] = ev.get("episodes", 1) + 1
+                        self._emit({"type": "exercise_event", "kind": "los",
+                                    "pair": ev["pair"], "t": round(rel)})
                     ev["open"] = True
                     ev["t_end"] = None
                     if d is not None and (ev["min_nm"] is None or d < ev["min_nm"]):
@@ -284,7 +327,18 @@ class ExerciseEngine:
                     ev = self._zone.get(k)
                     if ev is None:
                         self._zone[k] = {"callsign": a["id"], "zone": a["inzone"],
-                                         "t_start": round(rel, 1), "t_end": None, "open": True}
+                                         "t_start": round(rel, 1), "t_end": None, "open": True,
+                                         "episodes": 1, "dur_s": 0.0}
+                        self._emit({"type": "exercise_event", "kind": "zone",
+                                    "callsign": a["id"], "zone": a["inzone"], "t": round(rel)})
+                    elif not ev["open"]:
+                        # re-entree dans la meme zone : nouvel episode (meme
+                        # logique de cumul que les pertes de separation)
+                        ev["dur_s"] = ev.get("dur_s", 0.0) + (ev["t_end"] - ev["t_start"])
+                        ev["t_start"] = round(rel, 1)
+                        ev["t_end"] = None
+                        ev["open"] = True
+                        ev["episodes"] = ev.get("episodes", 1) + 1
                         self._emit({"type": "exercise_event", "kind": "zone",
                                     "callsign": a["id"], "zone": a["inzone"], "t": round(rel)})
             inzone_now = {(a["id"], a["inzone"]) for a in acs if a.get("inzone")}
@@ -309,8 +363,11 @@ class ExerciseEngine:
     # --------------------------------------------------------------- scoring
     def _score_unlocked(self, rel):
         """Bareme documente dans docs/VALIDATION.md (par. 6). Appeler sous verrou."""
-        n_los = len(self._los)
-        t_los = sum((ev["t_end"] if ev["t_end"] is not None else rel) - ev["t_start"]
+        # nombre d'EPISODES de perte de separation (une paire peut en cumuler
+        # plusieurs) ; duree = episodes clos cumules (dur_s) + episode courant
+        n_los = sum(ev.get("episodes", 1) for ev in self._los.values())
+        t_los = sum(ev.get("dur_s", 0.0)
+                    + (ev["t_end"] if ev["t_end"] is not None else rel) - ev["t_start"]
                     for ev in self._los.values())
         s_sep = max(0.0, 50.0 - 25.0 * n_los - 0.5 * t_los)
 
@@ -319,8 +376,9 @@ class ExerciseEngine:
         resolved = predicted - unresolved
         s_conf = 20.0 * len(resolved) / len(predicted) if predicted else 20.0
 
-        n_zone = len(self._zone)
-        t_zone = sum((ev["t_end"] if ev["t_end"] is not None else rel) - ev["t_start"]
+        n_zone = sum(ev.get("episodes", 1) for ev in self._zone.values())
+        t_zone = sum(ev.get("dur_s", 0.0)
+                     + (ev["t_end"] if ev["t_end"] is not None else rel) - ev["t_start"]
                      for ev in self._zone.values())
         s_zone = max(0.0, 15.0 - 5.0 * n_zone - 0.1 * t_zone)
 

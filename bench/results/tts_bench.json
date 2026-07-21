@@ -1,0 +1,1081 @@
+{
+ "n_phrases": 30,
+ "juge": "faster-whisper small (cuda, greedy)",
+ "protocole": {
+  "phrases": "collationnements OACI de src/readback.py",
+  "vhf": "atc_audio.preprocess_waveform (Butterworth 6, 300-3400 Hz)",
+  "wer": "bench_textnorm.norm_radio (nombres epeles -> chiffres, symetrique ref/hyp) + jiwer — metrique RELATIVE inter-moteurs"
+ },
+ "engines": {
+  "kokoro/af_bella": {
+   "n": 30,
+   "rtf_moyen": 0.3476399114027661,
+   "ic95_rtf": [
+    0.3372353884710388,
+    0.3587123381331561
+   ],
+   "latence_synthese": {
+    "n": 30,
+    "moyenne_s": 1.386688526646079,
+    "mediane_s": 1.3027684999397025,
+    "p95_s": 1.9419114199874454,
+    "min_s": 0.9152684999862686,
+    "max_s": 2.4977026999695227,
+    "ic95_moyenne_s": [
+     1.2637545579693203,
+     1.519302755073489
+    ]
+   },
+   "duree_audio_moyenne_s": 4.034162499999999,
+   "wer_aller_retour_propre": 0.2253835978835979,
+   "ic95_wer_propre": [
+    0.12436507936507937,
+    0.34622387566137547
+   ],
+   "wer_aller_retour_vhf": 0.25432539682539684,
+   "ic95_wer_vhf": [
+    0.1297867063492064,
+    0.4003515211640211
+   ],
+   "per_utt": [
+    {
+     "text": "descend flight level one zero zero, air france one two three four",
+     "rtf": 0.369,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "climb flight level three two zero, air france one two three four",
+     "rtf": 0.298,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading two seven zero, speedbird five seven",
+     "rtf": 0.325,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level zero eight zero, speedbird five seven",
+     "rtf": 0.305,
+     "wer_propre": 0.167,
+     "wer_vhf": 0.167
+    },
+    {
+     "text": "climb flight level two four zero, ryanair niner",
+     "rtf": 0.309,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "proceed direct delta echo lima tango alfa, ryanair niner",
+     "rtf": 0.296,
+     "wer_propre": 0.444,
+     "wer_vhf": 0.444
+    },
+    {
+     "text": "speed two five zero knots, easyjet two one",
+     "rtf": 0.32,
+     "wer_propre": 1.4,
+     "wer_vhf": 1.4
+    },
+    {
+     "text": "heading one zero zero, easyjet two one",
+     "rtf": 0.363,
+     "wer_propre": 0.75,
+     "wer_vhf": 0.75
+    },
+    {
+     "text": "climb flight level three five zero, lufthansa eight eight",
+     "rtf": 0.369,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "proceed direct echo xray india tango echo, lufthansa eight eight",
+     "rtf": 0.356,
+     "wer_propre": 0.222,
+     "wer_vhf": 0.333
+    },
+    {
+     "text": "heading two two zero, klm one two three",
+     "rtf": 0.393,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "speed two eight zero knots, klm one two three",
+     "rtf": 0.356,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level two four zero, charlie sierra alfa one delta zulu",
+     "rtf": 0.339,
+     "wer_propre": 0.1,
+     "wer_vhf": 0.1
+    },
+    {
+     "text": "heading one two zero, american six three",
+     "rtf": 0.4,
+     "wer_propre": 0.5,
+     "wer_vhf": 0.5
+    },
+    {
+     "text": "climb flight level three three zero, united four five one",
+     "rtf": 0.346,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level zero niner zero, november one two three alfa bravo",
+     "rtf": 0.333,
+     "wer_propre": 0.25,
+     "wer_vhf": 0.625
+    },
+    {
+     "text": "climb flight level one five zero, foxtrot golf alfa bravo charlie",
+     "rtf": 0.336,
+     "wer_propre": 0.222,
+     "wer_vhf": 0.111
+    },
+    {
+     "text": "heading zero four five, air france one two three four",
+     "rtf": 0.405,
+     "wer_propre": 0.2,
+     "wer_vhf": 0.2
+    },
+    {
+     "text": "speed two three zero knots, speedbird five seven",
+     "rtf": 0.377,
+     "wer_propre": 0.0,
+     "wer_vhf": 1.4
+    },
+    {
+     "text": "proceed direct bravo alfa lima mike oscar, easyjet two one",
+     "rtf": 0.344,
+     "wer_propre": 0.444,
+     "wer_vhf": 0.556
+    },
+    {
+     "text": "descend flight level two zero zero, proceed direct charlie romeo oscar sierra sierra, air france one two three four",
+     "rtf": 0.315,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading zero niner zero, descend flight level one one zero, speedbird five seven",
+     "rtf": 0.35,
+     "wer_propre": 0.125,
+     "wer_vhf": 0.125
+    },
+    {
+     "text": "climb flight level three one zero, speed two niner zero knots, lufthansa eight eight",
+     "rtf": 0.327,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading one eight zero, speed two four zero knots, easyjet two one",
+     "rtf": 0.347,
+     "wer_propre": 0.714,
+     "wer_vhf": 0.571
+    },
+    {
+     "text": "heading two two five, ryanair niner",
+     "rtf": 0.417,
+     "wer_propre": 0.5,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level one eight zero, klm one two three",
+     "rtf": 0.348,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "speed three zero zero knots, air france one two three four",
+     "rtf": 0.346,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading two one zero, charlie sierra alfa one delta zulu",
+     "rtf": 0.361,
+     "wer_propre": 0.5,
+     "wer_vhf": 0.125
+    },
+    {
+     "text": "proceed direct november oscar romeo tango hotel, united four five one",
+     "rtf": 0.353,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level one three zero, speed two two zero knots, american six three",
+     "rtf": 0.328,
+     "wer_propre": 0.222,
+     "wer_vhf": 0.222
+    }
+   ],
+   "sr_natif": 24000
+  },
+  "kokoro/am_adam": {
+   "n": 30,
+   "rtf_moyen": 0.3456638499791721,
+   "ic95_rtf": [
+    0.33815117627075325,
+    0.35387197884431787
+   ],
+   "latence_synthese": {
+    "n": 30,
+    "moyenne_s": 1.3238360866671428,
+    "mediane_s": 1.2750656499993056,
+    "p95_s": 1.7500345850188748,
+    "min_s": 0.8995956999715418,
+    "max_s": 2.3191654999973252,
+    "ic95_moyenne_s": [
+     1.223278223607631,
+     1.4343084295055208
+    ]
+   },
+   "duree_audio_moyenne_s": 3.874864583333333,
+   "wer_aller_retour_propre": 0.18205026455026455,
+   "ic95_wer_propre": [
+    0.10692757936507935,
+    0.26617361111111093
+   ],
+   "wer_aller_retour_vhf": 0.17744708994708996,
+   "ic95_wer_vhf": [
+    0.0955023148148148,
+    0.273281746031746
+   ],
+   "per_utt": [
+    {
+     "text": "descend flight level one zero zero, air france one two three four",
+     "rtf": 0.327,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "climb flight level three two zero, air france one two three four",
+     "rtf": 0.402,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading two seven zero, speedbird five seven",
+     "rtf": 0.376,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level zero eight zero, speedbird five seven",
+     "rtf": 0.351,
+     "wer_propre": 0.5,
+     "wer_vhf": 0.167
+    },
+    {
+     "text": "climb flight level two four zero, ryanair niner",
+     "rtf": 0.352,
+     "wer_propre": 0.167,
+     "wer_vhf": 0.167
+    },
+    {
+     "text": "proceed direct delta echo lima tango alfa, ryanair niner",
+     "rtf": 0.345,
+     "wer_propre": 0.333,
+     "wer_vhf": 0.111
+    },
+    {
+     "text": "speed two five zero knots, easyjet two one",
+     "rtf": 0.349,
+     "wer_propre": 0.6,
+     "wer_vhf": 0.2
+    },
+    {
+     "text": "heading one zero zero, easyjet two one",
+     "rtf": 0.361,
+     "wer_propre": 0.75,
+     "wer_vhf": 0.75
+    },
+    {
+     "text": "climb flight level three five zero, lufthansa eight eight",
+     "rtf": 0.335,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "proceed direct echo xray india tango echo, lufthansa eight eight",
+     "rtf": 0.336,
+     "wer_propre": 0.222,
+     "wer_vhf": 0.222
+    },
+    {
+     "text": "heading two two zero, klm one two three",
+     "rtf": 0.36,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "speed two eight zero knots, klm one two three",
+     "rtf": 0.333,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level two four zero, charlie sierra alfa one delta zulu",
+     "rtf": 0.328,
+     "wer_propre": 0.1,
+     "wer_vhf": 0.1
+    },
+    {
+     "text": "heading one two zero, american six three",
+     "rtf": 0.364,
+     "wer_propre": 0.5,
+     "wer_vhf": 0.5
+    },
+    {
+     "text": "climb flight level three three zero, united four five one",
+     "rtf": 0.354,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level zero niner zero, november one two three alfa bravo",
+     "rtf": 0.327,
+     "wer_propre": 0.625,
+     "wer_vhf": 0.625
+    },
+    {
+     "text": "climb flight level one five zero, foxtrot golf alfa bravo charlie",
+     "rtf": 0.322,
+     "wer_propre": 0.222,
+     "wer_vhf": 0.222
+    },
+    {
+     "text": "heading zero four five, air france one two three four",
+     "rtf": 0.359,
+     "wer_propre": 0.2,
+     "wer_vhf": 0.2
+    },
+    {
+     "text": "speed two three zero knots, speedbird five seven",
+     "rtf": 0.359,
+     "wer_propre": 0.0,
+     "wer_vhf": 1.0
+    },
+    {
+     "text": "proceed direct bravo alfa lima mike oscar, easyjet two one",
+     "rtf": 0.343,
+     "wer_propre": 0.556,
+     "wer_vhf": 0.444
+    },
+    {
+     "text": "descend flight level two zero zero, proceed direct charlie romeo oscar sierra sierra, air france one two three four",
+     "rtf": 0.309,
+     "wer_propre": 0.071,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading zero niner zero, descend flight level one one zero, speedbird five seven",
+     "rtf": 0.349,
+     "wer_propre": 0.125,
+     "wer_vhf": 0.125
+    },
+    {
+     "text": "climb flight level three one zero, speed two niner zero knots, lufthansa eight eight",
+     "rtf": 0.318,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading one eight zero, speed two four zero knots, easyjet two one",
+     "rtf": 0.325,
+     "wer_propre": 0.143,
+     "wer_vhf": 0.143
+    },
+    {
+     "text": "heading two two five, ryanair niner",
+     "rtf": 0.406,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level one eight zero, klm one two three",
+     "rtf": 0.352,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "speed three zero zero knots, air france one two three four",
+     "rtf": 0.339,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading two one zero, charlie sierra alfa one delta zulu",
+     "rtf": 0.326,
+     "wer_propre": 0.125,
+     "wer_vhf": 0.125
+    },
+    {
+     "text": "proceed direct november oscar romeo tango hotel, united four five one",
+     "rtf": 0.341,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level one three zero, speed two two zero knots, american six three",
+     "rtf": 0.321,
+     "wer_propre": 0.222,
+     "wer_vhf": 0.222
+    }
+   ],
+   "sr_natif": 24000
+  },
+  "kokoro/bf_emma": {
+   "n": 30,
+   "rtf_moyen": 0.3391856364057533,
+   "ic95_rtf": [
+    0.33288007869670805,
+    0.34535678274800036
+   ],
+   "latence_synthese": {
+    "n": 30,
+    "moyenne_s": 1.2764109433318178,
+    "mediane_s": 1.2330845500109717,
+    "p95_s": 1.623763155058259,
+    "min_s": 0.8519073999486864,
+    "max_s": 2.234500400023535,
+    "ic95_moyenne_s": [
+     1.1821629374149294,
+     1.3802435911799937
+    ]
+   },
+   "duree_audio_moyenne_s": 3.802335416666666,
+   "wer_aller_retour_propre": 0.2115079365079365,
+   "ic95_wer_propre": [
+    0.1417718253968254,
+    0.286547619047619
+   ],
+   "wer_aller_retour_vhf": 0.1983201058201058,
+   "ic95_wer_vhf": [
+    0.11333333333333333,
+    0.3007149470899471
+   ],
+   "per_utt": [
+    {
+     "text": "descend flight level one zero zero, air france one two three four",
+     "rtf": 0.327,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "climb flight level three two zero, air france one two three four",
+     "rtf": 0.343,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading two seven zero, speedbird five seven",
+     "rtf": 0.355,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level zero eight zero, speedbird five seven",
+     "rtf": 0.343,
+     "wer_propre": 0.167,
+     "wer_vhf": 0.167
+    },
+    {
+     "text": "climb flight level two four zero, ryanair niner",
+     "rtf": 0.361,
+     "wer_propre": 0.167,
+     "wer_vhf": 0.167
+    },
+    {
+     "text": "proceed direct delta echo lima tango alfa, ryanair niner",
+     "rtf": 0.345,
+     "wer_propre": 0.444,
+     "wer_vhf": 0.111
+    },
+    {
+     "text": "speed two five zero knots, easyjet two one",
+     "rtf": 0.356,
+     "wer_propre": 0.4,
+     "wer_vhf": 0.4
+    },
+    {
+     "text": "heading one zero zero, easyjet two one",
+     "rtf": 0.355,
+     "wer_propre": 0.75,
+     "wer_vhf": 0.25
+    },
+    {
+     "text": "climb flight level three five zero, lufthansa eight eight",
+     "rtf": 0.334,
+     "wer_propre": 0.333,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "proceed direct echo xray india tango echo, lufthansa eight eight",
+     "rtf": 0.334,
+     "wer_propre": 0.222,
+     "wer_vhf": 0.222
+    },
+    {
+     "text": "heading two two zero, klm one two three",
+     "rtf": 0.362,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "speed two eight zero knots, klm one two three",
+     "rtf": 0.351,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level two four zero, charlie sierra alfa one delta zulu",
+     "rtf": 0.376,
+     "wer_propre": 0.2,
+     "wer_vhf": 0.1
+    },
+    {
+     "text": "heading one two zero, american six three",
+     "rtf": 0.353,
+     "wer_propre": 0.5,
+     "wer_vhf": 0.5
+    },
+    {
+     "text": "climb flight level three three zero, united four five one",
+     "rtf": 0.335,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level zero niner zero, november one two three alfa bravo",
+     "rtf": 0.323,
+     "wer_propre": 0.5,
+     "wer_vhf": 0.625
+    },
+    {
+     "text": "climb flight level one five zero, foxtrot golf alfa bravo charlie",
+     "rtf": 0.321,
+     "wer_propre": 0.333,
+     "wer_vhf": 0.333
+    },
+    {
+     "text": "heading zero four five, air france one two three four",
+     "rtf": 0.358,
+     "wer_propre": 0.2,
+     "wer_vhf": 0.2
+    },
+    {
+     "text": "speed two three zero knots, speedbird five seven",
+     "rtf": 0.35,
+     "wer_propre": 0.2,
+     "wer_vhf": 1.2
+    },
+    {
+     "text": "proceed direct bravo alfa lima mike oscar, easyjet two one",
+     "rtf": 0.331,
+     "wer_propre": 0.556,
+     "wer_vhf": 0.556
+    },
+    {
+     "text": "descend flight level two zero zero, proceed direct charlie romeo oscar sierra sierra, air france one two three four",
+     "rtf": 0.311,
+     "wer_propre": 0.143,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading zero niner zero, descend flight level one one zero, speedbird five seven",
+     "rtf": 0.311,
+     "wer_propre": 0.125,
+     "wer_vhf": 0.125
+    },
+    {
+     "text": "climb flight level three one zero, speed two niner zero knots, lufthansa eight eight",
+     "rtf": 0.312,
+     "wer_propre": 0.111,
+     "wer_vhf": 0.111
+    },
+    {
+     "text": "heading one eight zero, speed two four zero knots, easyjet two one",
+     "rtf": 0.328,
+     "wer_propre": 0.286,
+     "wer_vhf": 0.286
+    },
+    {
+     "text": "heading two two five, ryanair niner",
+     "rtf": 0.366,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level one eight zero, klm one two three",
+     "rtf": 0.335,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "speed three zero zero knots, air france one two three four",
+     "rtf": 0.334,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading two one zero, charlie sierra alfa one delta zulu",
+     "rtf": 0.331,
+     "wer_propre": 0.375,
+     "wer_vhf": 0.375
+    },
+    {
+     "text": "proceed direct november oscar romeo tango hotel, united four five one",
+     "rtf": 0.332,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level one three zero, speed two two zero knots, american six three",
+     "rtf": 0.305,
+     "wer_propre": 0.333,
+     "wer_vhf": 0.222
+    }
+   ],
+   "sr_natif": 24000
+  },
+  "kokoro/bm_george": {
+   "n": 30,
+   "rtf_moyen": 0.31011681388947215,
+   "ic95_rtf": [
+    0.3062756945092813,
+    0.313825325863042
+   ],
+   "latence_synthese": {
+    "n": 30,
+    "moyenne_s": 1.3821182666773286,
+    "mediane_s": 1.3388264999957755,
+    "p95_s": 1.8707106600166294,
+    "min_s": 0.9386717999586836,
+    "max_s": 2.3570187999866903,
+    "ic95_moyenne_s": [
+     1.2795953773502455,
+     1.496328739586364
+    ]
+   },
+   "duree_audio_moyenne_s": 4.482860416666667,
+   "wer_aller_retour_propre": 0.2595767195767196,
+   "ic95_wer_propre": [
+    0.14781514550264555,
+    0.38676719576719554
+   ],
+   "wer_aller_retour_vhf": 0.22605820105820104,
+   "ic95_wer_vhf": [
+    0.1274074074074074,
+    0.3424871031746031
+   ],
+   "per_utt": [
+    {
+     "text": "descend flight level one zero zero, air france one two three four",
+     "rtf": 0.296,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "climb flight level three two zero, air france one two three four",
+     "rtf": 0.309,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading two seven zero, speedbird five seven",
+     "rtf": 0.323,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level zero eight zero, speedbird five seven",
+     "rtf": 0.324,
+     "wer_propre": 0.5,
+     "wer_vhf": 0.167
+    },
+    {
+     "text": "climb flight level two four zero, ryanair niner",
+     "rtf": 0.321,
+     "wer_propre": 0.167,
+     "wer_vhf": 0.167
+    },
+    {
+     "text": "proceed direct delta echo lima tango alfa, ryanair niner",
+     "rtf": 0.308,
+     "wer_propre": 0.444,
+     "wer_vhf": 0.444
+    },
+    {
+     "text": "speed two five zero knots, easyjet two one",
+     "rtf": 0.317,
+     "wer_propre": 1.2,
+     "wer_vhf": 1.2
+    },
+    {
+     "text": "heading one zero zero, easyjet two one",
+     "rtf": 0.319,
+     "wer_propre": 0.75,
+     "wer_vhf": 0.25
+    },
+    {
+     "text": "climb flight level three five zero, lufthansa eight eight",
+     "rtf": 0.307,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "proceed direct echo xray india tango echo, lufthansa eight eight",
+     "rtf": 0.307,
+     "wer_propre": 0.222,
+     "wer_vhf": 0.222
+    },
+    {
+     "text": "heading two two zero, klm one two three",
+     "rtf": 0.322,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "speed two eight zero knots, klm one two three",
+     "rtf": 0.309,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level two four zero, charlie sierra alfa one delta zulu",
+     "rtf": 0.308,
+     "wer_propre": 0.1,
+     "wer_vhf": 0.1
+    },
+    {
+     "text": "heading one two zero, american six three",
+     "rtf": 0.323,
+     "wer_propre": 0.5,
+     "wer_vhf": 0.5
+    },
+    {
+     "text": "climb flight level three three zero, united four five one",
+     "rtf": 0.317,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level zero niner zero, november one two three alfa bravo",
+     "rtf": 0.31,
+     "wer_propre": 0.625,
+     "wer_vhf": 0.625
+    },
+    {
+     "text": "climb flight level one five zero, foxtrot golf alfa bravo charlie",
+     "rtf": 0.296,
+     "wer_propre": 0.333,
+     "wer_vhf": 0.111
+    },
+    {
+     "text": "heading zero four five, air france one two three four",
+     "rtf": 0.313,
+     "wer_propre": 0.2,
+     "wer_vhf": 0.2
+    },
+    {
+     "text": "speed two three zero knots, speedbird five seven",
+     "rtf": 0.305,
+     "wer_propre": 1.2,
+     "wer_vhf": 1.0
+    },
+    {
+     "text": "proceed direct bravo alfa lima mike oscar, easyjet two one",
+     "rtf": 0.294,
+     "wer_propre": 0.556,
+     "wer_vhf": 0.556
+    },
+    {
+     "text": "descend flight level two zero zero, proceed direct charlie romeo oscar sierra sierra, air france one two three four",
+     "rtf": 0.284,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading zero niner zero, descend flight level one one zero, speedbird five seven",
+     "rtf": 0.322,
+     "wer_propre": 0.125,
+     "wer_vhf": 0.375
+    },
+    {
+     "text": "climb flight level three one zero, speed two niner zero knots, lufthansa eight eight",
+     "rtf": 0.3,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading one eight zero, speed two four zero knots, easyjet two one",
+     "rtf": 0.298,
+     "wer_propre": 0.143,
+     "wer_vhf": 0.143
+    },
+    {
+     "text": "heading two two five, ryanair niner",
+     "rtf": 0.328,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level one eight zero, klm one two three",
+     "rtf": 0.316,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "speed three zero zero knots, air france one two three four",
+     "rtf": 0.32,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading two one zero, charlie sierra alfa one delta zulu",
+     "rtf": 0.307,
+     "wer_propre": 0.5,
+     "wer_vhf": 0.5
+    },
+    {
+     "text": "proceed direct november oscar romeo tango hotel, united four five one",
+     "rtf": 0.302,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level one three zero, speed two two zero knots, american six three",
+     "rtf": 0.299,
+     "wer_propre": 0.222,
+     "wer_vhf": 0.222
+    }
+   ],
+   "sr_natif": 24000
+  },
+  "sapi/Microsoft Zira Desktop": {
+   "n": 30,
+   "rtf_moyen": 0.0027841435792884416,
+   "ic95_rtf": [
+    0.0025568036964068465,
+    0.003186196787912935
+   ],
+   "latence_synthese": {
+    "n": 30,
+    "moyenne_s": 0.013770463333333333,
+    "mediane_s": 0.0122333,
+    "p95_s": 0.020424369999999987,
+    "min_s": 0.0091304,
+    "max_s": 0.0405238,
+    "ic95_moyenne_s": [
+     0.012068688833333334,
+     0.01613649575
+    ]
+   },
+   "duree_audio_moyenne_s": 4.934283333333334,
+   "wer_aller_retour_propre": 0.1595238095238095,
+   "ic95_wer_propre": [
+    0.09277314814814816,
+    0.23555753968253967
+   ],
+   "wer_aller_retour_vhf": 0.1817460317460317,
+   "ic95_wer_vhf": [
+    0.11342592592592592,
+    0.259338955026455
+   ],
+   "per_utt": [
+    {
+     "text": "descend flight level one zero zero, air france one two three four",
+     "rtf": 0.008,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "climb flight level three two zero, air france one two three four",
+     "rtf": 0.002,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading two seven zero, speedbird five seven",
+     "rtf": 0.003,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.5
+    },
+    {
+     "text": "descend flight level zero eight zero, speedbird five seven",
+     "rtf": 0.003,
+     "wer_propre": 0.167,
+     "wer_vhf": 0.167
+    },
+    {
+     "text": "climb flight level two four zero, ryanair niner",
+     "rtf": 0.002,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.167
+    },
+    {
+     "text": "proceed direct delta echo lima tango alfa, ryanair niner",
+     "rtf": 0.003,
+     "wer_propre": 0.333,
+     "wer_vhf": 0.333
+    },
+    {
+     "text": "speed two five zero knots, easyjet two one",
+     "rtf": 0.003,
+     "wer_propre": 0.8,
+     "wer_vhf": 0.8
+    },
+    {
+     "text": "heading one zero zero, easyjet two one",
+     "rtf": 0.003,
+     "wer_propre": 0.5,
+     "wer_vhf": 0.5
+    },
+    {
+     "text": "climb flight level three five zero, lufthansa eight eight",
+     "rtf": 0.003,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "proceed direct echo xray india tango echo, lufthansa eight eight",
+     "rtf": 0.003,
+     "wer_propre": 0.222,
+     "wer_vhf": 0.222
+    },
+    {
+     "text": "heading two two zero, klm one two three",
+     "rtf": 0.002,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "speed two eight zero knots, klm one two three",
+     "rtf": 0.002,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level two four zero, charlie sierra alfa one delta zulu",
+     "rtf": 0.003,
+     "wer_propre": 0.1,
+     "wer_vhf": 0.1
+    },
+    {
+     "text": "heading one two zero, american six three",
+     "rtf": 0.003,
+     "wer_propre": 0.5,
+     "wer_vhf": 0.5
+    },
+    {
+     "text": "climb flight level three three zero, united four five one",
+     "rtf": 0.003,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level zero niner zero, november one two three alfa bravo",
+     "rtf": 0.003,
+     "wer_propre": 0.25,
+     "wer_vhf": 0.25
+    },
+    {
+     "text": "climb flight level one five zero, foxtrot golf alfa bravo charlie",
+     "rtf": 0.003,
+     "wer_propre": 0.111,
+     "wer_vhf": 0.111
+    },
+    {
+     "text": "heading zero four five, air france one two three four",
+     "rtf": 0.003,
+     "wer_propre": 0.2,
+     "wer_vhf": 0.2
+    },
+    {
+     "text": "speed two three zero knots, speedbird five seven",
+     "rtf": 0.003,
+     "wer_propre": 0.4,
+     "wer_vhf": 0.4
+    },
+    {
+     "text": "proceed direct bravo alfa lima mike oscar, easyjet two one",
+     "rtf": 0.003,
+     "wer_propre": 0.444,
+     "wer_vhf": 0.444
+    },
+    {
+     "text": "descend flight level two zero zero, proceed direct charlie romeo oscar sierra sierra, air france one two three four",
+     "rtf": 0.003,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading zero niner zero, descend flight level one one zero, speedbird five seven",
+     "rtf": 0.003,
+     "wer_propre": 0.125,
+     "wer_vhf": 0.125
+    },
+    {
+     "text": "climb flight level three one zero, speed two niner zero knots, lufthansa eight eight",
+     "rtf": 0.003,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading one eight zero, speed two four zero knots, easyjet two one",
+     "rtf": 0.003,
+     "wer_propre": 0.286,
+     "wer_vhf": 0.286
+    },
+    {
+     "text": "heading two two five, ryanair niner",
+     "rtf": 0.003,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level one eight zero, klm one two three",
+     "rtf": 0.003,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "speed three zero zero knots, air france one two three four",
+     "rtf": 0.003,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "heading two one zero, charlie sierra alfa one delta zulu",
+     "rtf": 0.003,
+     "wer_propre": 0.125,
+     "wer_vhf": 0.125
+    },
+    {
+     "text": "proceed direct november oscar romeo tango hotel, united four five one",
+     "rtf": 0.003,
+     "wer_propre": 0.0,
+     "wer_vhf": 0.0
+    },
+    {
+     "text": "descend flight level one three zero, speed two two zero knots, american six three",
+     "rtf": 0.002,
+     "wer_propre": 0.222,
+     "wer_vhf": 0.222
+    }
+   ],
+   "sr_natif": 22050
+  }
+ }
+}

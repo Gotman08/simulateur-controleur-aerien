@@ -17,12 +17,13 @@ from ai_client import (AIClient, LlmClient, ProviderConfig, ProviderConfigError,
 
 
 class FakeResp:
-    def __init__(self, status=200, json_data=None, content=b"", text=""):
+    def __init__(self, status=200, json_data=None, content=b"", text="", headers=None):
         self.status_code = status
         self._json = json_data
         self.content = content
         self.text = text or (json.dumps(json_data) if json_data is not None else "")
         self.reason = "err"
+        self.headers = headers or {}
 
     @property
     def ok(self):
@@ -254,3 +255,32 @@ def test_apply_vhf_resample_16k_et_riff():
 def test_apply_vhf_non_wav_renvoye_tel_quel():
     mp3ish = b"ID3\x04rest-of-mp3"
     assert ai_client._apply_vhf(mp3ish) == mp3ish
+
+
+# --- gardes ajoutees en durcissement production --------------------------------
+def test_stt_json_non_objet_leve_provider_error(monkeypatch):
+    monkeypatch.setattr(requests, "post",
+                        lambda url, **kw: FakeResp(json_data=["pas", "un", "objet"]))
+    with pytest.raises(ProviderError):
+        SttClient(_cfg("stt")).transcribe(b"RIFFxxxx")
+
+
+def test_llm_content_null_leve_provider_error(monkeypatch):
+    body = {"choices": [{"message": {"role": "assistant", "content": None}}]}
+    monkeypatch.setattr(requests, "post", lambda url, **kw: FakeResp(json_data=body))
+    with pytest.raises(ProviderError):
+        LlmClient(_cfg("llm")).chat([{"role": "user", "content": "x"}])
+
+
+def test_tts_reponse_vide_leve_provider_error(monkeypatch):
+    monkeypatch.setattr(requests, "post", lambda url, **kw: FakeResp(content=b""))
+    with pytest.raises(ProviderError):
+        TtsClient(_cfg("tts")).speak("roger", voice="pilot_1")
+
+
+def test_tts_reponse_json_erreur_200_leve_provider_error(monkeypatch):
+    monkeypatch.setattr(requests, "post", lambda url, **kw: FakeResp(
+        json_data={"error": {"message": "quota"}}, content=b'{"error"...}',
+        headers={"content-type": "application/json"}))
+    with pytest.raises(ProviderError):
+        TtsClient(_cfg("tts")).speak("roger", voice="pilot_1")

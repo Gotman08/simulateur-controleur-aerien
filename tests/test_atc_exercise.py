@@ -114,3 +114,50 @@ def test_score_borne_a_zero_si_multi_los():
               for i in range(5)}
     s = e._score_unlocked(40.0)
     assert s["separation"] == 0.0            # max(0, 50 - 25*5 - ...) -> 0
+
+
+# ------------------------------------------- _sample() : episodes multiples
+def _snap(t, conflicts=(), aircraft=None):
+    if aircraft is None:
+        aircraft = [{"id": "A", "x": 0.0, "y": 0.0, "alt_ft": 30000.0},
+                    {"id": "B", "x": 2.0, "y": 0.0, "alt_ft": 30000.0}]
+    return {"t": t, "aircraft": aircraft, "conflicts": [list(c) for c in conflicts],
+            "predicted": []}
+
+
+def _sampling_engine():
+    e = _engine()
+    e._active = True
+    e._meta = {"duration_s": 1e9}          # jamais de stop(auto) pendant le test
+    return e
+
+
+def test_los_reentree_compte_deux_episodes_et_duree_cumulee():
+    """Une paire qui re-perd la separation apres resolution = 2 episodes ;
+    t_los ne doit PAS englober l'intervalle correctement separe (bug corrige :
+    310 s fantomes aneantissaient S_sep)."""
+    e = _sampling_engine()
+    e._sample(_snap(1000.0, conflicts=[("A", "B")]))   # episode 1 : rel 0
+    e._sample(_snap(1010.0))                           # ferme a rel 10 (10 s)
+    e._sample(_snap(1400.0, conflicts=[("A", "B")]))   # episode 2 : rel 400
+    e._sample(_snap(1410.0))                           # ferme a rel 410 (10 s)
+    s = e._score_unlocked(410.0)
+    assert s["n_los"] == 2
+    assert s["t_los_s"] == 20.0                        # 10 + 10, pas 410
+    # S_sep = 50 - 25*2 - 0.5*20 = -10 -> borne 0
+    assert s["separation"] == 0.0
+
+
+def test_zone_reentree_compte_deux_episodes():
+    """Sortir puis re-entrer dans la MEME zone doit rouvrir l'evenement
+    (bug corrige : la re-entree n'etait jamais re-comptee)."""
+    e = _sampling_engine()
+    inz = [{"id": "A", "x": 0.0, "y": 0.0, "alt_ft": 30000.0, "inzone": "storm"}]
+    out = [{"id": "A", "x": 50.0, "y": 0.0, "alt_ft": 30000.0}]
+    e._sample(_snap(1000.0, aircraft=inz))             # entree 1 : rel 0
+    e._sample(_snap(1010.0, aircraft=out))             # sortie a rel 10
+    e._sample(_snap(1400.0, aircraft=inz))             # re-entree : rel 400
+    e._sample(_snap(1410.0, aircraft=out))             # sortie a rel 410
+    s = e._score_unlocked(410.0)
+    assert s["n_zone"] == 2
+    assert s["t_zone_s"] == 20.0

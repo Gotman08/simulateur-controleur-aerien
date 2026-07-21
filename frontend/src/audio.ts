@@ -6,8 +6,16 @@ export function playB64Wav(b64: string) {
   const arr = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
   const url = URL.createObjectURL(new Blob([arr], { type: "audio/wav" }));
+  // URL blob revoquee apres lecture (sinon fuite memoire cumulative : un blob
+  // par collationnement TTS sur toute la session). revoke est idempotent.
+  const audio = new Audio(url);
+  audio.onended = () => URL.revokeObjectURL(url);
+  audio.onerror = () => URL.revokeObjectURL(url);
   // Lecture bloquee (politique autoplay...) : jamais totalement silencieux.
-  void new Audio(url).play().catch((e) => console.warn("[audio] lecture readback bloquee :", e));
+  void audio.play().catch((e) => {
+    console.warn("[audio] lecture readback bloquee :", e);
+    URL.revokeObjectURL(url);
+  });
 }
 
 /* ----- capture micro -> WAV mono 16 kHz (envoye a /api/voice) ---------------- */
@@ -66,8 +74,20 @@ function mergeFloat(chunks: Float32Array[]): Float32Array {
   return out;
 }
 
+/** Passe-bas 1 pole aller-retour (phase nulle, ~12 dB/oct) applique EN PLACE.
+ *  Anti-repliement avant decimation : sans lui, tout contenu > 8 kHz replie
+ *  dans la bande utile du WAV 16 kHz envoye au STT. */
+function lowpassInPlace(buf: Float32Array, rate: number, cutoff: number) {
+  const a = 1 - Math.exp((-2 * Math.PI * cutoff) / rate);
+  let y = buf[0] ?? 0;
+  for (let i = 0; i < buf.length; i++) { y += a * (buf[i] - y); buf[i] = y; }
+  y = buf[buf.length - 1] ?? 0;
+  for (let i = buf.length - 1; i >= 0; i--) { y += a * (buf[i] - y); buf[i] = y; }
+}
+
 function downsample(buf: Float32Array, from: number, to: number): Float32Array {
   if (to >= from) return buf;
+  lowpassInPlace(buf, from, 0.45 * to);   // coupure sous Nyquist cible (7,2 kHz)
   const ratio = from / to;
   const n = Math.round(buf.length / ratio);
   const out = new Float32Array(n);
