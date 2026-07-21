@@ -53,3 +53,5 @@ docs/article/figures/
 # journaux de serveurs de bench (diagnostic uniquement)
 bench/results/server_*.log
 bench/results/llm_usage.jsonl
+# voix du locuteur humain (donnees personnelles, jamais versionnees)
+bench/results/human_audio/
