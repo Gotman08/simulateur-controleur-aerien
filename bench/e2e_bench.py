@@ -149,17 +149,30 @@ class LocalFullServer:
 
 
 def main():
+    import contextlib
     ap = argparse.ArgumentParser()
-    ap.add_argument("--llm-gguf", required=True)
+    ap.add_argument("--llm-gguf", default="",
+                    help="GGUF local (mode facade locale) ; omis si --external-*")
     ap.add_argument("--stt", default="")
     ap.add_argument("--port", type=int, default=8905)
     ap.add_argument("--max-n", type=int, default=25)
+    # mode fournisseurs EXTERNES deja en service (ex. facade ROMEO via tunnel) :
+    ap.add_argument("--external-stt-url", default="")
+    ap.add_argument("--external-llm-url", default="")
+    ap.add_argument("--external-tts-url", default="")
+    ap.add_argument("--external-stt-model", default="whisper-atc-lora")
+    ap.add_argument("--external-llm-model", default="mistral-7b-atc")
+    ap.add_argument("--external-tts-model", default="xtts-atc")
+    ap.add_argument("--external-tts-voices", default="pilot_1,pilot_2,pilot_3")
     ap.add_argument("--out", default=os.path.join(RESULTS_DIR, "e2e_bench.json"))
     ap.add_argument("--save-audio", action="store_true")
     args = ap.parse_args()
     os.makedirs(RESULTS_DIR, exist_ok=True)
 
-    if not args.stt:
+    external = bool(args.external_llm_url)
+    if not external and not args.llm_gguf:
+        raise SystemExit("--llm-gguf requis (ou mode --external-*-url)")
+    if not external and not args.stt:
         try:
             import torch
             args.stt = (f"hf-lora:{ADAPTER}" if torch.cuda.is_available() else "fw:small")
@@ -179,17 +192,37 @@ def main():
                 f.write(b)
         wavs.append(b)
 
-    llm_name = os.path.splitext(os.path.basename(args.llm_gguf))[0].lower()
-    print(f"[e2e] serveur local : STT={args.stt}  LLM={llm_name}  TTS=kokoro")
-    with LocalFullServer(args.llm_gguf, args.stt, args.port):
-        base = f"http://127.0.0.1:{args.port}"
-        for name in ("STT", "LLM", "TTS"):
-            os.environ[f"ATC_{name}_URL"] = base
-            os.environ[f"ATC_{name}_KEY"] = ""
-        os.environ["ATC_STT_MODEL"] = args.stt
-        os.environ["ATC_LLM_MODEL"] = llm_name
-        os.environ["ATC_TTS_MODEL"] = "kokoro-82m"
-        os.environ["ATC_TTS_VOICES"] = "af_bella,am_adam,bm_george"
+    if external:
+        llm_name = args.external_llm_model
+        args.stt = f"api:{args.external_stt_url}"
+        print(f"[e2e] fournisseurs EXTERNES : STT={args.external_stt_url} "
+              f"LLM={args.external_llm_url} TTS={args.external_tts_url}")
+        serveur = contextlib.nullcontext()
+    else:
+        llm_name = os.path.splitext(os.path.basename(args.llm_gguf))[0].lower()
+        print(f"[e2e] serveur local : STT={args.stt}  LLM={llm_name}  TTS=kokoro")
+        serveur = LocalFullServer(args.llm_gguf, args.stt, args.port)
+
+    with serveur:
+        if external:
+            os.environ["ATC_STT_URL"] = args.external_stt_url
+            os.environ["ATC_LLM_URL"] = args.external_llm_url
+            os.environ["ATC_TTS_URL"] = args.external_tts_url
+            for name in ("STT", "LLM", "TTS"):
+                os.environ[f"ATC_{name}_KEY"] = ""
+            os.environ["ATC_STT_MODEL"] = args.external_stt_model
+            os.environ["ATC_LLM_MODEL"] = args.external_llm_model
+            os.environ["ATC_TTS_MODEL"] = args.external_tts_model
+            os.environ["ATC_TTS_VOICES"] = args.external_tts_voices
+        else:
+            base = f"http://127.0.0.1:{args.port}"
+            for name in ("STT", "LLM", "TTS"):
+                os.environ[f"ATC_{name}_URL"] = base
+                os.environ[f"ATC_{name}_KEY"] = ""
+            os.environ["ATC_STT_MODEL"] = args.stt
+            os.environ["ATC_LLM_MODEL"] = llm_name
+            os.environ["ATC_TTS_MODEL"] = "kokoro-82m"
+            os.environ["ATC_TTS_VOICES"] = "af_bella,am_adam,bm_george"
         os.environ["ATC_TTS_VHF"] = "1"
         os.environ["ATC_TTS_FORMAT"] = "wav"
         import readback

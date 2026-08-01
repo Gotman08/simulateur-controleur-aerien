@@ -122,9 +122,9 @@ def json_strict_ok(raw):
 
 
 # --- evaluation clairances ------------------------------------------------------
-def eval_clairances_llm(cases, port, model_name):
+def eval_clairances_llm(cases, base_url, model_name):
     from ai_client import LlmClient, ProviderConfig, ProviderError
-    os.environ["ATC_LLM_URL"] = f"http://127.0.0.1:{port}"
+    os.environ["ATC_LLM_URL"] = base_url
     os.environ["ATC_LLM_KEY"] = ""
     os.environ["ATC_LLM_MODEL"] = model_name
     client = LlmClient(ProviderConfig.from_env("llm"))
@@ -195,12 +195,12 @@ def _load_gen_eval():
     return mod
 
 
-def eval_scenarios_llm(port, model_name):
+def eval_scenarios_llm(base_url, model_name):
     import atc_ai
     import atc_llm
     from ai_client import LlmClient, ProviderConfig, ProviderError
     gen = _load_gen_eval()
-    os.environ["ATC_LLM_URL"] = f"http://127.0.0.1:{port}"
+    os.environ["ATC_LLM_URL"] = base_url
     os.environ["ATC_LLM_MODEL"] = model_name
     client = LlmClient(ProviderConfig.from_env("llm"))
     stats = defaultdict(lambda: {"n": 0, "ok": 0})
@@ -363,12 +363,20 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--models", default="", help="name=path.gguf,name2=path2.gguf")
     ap.add_argument("--port", type=int, default=DEFAULT_PORT)
+    ap.add_argument("--external", default="",
+                    help="fournisseur OpenAI-compatible DEJA en service : "
+                         "'nom_systeme=URL=modele' (ex. mistral-7b-atc-romeo="
+                         "http://localhost:8765=mistral-7b-atc). Aucun serveur "
+                         "local n'est lance ; la meme chaine de production et le "
+                         "meme corpus sont evalues a travers ce fournisseur.")
     ap.add_argument("--out", default=os.path.join(RESULTS_DIR, "llm_bench.json"))
     ap.add_argument("--skip-scenarios", action="store_true")
     args = ap.parse_args()
 
     models = {}
-    if args.models:
+    if args.external:
+        pass                                    # pas de GGUF local a evaluer
+    elif args.models:
         for part in args.models.split(","):
             name, _, path = part.partition("=")
             models[name.strip()] = path.strip()
@@ -381,7 +389,8 @@ def main():
     os.makedirs(RESULTS_DIR, exist_ok=True)
     usage_log = os.path.join(RESULTS_DIR, "llm_usage.jsonl")
     cases = bench_corpus.all_cases()
-    print(f"[llm_bench] {len(cases)} clairances, {len(models)} modeles : {list(models)}")
+    print(f"[llm_bench] {len(cases)} clairances, "
+          f"{'externe: ' + args.external if args.external else str(len(models)) + ' modeles'}")
 
     results = {"machine": machine_info(), "port": args.port,
                "n_cas": len(cases), "systems": {}, "rows": {}}
@@ -393,16 +402,35 @@ def main():
     if not args.skip_scenarios:
         results["systems"]["rules-parser"]["scenarios"] = eval_scenarios_parser()
 
+    if args.external:
+        sys_name, _, rest = args.external.partition("=")
+        base_url, _, model_id = rest.partition("=")
+        if not (sys_name and base_url and model_id):
+            raise SystemExit("--external attend 'nom=URL=modele'")
+        print(f"[llm_bench] fournisseur externe : {sys_name} ({base_url}, {model_id})")
+        rows = eval_clairances_llm(cases, base_url, model_id)
+        summary = summarize(rows)
+        summary["fournisseur"] = {"url": base_url, "modele": model_id,
+                                  "note": "latences client via tunnel/reseau inclus"}
+        if not args.skip_scenarios:
+            print(f"    scenarios ({sys_name})...")
+            summary["scenarios"] = eval_scenarios_llm(base_url, model_id)
+        results["rows"][sys_name] = rows
+        results["systems"][sys_name] = summary
+        with open(args.out, "w", encoding="utf-8") as f:
+            json.dump(results, f, indent=1, ensure_ascii=False)
+        print(f"    -> exactitude {summary['exactitude']['globale']:.1%}")
+
     for name, gguf in models.items():
         print(f"[llm_bench] modele : {name} ({os.path.getsize(gguf) / 1e9:.2f} Go)")
         with LocalLlmServer(gguf, name, args.port, usage_log) as srv:
-            rows = eval_clairances_llm(cases, args.port, name)
+            rows = eval_clairances_llm(cases, f"http://127.0.0.1:{args.port}", name)
             summary = summarize(rows)
             summary["chargement_serveur_s"] = round(srv.start_s, 1)
             summary["taille_gguf_go"] = round(os.path.getsize(gguf) / 1e9, 2)
             if not args.skip_scenarios:
                 print(f"    scenarios ({name})...")
-                summary["scenarios"] = eval_scenarios_llm(args.port, name)
+                summary["scenarios"] = eval_scenarios_llm(f"http://127.0.0.1:{args.port}", name)
             summary["tokens"] = tokens_stats(usage_log, name)
             results["rows"][name] = rows
             results["systems"][name] = summary

@@ -112,7 +112,7 @@ multilayer safety net) are measured and discussed in
 **[docs/PERFORMANCE.md](docs/PERFORMANCE.md)** - reproducible with
 `src\bluesky-env\Scripts\python.exe validation\05_performance.py`.
 
-### Benchmark campaign on consumer hardware (July 2026)
+### Benchmark campaign on consumer and HPC hardware (July-August 2026)
 
 Every stage was re-measured **for real** on a local RTX 4070 Laptop (8 GB),
 through the production code path, with seeded protocols, bootstrap/Wilson 95% CIs
@@ -131,8 +131,10 @@ review and fixes: **[docs/PRODUCTION.md](docs/PRODUCTION.md)**.
 | Clearance interpretation | 116 annotated clearances (standard + out-of-grammar + adversarial), full production chain, 5 local LLMs | best local **Mistral-7B-v0.3 81.9%** (rules parser 87.9%; out-of-grammar: LLM 77% vs parser 71%) |
 | TTS (local Kokoro-82M, 4 voices) | 30 ICAO readbacks, round-trip intelligibility (fixed STT judge, semantic normalization) | RTF **0.34**, round-trip WER after VHF **21.4%** |
 | Full voice loop (E2E) | 25 spoken clearances through radio channel (SNR 12 dB), STT→LLM→validation→TTS | **76%** exact execution (text control: 88%), mean voice latency **2.6 s** |
+| Cluster parity (ROMEO GH200, Aug 2026) | same seeded protocols replayed against the production façade through the SSH tunnel | Mistral-7B **bf16 83.6%** vs Q4 local (quantization cost isolated); E2E **76%**, 9.0 s mean (SSH tunnel incl.) |
+| Human speaker validation | same 25 clearances spoken by a real (non-native) speaker, replayed through the exact bench chain | raw mic **80%**, simulated radio 72% — failure taxonomy in the article |
 
-Historical ROMEO (GH200) reference figures remain in the table above; the July 2026 campaign proves the same architecture on consumer hardware.
+The July 2026 campaign proves the architecture on consumer hardware; the August 2026 campaign replays the same seeded protocols against the GH200 production façade (deployment parity), plus a real-speaker validation. Historical first-campaign figures remain in the table above.
 <!-- BENCH:END -->
 
 ## Demos

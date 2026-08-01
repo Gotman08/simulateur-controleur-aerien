@@ -53,6 +53,10 @@ def fig_stt():
     d = load("stt_bench.json")
     if not d or "systems" not in d:
         return
+    extra = load("stt_bench_romeo.json")
+    if extra:
+        for k, v in extra.get("systems", {}).items():
+            d["systems"].setdefault(k, v)
     systems = list(d["systems"].keys())
     corpora = list(d["corpora"].keys())
 
@@ -116,6 +120,8 @@ def fig_stt():
 #  LLM
 # =============================================================================
 def _sysname(s):
+    if s == "mistral-7b-atc-romeo":
+        return "Mistral-7B\nROMEO bf16"
     return (s.replace("-instruct", "").replace("-q4_k_m", "")
             .replace("qwen2.5", "Qwen2.5").replace("llama-3.2", "Llama-3.2")
             .replace("mistral-7b", "Mistral-7B").replace("rules-parser", "Parseur regles"))
@@ -125,6 +131,11 @@ def fig_llm():
     d = load("llm_bench.json")
     if not d or "systems" not in d:
         return
+    extra = load("llm_bench_romeo.json")
+    if extra:
+        for k, v in extra.get("systems", {}).items():
+            if k != "rules-parser":
+                d["systems"].setdefault(k, v)
     systems = list(d["systems"].keys())
     labels = [_sysname(s) for s in systems]
 
@@ -157,9 +168,9 @@ def fig_llm():
     ax.set_xticks(xs)
     ax.set_xticklabels(labels, rotation=15, ha="right")
     ax.set_ylabel("Exactitude TrafScript exacte (%) - IC 95 % Wilson")
-    ax.set_ylim(0, 105)
+    ax.set_ylim(0, 118)
     ax.set_title("Extraction d'intention : exactitude par systeme (chaine de production complete)")
-    ax.legend(fontsize=8, loc="lower right")
+    ax.legend(fontsize=8, loc="upper center", ncol=3, framealpha=0.9)
     save(fig, "fig_llm_exactitude.png")
 
     # --- heatmap categories -------------------------------------------------------
@@ -238,6 +249,11 @@ def fig_tts():
     d = load("tts_bench.json")
     if not d or "engines" not in d:
         return
+    extra = load("tts_bench_romeo.json")
+    if extra:
+        for k, v in extra.get("engines", {}).items():
+            if k.startswith("xtts") and "erreur" not in v:
+                d["engines"].setdefault(k, v)
     engines = [(k, v) for k, v in d["engines"].items() if "erreur" not in v]
     if not engines:
         return
@@ -278,41 +294,58 @@ def fig_e2e():
     d = load("e2e_bench.json")
     if not d:
         return
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9, 3.5))
-    # reussite voix vs texte
-    conds = [("voix", "pipeline vocal complet"), ("texte_temoin", "texte (temoin, sans STT)")]
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10.5, 3.6),
+                                   gridspec_kw={"width_ratios": [1.6, 1]})
+    # reussite : toutes les conditions mesurees disponibles
+    conds = [(d["voix"], "SAPI\npile locale", C[0]),
+             (d["texte_temoin"], "texte temoin\n(sans STT)", C[2])]
+    romeo = load("e2e_bench_romeo.json")
+    if romeo:
+        conds.insert(1, (romeo["voix"], "SAPI\npile ROMEO", C[5]))
+    human = load("human_e2e.json")
+    if human:
+        for spk, per in human.get("par_locuteur", {}).items():
+            if per.get("micro"):
+                conds.append((per["micro"], f"humain ({spk})\nmicro brut", C[1]))
+            if per.get("radio"):
+                conds.append((per["radio"], f"humain ({spk})\ncanal radio", C[3]))
     xs = np.arange(len(conds))
-    vals = [100 * d[c]["reussite"] for c, _ in conds]
-    los = [100 * d[c]["ic95"][0] for c, _ in conds]
-    his = [100 * d[c]["ic95"][1] for c, _ in conds]
-    ax1.bar(xs, vals, 0.45, yerr=[np.array(vals) - los, np.array(his) - np.array(vals)],
-            capsize=4, color=[C[0], C[2]], edgecolor="white")
-    for x, (c, _) in zip(xs, conds):
-        ax1.text(x, 5, f"{d[c]['k']}/{d[c]['n']}", ha="center", fontsize=9, color="white",
-                 fontweight="bold")
+    vals = [100 * c[0]["reussite"] for c in conds]
+    los = [100 * c[0]["ic95"][0] for c in conds]
+    his = [100 * c[0]["ic95"][1] for c in conds]
+    ax1.bar(xs, vals, 0.55, yerr=[np.array(vals) - los, np.array(his) - np.array(vals)],
+            capsize=4, color=[c[2] for c in conds], edgecolor="white")
+    for x, c in zip(xs, conds):
+        ax1.text(x, 5, f"{c[0]['k']}/{c[0]['n']}", ha="center", fontsize=8,
+                 color="white", fontweight="bold")
     ax1.set_xticks(xs)
-    ax1.set_xticklabels([lbl for _, lbl in conds], fontsize=8)
+    ax1.set_xticklabels([c[1] for c in conds], fontsize=7.5)
     ax1.set_ylabel("Clairances correctement executees (%)")
     ax1.set_ylim(0, 105)
-    ax1.set_title("Reussite E2E - IC 95 % Wilson")
-    # latences par etage
+    ax1.set_title("Reussite E2E par condition - IC 95 % Wilson")
+    # latences par etage : pile locale et, si mesuree, pile ROMEO (tunnel inclus)
     stages = [("stt", "STT"), ("llm", "LLM"), ("tts", "TTS")]
-    means = [d["latences"][s]["moyenne_s"] for s, _ in stages]
-    bottoms = np.concatenate([[0], np.cumsum(means)[:-1]])
-    for k, ((_s, lbl), m, b) in enumerate(zip(stages, means, bottoms)):
-        ax2.bar([0], [m], 0.4, bottom=[b], label=f"{lbl} ({m:.2f} s)", color=C[k],
-                edgecolor="white")
-    tot = d["latences"]["totale"]
-    ax2.errorbar([0], [sum(means)], yerr=[[0], [tot["p95_s"] - sum(means)]],
-                 fmt="none", ecolor="black", capsize=5, label=f"p95 total ({tot['p95_s']:.2f} s)")
-    ax2.set_xlim(-0.8, 1.6)
-    ax2.set_xticks([])
+    piles = [("locale", d)] + ([("ROMEO", romeo)] if romeo else [])
+    for xi, (_plbl, dd) in enumerate(piles):
+        bottom = 0.0
+        for k, (s, lbl) in enumerate(stages):
+            m = dd["latences"][s]["moyenne_s"]
+            ax2.bar([xi], [m], 0.5, bottom=[bottom], color=C[k], edgecolor="white",
+                    label=f"{lbl}" if xi == 0 else None)
+            bottom += m
+        tot = dd["latences"]["totale"]
+        ax2.errorbar([xi], [bottom], yerr=[[0], [max(0.0, tot["p95_s"] - bottom)]],
+                     fmt="none", ecolor="black", capsize=5,
+                     label="p95 total" if xi == 0 else None)
+        ax2.text(xi, bottom + 0.25, f"{tot['moyenne_s']:.1f} s", ha="center", fontsize=8)
+    ax2.set_xticks(range(len(piles)))
+    ax2.set_xticklabels([f"pile {p}" for p, _ in piles], fontsize=8)
+    ax2.set_xlim(-0.7, len(piles) - 0.3 + 0.9)
     ax2.set_ylabel("Latence (s)")
-    ax2.set_title("Decomposition de la latence vocale")
+    ax2.set_title("Latence vocale par etage")
     ax2.legend(fontsize=8, loc="center right")
-    fig.suptitle(f"Boucle vocale complete - STT={d['config']['stt'].split(':')[0]}, "
-                 f"LLM={_sysname(d['config']['llm'])}, TTS=kokoro, SNR {d['config']['snr_db']} dB",
-                 y=1.03, fontsize=9)
+    fig.suptitle(f"Boucle vocale complete - 25 clairances, canal SNR {d['config']['snr_db']} dB "
+                 f"(graine commune a toutes les conditions)", y=1.03, fontsize=9)
     save(fig, "fig_e2e.png")
 
 

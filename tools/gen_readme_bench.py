@@ -105,8 +105,36 @@ def build_block():
             f"**{e2e['latences']['totale']['moyenne_s']:.1f} s** |",
         ]
 
-    lines += ["", "Historical ROMEO (GH200) reference figures remain in the table above; "
-                  "the July 2026 campaign proves the same architecture on consumer hardware."]
+    lromeo = load("llm_bench_romeo.json")
+    eromeo = load("e2e_bench_romeo.json")
+    if lromeo or eromeo:
+        cell = []
+        if lromeo and "mistral-7b-atc-romeo" in lromeo.get("systems", {}):
+            cell.append(f"Mistral-7B **bf16 {pc(lromeo['systems']['mistral-7b-atc-romeo']['exactitude']['globale'])}** "
+                        f"vs Q4 local (quantization cost isolated)")
+        if eromeo:
+            cell.append(f"E2E **{pc(eromeo['voix']['reussite'], 0)}**, "
+                        f"{eromeo['latences']['totale']['moyenne_s']:.1f} s mean (SSH tunnel incl.)")
+        lines += [
+            "| Cluster parity (ROMEO GH200, Aug 2026) | same seeded protocols replayed "
+            "against the production façade through the SSH tunnel | " + "; ".join(cell) + " |",
+        ]
+
+    human = load("human_e2e.json")
+    if human:
+        n1 = human.get("par_locuteur", {}).get("nicolas", {})
+        if n1:
+            lines += [
+                f"| Human speaker validation | same 25 clearances spoken by a real "
+                f"(non-native) speaker, replayed through the exact bench chain | raw mic "
+                f"**{pc(n1.get('micro', {}).get('reussite'), 0)}**, simulated radio "
+                f"{pc(n1.get('radio', {}).get('reussite'), 0)} — failure taxonomy in the article |",
+            ]
+
+    lines += ["", "The July 2026 campaign proves the architecture on consumer hardware; the "
+                  "August 2026 campaign replays the same seeded protocols against the GH200 "
+                  "production façade (deployment parity), plus a real-speaker validation. "
+                  "Historical first-campaign figures remain in the table above."]
     return "\n".join(lines)
 
 

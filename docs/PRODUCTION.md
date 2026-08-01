@@ -102,10 +102,15 @@ Pendant la campagne de mesure de juillet 2026, le supercalculateur ROMEO
 était **entièrement indisponible** (maintenance de sécurité : logins et
 nœuds ARM GPU down dans l'attente des correctifs RedHat). L'application est
 restée pleinement opérationnelle en basculant la configuration `.env` vers la
-façade 100 % locale (RTX 4070) - sans toucher au code. C'est précisément le
+façade 100 % locale (RTX 4070) - sans toucher au code. À la réouverture
+(août 2026), la bascule inverse a été exercée : la même batterie de mesures
+a été rejouée à protocole identique contre la façade GH200 via le tunnel de
+production (`bench/results/*_romeo.json`) - parité STT (WER identiques),
+écart d'interprétation bf16/Q4 non significatif (McNemar apparié), et
+boucle vocale au même taux de réussite (76 %). C'est précisément le
 scénario de continuité que le contrat OpenAI-compatible garantit : la panne
 d'un fournisseur (cluster, cloud) est un risque opérationnel réel, couvert
-par bascule de configuration.
+par bascule de configuration - **vérifié dans les deux sens**.
 
 ## 7. Limites assumées (documentées)
 

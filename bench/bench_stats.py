@@ -68,6 +68,19 @@ def mcnemar_exact(a_correct, b_correct):
     return {"n01": n01, "n10": n10, "p_value": p}
 
 
+def holm_correction(pvalues):
+    """Correction de Holm-Bonferroni (famille de tests) : liste de p bruts ->
+    liste de p ajustes (meme ordre). Monotone et bornee a 1."""
+    m = len(pvalues)
+    order = sorted(range(m), key=lambda i: pvalues[i])
+    adj = [0.0] * m
+    running = 0.0
+    for rank, i in enumerate(order):
+        running = max(running, (m - rank) * pvalues[i])
+        adj[i] = min(1.0, running)
+    return adj
+
+
 def paired_bootstrap_diff(values_a, values_b, b=BOOT_B, seed=BOOT_SEED, alpha=0.05):
     """IC bootstrap de mean(A) - mean(B) sur echantillons APPARIES (meme corpus).
 

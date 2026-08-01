@@ -120,6 +120,29 @@ class KokoroEngine:
         return np.asarray(samples, dtype=np.float32), int(sr), dt
 
 
+class HttpTts:
+    """Fournisseur TTS OpenAI-compatible en service (ex. XTTS sur ROMEO via
+    tunnel). Latences client = synthese + reseau (realite de deploiement)."""
+
+    def __init__(self, url, model_id="xtts-atc"):
+        import ai_client
+        os.environ["ATC_TTS_URL"] = url
+        os.environ["ATC_TTS_KEY"] = ""
+        os.environ["ATC_TTS_MODEL"] = model_id
+        self.client = ai_client.TtsClient(ai_client.ProviderConfig.from_env("tts"))
+
+    def synth(self, text, voice):
+        import io as _io
+        import soundfile as sf
+        t0 = time.perf_counter()
+        wav_bytes = self.client.speak(text, voice, response_format="wav")
+        dt = time.perf_counter() - t0
+        data, sr = sf.read(_io.BytesIO(wav_bytes), dtype="float32")
+        if data.ndim > 1:
+            data = data.mean(axis=1)
+        return np.asarray(data, dtype=np.float32), int(sr), dt
+
+
 def sapi_voices():
     ps = ("Add-Type -AssemblyName System.Speech; "
           "(New-Object System.Speech.Synthesis.SpeechSynthesizer).GetInstalledVoices()"
@@ -229,6 +252,9 @@ def eval_engine_outputs(items, judge):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=os.path.join(RESULTS_DIR, "tts_bench.json"))
+    ap.add_argument("--xtts-url", default="",
+                    help="URL de la facade TTS distante (ex. http://localhost:8766 "
+                         "= XTTS ROMEO via tunnel) ; voix pilot_1..3")
     ap.add_argument("--save-audio", action="store_true",
                     help="conserver les WAV de synthese (demo article)")
     args = ap.parse_args()
@@ -271,6 +297,32 @@ def main():
     except Exception as e:
         results["engines"]["kokoro"] = {"erreur": str(e)}
         print(f"[tts_bench] kokoro indisponible : {e}")
+
+    # --- XTTS distant (facade ROMEO via tunnel), voix clonees pilot_* -----------
+    if args.xtts_url:
+        try:
+            xt = HttpTts(args.xtts_url, model_id="xtts-atc")
+            for voice in ("pilot_1", "pilot_2", "pilot_3"):
+                print(f"[tts_bench] xtts-romeo / {voice} ...", flush=True)
+                items = []
+                for p in ph:
+                    samples, sr, dt = xt.synth(p["text"], voice)
+                    s16 = to_16k(samples, sr)
+                    items.append({"text": p["text"], "samples_16k": s16, "synth_s": dt})
+                    if args.save_audio:
+                        sf.write(os.path.join(AUDIO_DIR, f"xtts_{voice}_{p['id']}.wav"),
+                                 s16, 16000)
+                r = eval_engine_outputs(items, judge)
+                r["sr_natif"] = sr
+                r["note"] = "synthese GH200 via tunnel SSH : latence reseau incluse"
+                results["engines"][f"xtts-romeo/{voice}"] = r
+                print(f"    RTF={r['rtf_moyen']:.3f}  WER propre={r['wer_aller_retour_propre']:.1%}"
+                      f"  WER VHF={r['wer_aller_retour_vhf']:.1%}")
+                with open(args.out, "w", encoding="utf-8") as f:
+                    json.dump(results, f, indent=1, ensure_ascii=False)
+        except Exception as e:
+            results["engines"]["xtts-romeo"] = {"erreur": str(e)}
+            print(f"[tts_bench] xtts-romeo indisponible : {e}")
 
     # --- SAPI ------------------------------------------------------------------
     try:

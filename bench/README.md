@@ -58,6 +58,26 @@ bench\bench-env\Scripts\python bench\run_all.py
 
 Matériel de référence : RTX 4070 Laptop 8 Go, i9-13900H, 32 Go RAM, Windows 11.
 
+## Campagne contre un fournisseur distant (façade ROMEO)
+
+Chaque banc accepte un fournisseur OpenAI-compatible **déjà en service**
+(mêmes protocoles, mêmes graines — c'est ainsi qu'a été produite la
+comparaison cluster/local d'août 2026, tunnel SSH compris dans les latences) :
+
+```bat
+:: façade GH200 lancée par start_romeo.ps1 (tunnel 8765/8766)
+bench\bench-env\Scripts\python bench\llm_bench.py --external "mistral-7b-atc-romeo=http://localhost:8765=mistral-7b-atc" --out bench\results\llm_bench_romeo.json
+bench\bench-env\Scripts\python bench\stt_bench.py --systems "api:http://localhost:8765|whisper-atc-lora" --out bench\results\stt_bench_romeo.json
+bench\bench-env\Scripts\python bench\tts_bench.py --xtts-url http://localhost:8766 --out bench\results\tts_bench_romeo.json
+bench\bench-env\Scripts\python bench\e2e_bench.py --external-stt-url http://localhost:8765 --external-llm-url http://localhost:8765 --external-tts-url http://localhost:8766 --out bench\results\e2e_bench_romeo.json
+```
+
+`gen_tables.py` et `figures.py` fusionnent automatiquement les fichiers
+`*_romeo.json` (lignes « ROMEO » des tableaux, barres supplémentaires des
+figures). NB : la condition STT distante est rangée sous `vhf_bandpass`
+(la façade applique elle-même le passe-bande d'inférence — chemin de
+production) ; `capture_versions.py` fige l'environnement logiciel exact.
+
 ## Limites documentées
 
 - L'intelligibilité TTS aller-retour partage le biais du juge STT entre tous

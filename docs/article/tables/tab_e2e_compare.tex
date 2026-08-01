@@ -1,0 +1,14 @@
+\begin{table}[t]\centering\small
+\caption{Boucle vocale complète : conditions comparées (25 clairances identiques, graine de bruit commune ; IC de Wilson 95\,\% ; attribution des échecs par WER sémantique ; latences client, tunnel compris pour ROMEO).}
+\label{tab:e2ecmp}
+\begin{tabular}{lrrrr}
+\toprule
+Condition & Réussite & IC 95\,\% & Échecs STT/LLM & Lat. moy./p95 \\
+\midrule
+SAPI $\rightarrow$ pile locale & 19/25 (76\,\%) & \ic{57}{89} & 3/3 & 2,6/3,2\,s \\
+SAPI $\rightarrow$ pile ROMEO (tunnel) & 19/25 (76\,\%) & \ic{57}{89} & 3/3 & 9,0/13,6\,s \\
+Locuteur humain (nicolas), micro brut $\rightarrow$ pile locale & 20/25 (80\,\%) & \ic{61}{91} & 4/1 & 2,3/2,7\,s \\
+Locuteur humain (nicolas), canal radio simulé $\rightarrow$ pile locale & 18/25 (72\,\%) & \ic{52}{86} & 6/1 & 2,7/3,6\,s \\
+\bottomrule
+\end{tabular}
+\end{table}

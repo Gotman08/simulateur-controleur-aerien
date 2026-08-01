@@ -1,0 +1,34 @@
+\begin{table}[t]\centering\small
+\caption{Environnement logiciel exact des campagnes (reproductibilité).}
+\label{tab:versions}
+\begin{tabular}{ll}
+\toprule
+Composant & Version \\
+\midrule
+Python (bench) & 3.12.10 \\
+OS & Windows 11 \\
+torch & 2.6.0+cu124 \\
+transformers & 5.12.1 \\
+peft & 0.19.1 \\
+datasets & 5.0.0 \\
+faster\_whisper & 1.2.1 \\
+ctranslate2 & 4.8.0 \\
+llama\_cpp & 0.3.32 \\
+kokoro\_onnx & ? \\
+onnxruntime & 1.27.0 \\
+jiwer & ? \\
+numpy & 2.5.0 \\
+scipy & 1.18.0 \\
+soundfile & 0.14.0 \\
+fastapi & 0.139.0 \\
+requests & 2.34.2 \\
+GPU (local) & NVIDIA GeForce RTX 4070 Laptop GPU \\
+CUDA (torch) & 12.4 \\
+Pilote NVIDIA & 591.74 \\
+Python (app) & 3.12.10 \\
+bluesky-simulator & 1.1.1 \\
+numpy (app) & 2.4.6 \\
+Modeles GGUF (Q4\_K\_M) & Llama-3.2-1B-Instruct-Q4\_K\_M (0.81 Go), Mistral-7B-Instruct-v0.3-Q4\_K\_M (4.37 Go), Qwen2.5-3B-Instruct-bartowski-Q4\_K\_M (1.93 Go), qwen2.5-1.5b-instruct-q4\_k\_m (1.12 Go), qwen2.5-3b-instruct-q4\_k\_m (2.10 Go) \\
+\bottomrule
+\end{tabular}
+\end{table}

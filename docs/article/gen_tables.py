@@ -54,10 +54,68 @@ def macro(name, value):
 
 
 def sysname(s):
+    if s == "mistral-7b-atc-romeo":
+        return "Mistral-7B ROMEO (bf16)"
     return (s.replace("-instruct", "").replace("-q4_k_m", "")
             .replace("qwen2.5", "Qwen2.5").replace("llama-3.2", "Llama-3.2")
             .replace("mistral-7b", "Mistral-7B").replace("-v0.3", "")
             .replace("rules-parser", "Parseur à règles"))
+
+
+# --- statistiques pures (stdlib) : McNemar exact + Holm -----------------------
+def _binom_two_sided_half(k, n):
+    """P bilaterale exacte du binomial(n, 1/2) pour k succes (symetrique)."""
+    if n == 0:
+        return 1.0
+    import math
+    kmin = min(k, n - k)
+    tail = sum(math.comb(n, i) for i in range(kmin + 1)) / (2 ** n)
+    return min(1.0, 2.0 * tail)
+
+
+def mcnemar_from_rows(rows_a, rows_b):
+    a = [r["correct"] for r in rows_a]
+    b = [r["correct"] for r in rows_b]
+    n01 = sum(1 for x, y in zip(a, b) if x and not y)
+    n10 = sum(1 for x, y in zip(a, b) if not x and y)
+    return {"n01": n01, "n10": n10,
+            "p_value": _binom_two_sided_half(min(n01, n10), n01 + n10)}
+
+
+def holm(pvalues):
+    m = len(pvalues)
+    order = sorted(range(m), key=lambda i: pvalues[i])
+    adj = [0.0] * m
+    running = 0.0
+    for rank, i in enumerate(order):
+        running = max(running, (m - rank) * pvalues[i])
+        adj[i] = min(1.0, running)
+    return adj
+
+
+def load_llm_merged():
+    """llm_bench.json + llm_bench_romeo.json (systemes fusionnes, McNemar
+    recalcule sur l'union des systemes avec correction de Holm)."""
+    d = load("llm_bench.json")
+    if not d:
+        return None
+    extra = load("llm_bench_romeo.json")
+    if extra:
+        for k, v in extra.get("systems", {}).items():
+            if k != "rules-parser" and k not in d["systems"]:
+                d["systems"][k] = v
+                d["rows"][k] = extra["rows"][k]
+    names = list(d["rows"])
+    mcn = {}
+    for i, x in enumerate(names):
+        for y in names[i + 1:]:
+            mcn[f"{x} vs {y}"] = mcnemar_from_rows(d["rows"][x], d["rows"][y])
+    pairs = list(mcn)
+    adj = holm([mcn[p]["p_value"] for p in pairs])
+    for p, a in zip(pairs, adj):
+        mcn[p]["p_holm"] = a
+    d["mcnemar"] = mcn
+    return d
 
 
 def write(path, content):
@@ -103,6 +161,10 @@ def gen_sim():
 # =============================================================================
 def gen_stt():
     d = load("stt_bench.json")
+    extra = load("stt_bench_romeo.json")
+    if d and extra:
+        for k, v in extra.get("systems", {}).items():
+            d["systems"].setdefault(k, v)
     path = os.path.join(TABLES, "tab_stt.tex")
     if not d or "systems" not in d:
         for m in ("nWERVanillaAtcoVhf", "nWERLoraAtcoVhf", "nWERGainRel",
@@ -156,19 +218,23 @@ def gen_stt():
 #  llm_bench
 # =============================================================================
 def gen_llm():
-    d = load("llm_bench.json")
+    d = load_llm_merged()
     path = os.path.join(TABLES, "tab_llm.tex")
     mpath = os.path.join(TABLES, "tab_mcnemar.tex")
     if not d or "systems" not in d:
         for m in ("nLLMBestName", "nLLMBestAcc", "nLLMWorstName", "nLLMWorstAcc",
                   "nParserInGrammar", "nParserHorsGram", "nLLMSweetName",
-                  "nLLMSweetAcc", "nLLMSweetLat", "nScenParser", "nScenBest"):
+                  "nLLMSweetAcc", "nLLMSweetLat", "nScenParser", "nScenBest",
+                  "nLLMRomeoAcc", "nMcnParserMistralHolm"):
             macro(m, "??")
         placeholder(path, "LLM", "tab:llm")
         placeholder(mpath, "McNemar", "tab:mcnemar")
         return
     s = d["systems"]
-    llms = {k: v for k, v in s.items() if k != "rules-parser"}
+    llms = {k: v for k, v in s.items()
+            if k != "rules-parser" and k != "mistral-7b-atc-romeo"}
+    romeo = s.get("mistral-7b-atc-romeo")
+    macro("nLLMRomeoAcc", pct(romeo["exactitude"]["globale"]) if romeo else "??")
     best = max(llms, key=lambda k: llms[k]["exactitude"]["globale"])
     worst = min(llms, key=lambda k: llms[k]["exactitude"]["globale"])
     macro("nLLMBestName", sysname(best))
@@ -229,21 +295,42 @@ def gen_llm():
     write(path, "\n".join(lines) + "\n")
 
     mc = d.get("mcnemar", {})
+
+    def pfmt(pv):
+        return "$<10^{-4}$" if pv < 1e-4 else fr(pv, 4)
+
+    # macros de prose : p Holm parseur vs Mistral local ; paire quantification
+    key_pm = next((k for k in mc if "rules-parser" in k and "mistral-7b-instruct" in k), None)
+    macro("nMcnParserMistralHolm", pfmt(mc[key_pm]["p_holm"]) if key_pm else "??")
+    key_q = next((k for k in mc if "mistral-7b-instruct" in k and "romeo" in k), None)
+    if key_q:
+        r = mc[key_q]
+        macro("nMcnQuantDetail",
+              f"$n_{{01}}={r['n01']}$, $n_{{10}}={r['n10']}$, "
+              f"$p_{{\\mathrm{{Holm}}}}={fr(r['p_holm'], 2)}$")
+    else:
+        macro("nMcnQuantDetail", "??")
+
     lines = [
         "\\begin{table}[t]\\centering\\small",
         "\\caption{Tests exacts de McNemar entre systèmes appariés sur les "
-        f"{d['n_cas']} clairances ($n_{{01}}$ : A correct / B faux).}}",
+        f"{d['n_cas']} clairances ($n_{{01}}$ : A correct / B faux ; RC = rapport "
+        "de cotes $n_{01}/n_{10}$ ; $p_{\\mathrm{Holm}}$ : correction de "
+        "Holm-Bonferroni sur la famille complète de "
+        f"{len(mc)} comparaisons ; * : $p_{{\\mathrm{{Holm}}}}<0{{,}}05$).}}",
         "\\label{tab:mcnemar}",
-        "\\begin{tabular}{lrrr}",
+        "\\begin{tabular}{lrrrrr}",
         "\\toprule",
-        "Paire (A vs B) & $n_{01}$ & $n_{10}$ & $p$ \\\\",
+        "Paire (A vs B) & $n_{01}$ & $n_{10}$ & RC & $p$ & $p_{\\mathrm{Holm}}$ \\\\",
         "\\midrule",
     ]
     for pair, r in mc.items():
         a, b = pair.split(" vs ")
-        pv = r["p_value"]
-        pstr = "$<10^{-4}$" if pv < 1e-4 else fr(pv, 4)
-        lines.append(f"{sysname(a)} vs {sysname(b)} & {r['n01']} & {r['n10']} & {pstr} \\\\")
+        rc = ("--" if r["n01"] == 0 and r["n10"] == 0 else
+              "$\\infty$" if r["n10"] == 0 else fr(r["n01"] / r["n10"], 1))
+        star = "*" if r.get("p_holm", 1.0) < 0.05 else "\\phantom{*}"
+        lines.append(f"{sysname(a)} vs {sysname(b)} & {r['n01']} & {r['n10']} & {rc} "
+                     f"& {pfmt(r['p_value'])} & {pfmt(r.get('p_holm', r['p_value']))}{star} \\\\")
     lines += ["\\bottomrule", "\\end{tabular}", "\\end{table}"]
     write(mpath, "\n".join(lines) + "\n")
 
@@ -253,6 +340,11 @@ def gen_llm():
 # =============================================================================
 def gen_tts():
     d = load("tts_bench.json")
+    extra = load("tts_bench_romeo.json")
+    if d and extra:
+        for k, v in extra.get("engines", {}).items():
+            if k.startswith("xtts") and "erreur" not in v:
+                d["engines"].setdefault(k, v)
     path = os.path.join(TABLES, "tab_tts.tex")
     if not d or not any("erreur" not in v for v in d.get("engines", {}).values()):
         macro("nTTSKokoroRTF", "??")
@@ -332,12 +424,109 @@ def gen_e2e():
     write(path, "\n".join(lines) + "\n")
 
 
+# =============================================================================
+#  boucle complete : tableau COMPARATIF (SAPI local / ROMEO / locuteur humain)
+# =============================================================================
+def gen_e2e_compare():
+    path = os.path.join(TABLES, "tab_e2e_compare.tex")
+    local = load("e2e_bench.json")
+    romeo = load("e2e_bench_romeo.json")
+    human = load("human_e2e.json")
+
+    conds = []
+    if local:
+        conds.append(("SAPI $\\rightarrow$ pile locale", local["voix"],
+                      local["attribution_echecs"], local["latences"]["totale"],
+                      local.get("stt_wer_moyen")))
+        macro("nEETexteLocal", pct(local["texte_temoin"]["reussite"], 0))
+    if romeo:
+        conds.append(("SAPI $\\rightarrow$ pile ROMEO (tunnel)", romeo["voix"],
+                      romeo["attribution_echecs"], romeo["latences"]["totale"],
+                      romeo.get("stt_wer_moyen")))
+        macro("nEERomeoVoix", pct(romeo["voix"]["reussite"], 0))
+        macro("nEERomeoLatMoy", secs(romeo["latences"]["totale"].get("moyenne_s")))
+        macro("nEERomeoTexte", pct(romeo["texte_temoin"]["reussite"], 0))
+    else:
+        macro("nEERomeoVoix", "??")
+        macro("nEERomeoLatMoy", "??")
+        macro("nEERomeoTexte", "??")
+    if human:
+        for spk, per in human.get("par_locuteur", {}).items():
+            for cond_key, lbl in (("micro", "micro brut"), ("radio", "canal radio simulé")):
+                c = per.get(cond_key)
+                if not c:
+                    continue
+                conds.append((f"Locuteur humain ({spk}), {lbl} $\\rightarrow$ pile locale",
+                              c, c.get("attribution_echecs", {}),
+                              c.get("latence_totale", {}), c.get("stt_wer_moyen")))
+        n1 = human.get("par_locuteur", {}).get("nicolas", {})
+        macro("nHumMicro", pct(n1.get("micro", {}).get("reussite"), 0))
+        macro("nHumRadio", pct(n1.get("radio", {}).get("reussite"), 0))
+        micro_ic = n1.get("micro", {}).get("ic95")
+        macro("nHumMicroIC", f"\\ic{{{fr(100 * micro_ic[0], 0)}}}{{{fr(100 * micro_ic[1], 0)}}}"
+              if micro_ic else "??")
+        macro("nHumNLoc", str(len(human.get("par_locuteur", {}))))
+    else:
+        for m in ("nHumMicro", "nHumRadio", "nHumMicroIC", "nHumNLoc"):
+            macro(m, "??")
+
+    if not conds:
+        placeholder(path, "Boucle complète comparée", "tab:e2ecmp")
+        return
+    lines = [
+        "\\begin{table}[t]\\centering\\small",
+        "\\caption{Boucle vocale complète : conditions comparées (25 clairances "
+        "identiques, graine de bruit commune ; IC de Wilson 95\\,\\% ; attribution "
+        "des échecs par WER sémantique ; latences client, tunnel compris pour ROMEO).}",
+        "\\label{tab:e2ecmp}",
+        "\\begin{tabular}{lrrrr}",
+        "\\toprule",
+        "Condition & Réussite & IC 95\\,\\% & Échecs STT/LLM & Lat. moy./p95 \\\\",
+        "\\midrule",
+    ]
+    for lbl, vx, at, lat, _wer in conds:
+        lines.append(" & ".join([
+            lbl,
+            f"{vx['k']}/{vx['n']} ({fr(100 * vx['reussite'], 0)}\\,\\%)",
+            f"\\ic{{{fr(100 * vx['ic95'][0], 0)}}}{{{fr(100 * vx['ic95'][1], 0)}}}",
+            f"{at.get('stt', '?')}/{at.get('llm', '?')}",
+            (f"{fr(lat['moyenne_s'], 1)}/{fr(lat['p95_s'], 1)}\\,s"
+             if lat.get("moyenne_s") is not None else "--"),
+        ]) + " \\\\")
+    lines += ["\\bottomrule", "\\end{tabular}", "\\end{table}"]
+    write(path, "\n".join(lines) + "\n")
+
+
+# =============================================================================
+#  versions logicielles (reproductibilite)
+# =============================================================================
+def gen_versions():
+    path = os.path.join(TABLES, "tab_versions.tex")
+    d = load("versions.json")
+    if not d:
+        placeholder(path, "Versions logicielles", "tab:versions")
+        return
+    lines = [
+        "\\begin{table}[t]\\centering\\small",
+        "\\caption{Environnement logiciel exact des campagnes (reproductibilité).}",
+        "\\label{tab:versions}",
+        "\\begin{tabular}{ll}",
+        "\\toprule", "Composant & Version \\\\", "\\midrule",
+    ]
+    for k, v in d.items():
+        lines.append(f"{k.replace('_', chr(92) + '_')} & {str(v).replace('_', chr(92) + '_')} \\\\")
+    lines += ["\\bottomrule", "\\end{tabular}", "\\end{table}"]
+    write(path, "\n".join(lines) + "\n")
+
+
 def main():
     gen_sim()
     gen_stt()
     gen_llm()
     gen_tts()
     gen_e2e()
+    gen_e2e_compare()
+    gen_versions()
     lines = ["% GENERE par gen_tables.py - ne pas editer a la main"]
     for name, val in sorted(MACROS.items()):
         lines.append(f"\\newcommand{{\\{name}}}{{{val}}}")

@@ -1,0 +1,5140 @@
+{
+ "machine": {
+  "python": "3.12.10",
+  "llama_cpp": "0.3.32",
+  "gpu_offload": true,
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU, 8188 MiB"
+ },
+ "port": 8901,
+ "n_cas": 116,
+ "systems": {
+  "rules-parser": {
+   "n": 116,
+   "exactitude": {
+    "globale": 0.8793103448275862,
+    "ic95": [
+     0.8075734431935786,
+     0.9267300346342817
+    ],
+    "positifs": 0.8586956521739131,
+    "ic95_positifs": [
+     0.7731141979919699,
+     0.915523066216171
+    ],
+    "negatifs_rejetes": 0.9583333333333334,
+    "ic95_negatifs": [
+     0.7975819352134406,
+     0.9926065438344942
+    ]
+   },
+   "json_strict": 1.0,
+   "n_erreurs_fournisseur": 0,
+   "par_categorie": {
+    "bruit_stt": {
+     "n": 4,
+     "ok": 0,
+     "exactitude": 0.0
+    },
+    "cap": {
+     "n": 8,
+     "ok": 8,
+     "exactitude": 1.0
+    },
+    "chiffres": {
+     "n": 4,
+     "ok": 4,
+     "exactitude": 1.0
+    },
+    "chiffres_ext": {
+     "n": 4,
+     "ok": 3,
+     "exactitude": 0.75
+    },
+    "direct": {
+     "n": 6,
+     "ok": 6,
+     "exactitude": 1.0
+    },
+    "francais": {
+     "n": 6,
+     "ok": 6,
+     "exactitude": 1.0
+    },
+    "francais_ext": {
+     "n": 5,
+     "ok": 4,
+     "exactitude": 0.8
+    },
+    "indicatif": {
+     "n": 6,
+     "ok": 6,
+     "exactitude": 1.0
+    },
+    "indicatif_ext": {
+     "n": 2,
+     "ok": 2,
+     "exactitude": 1.0
+    },
+    "mixte": {
+     "n": 4,
+     "ok": 4,
+     "exactitude": 1.0
+    },
+    "multi": {
+     "n": 6,
+     "ok": 6,
+     "exactitude": 1.0
+    },
+    "multi_ext": {
+     "n": 4,
+     "ok": 4,
+     "exactitude": 1.0
+    },
+    "negatif": {
+     "n": 10,
+     "ok": 10,
+     "exactitude": 1.0
+    },
+    "negatif_ext": {
+     "n": 14,
+     "ok": 13,
+     "exactitude": 0.9285714285714286
+    },
+    "niveau": {
+     "n": 10,
+     "ok": 10,
+     "exactitude": 1.0
+    },
+    "paraphrase": {
+     "n": 11,
+     "ok": 4,
+     "exactitude": 0.36363636363636365
+    },
+    "taux": {
+     "n": 5,
+     "ok": 5,
+     "exactitude": 1.0
+    },
+    "vitesse": {
+     "n": 7,
+     "ok": 7,
+     "exactitude": 1.0
+    }
+   },
+   "par_strate": {
+    "in_grammar": {
+     "n": 68,
+     "ok": 68,
+     "exactitude": 1.0,
+     "ic95": [
+      0.9465286634799296,
+      1.0
+     ]
+    },
+    "hors_grammaire": {
+     "n": 48,
+     "ok": 34,
+     "exactitude": 0.7083333333333334,
+     "ic95": [
+      0.5682074019042831,
+      0.8175842107348348
+     ]
+    }
+   },
+   "latence": {
+    "n": 116,
+    "moyenne_s": 4.318275775937042e-05,
+    "mediane_s": 2.680000034160912e-05,
+    "p95_s": 4.897499457001686e-05,
+    "min_s": 7.700000423938036e-06,
+    "max_s": 0.0017547000024933368,
+    "ic95_moyenne_s": [
+     2.6699072384809402e-05,
+     7.417256219923729e-05
+    ]
+   },
+   "echecs": [
+    {
+     "categorie": "paraphrase",
+     "phrase": "BAW57 make your heading zero nine zero",
+     "attendu": [
+      "HDG BAW57 90"
+     ],
+     "obtenu": [
+      "HDG BAW57MAKEYOUR 90"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "paraphrase",
+     "phrase": "EZY21 pick up speed to three hundred knots",
+     "attendu": [
+      "SPD EZY21 300"
+     ],
+     "obtenu": [
+      "SPD EZY21PICKUP 3"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "paraphrase",
+     "phrase": "DLH88 when ready descend flight level one two zero",
+     "attendu": [
+      "ALT DLH88 12000"
+     ],
+     "obtenu": [
+      "ALT DLH88WHENREADY 12000"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "paraphrase",
+     "phrase": "ryanair niner route direct to delta",
+     "attendu": [
+      "ADDWPT RYR9 DELTA"
+     ],
+     "obtenu": [
+      "ADDWPT RYR9ROUTE DELTA"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "paraphrase",
+     "phrase": "speedbird five seven climb now to flight level three five zero",
+     "attendu": [
+      "ALT BAW57 35000"
+     ],
+     "obtenu": [],
+     "erreur": ""
+    },
+    {
+     "categorie": "paraphrase",
+     "phrase": "AFR1234 slow down to two three zero knots",
+     "attendu": [
+      "SPD AFR1234 230"
+     ],
+     "obtenu": [],
+     "erreur": ""
+    },
+    {
+     "categorie": "paraphrase",
+     "phrase": "BAW57 stop climb at flight level two eight zero",
+     "attendu": [
+      "ALT BAW57 28000"
+     ],
+     "obtenu": [],
+     "erreur": ""
+    },
+    {
+     "categorie": "bruit_stt",
+     "phrase": "uh air france one two three four er climb flight level three two zero please",
+     "attendu": [
+      "ALT AFR1234 32000"
+     ],
+     "obtenu": [
+      "ALT UHAIRFRANCE1234ER 32000"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "bruit_stt",
+     "phrase": "speedbird five seven speedbird five seven turn left heading two one zero",
+     "attendu": [
+      "HDG BAW57 210"
+     ],
+     "obtenu": [
+      "HDG BAW57SPEEDBIRD57 210"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "bruit_stt",
+     "phrase": "easyjet two one good evening climb flight level one eight zero",
+     "attendu": [
+      "ALT EZY21 18000"
+     ],
+     "obtenu": [
+      "ALT EZY21GOODEVENING 18000"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "bruit_stt",
+     "phrase": "AFR1234 roger climb flight level two four zero",
+     "attendu": [
+      "ALT AFR1234 24000"
+     ],
+     "obtenu": [
+      "ALT AFR1234ROGER 24000"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "francais_ext",
+     "phrase": "DLH88 directe BALMO",
+     "attendu": [
+      "ADDWPT DLH88 BALMO"
+     ],
+     "obtenu": [],
+     "erreur": ""
+    },
+    {
+     "categorie": "chiffres_ext",
+     "phrase": "BAW57 reduce speed two hundred fifty knots",
+     "attendu": [
+      "SPD BAW57 250"
+     ],
+     "obtenu": [
+      "SPD BAW57 2"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "negatif_ext",
+     "phrase": "AFR1234 monter niveau cinq cents",
+     "attendu": [],
+     "obtenu": [
+      "ALT AFR1234 500"
+     ],
+     "erreur": ""
+    }
+   ],
+   "scenarios": {
+    "n_descriptions": 20,
+    "descriptions_conformes": 20,
+    "n_contraintes": 116,
+    "n_contraintes_ok": 116,
+    "taux_contraintes": 1.0,
+    "ic95_taux": [
+     0.9679454935003613,
+     1.0
+    ],
+    "par_contrainte": {
+     "nombre": {
+      "n": 20,
+      "ok": 20
+     },
+     "type": {
+      "n": 18,
+      "ok": 18
+     },
+     "niveau": {
+      "n": 21,
+      "ok": 21
+     },
+     "cap": {
+      "n": 21,
+      "ok": 21
+     },
+     "direction": {
+      "n": 21,
+      "ok": 21
+     },
+     "espacement": {
+      "n": 10,
+      "ok": 10
+     },
+     "vitesse": {
+      "n": 5,
+      "ok": 5
+     }
+    },
+    "echecs": []
+   }
+  },
+  "mistral-7b-atc-romeo": {
+   "n": 116,
+   "exactitude": {
+    "globale": 0.8362068965517241,
+    "ic95": [
+     0.7582995878695619,
+     0.892560312932405
+    ],
+    "positifs": 0.8586956521739131,
+    "ic95_positifs": [
+     0.7731141979919699,
+     0.915523066216171
+    ],
+    "negatifs_rejetes": 0.75,
+    "ic95_negatifs": [
+     0.55100555994846,
+     0.8800063377140499
+    ]
+   },
+   "json_strict": 0.9827586206896551,
+   "n_erreurs_fournisseur": 0,
+   "par_categorie": {
+    "bruit_stt": {
+     "n": 4,
+     "ok": 4,
+     "exactitude": 1.0
+    },
+    "cap": {
+     "n": 8,
+     "ok": 7,
+     "exactitude": 0.875
+    },
+    "chiffres": {
+     "n": 4,
+     "ok": 4,
+     "exactitude": 1.0
+    },
+    "chiffres_ext": {
+     "n": 4,
+     "ok": 4,
+     "exactitude": 1.0
+    },
+    "direct": {
+     "n": 6,
+     "ok": 6,
+     "exactitude": 1.0
+    },
+    "francais": {
+     "n": 6,
+     "ok": 3,
+     "exactitude": 0.5
+    },
+    "francais_ext": {
+     "n": 5,
+     "ok": 5,
+     "exactitude": 1.0
+    },
+    "indicatif": {
+     "n": 6,
+     "ok": 5,
+     "exactitude": 0.8333333333333334
+    },
+    "indicatif_ext": {
+     "n": 2,
+     "ok": 1,
+     "exactitude": 0.5
+    },
+    "mixte": {
+     "n": 4,
+     "ok": 3,
+     "exactitude": 0.75
+    },
+    "multi": {
+     "n": 6,
+     "ok": 3,
+     "exactitude": 0.5
+    },
+    "multi_ext": {
+     "n": 4,
+     "ok": 3,
+     "exactitude": 0.75
+    },
+    "negatif": {
+     "n": 10,
+     "ok": 9,
+     "exactitude": 0.9
+    },
+    "negatif_ext": {
+     "n": 14,
+     "ok": 9,
+     "exactitude": 0.6428571428571429
+    },
+    "niveau": {
+     "n": 10,
+     "ok": 9,
+     "exactitude": 0.9
+    },
+    "paraphrase": {
+     "n": 11,
+     "ok": 11,
+     "exactitude": 1.0
+    },
+    "taux": {
+     "n": 5,
+     "ok": 5,
+     "exactitude": 1.0
+    },
+    "vitesse": {
+     "n": 7,
+     "ok": 6,
+     "exactitude": 0.8571428571428571
+    }
+   },
+   "par_strate": {
+    "in_grammar": {
+     "n": 68,
+     "ok": 57,
+     "exactitude": 0.8382352941176471,
+     "ic95": [
+      0.733099723993876,
+      0.9071990777719586
+     ]
+    },
+    "hors_grammaire": {
+     "n": 48,
+     "ok": 40,
+     "exactitude": 0.8333333333333334,
+     "ic95": [
+      0.7042217159874441,
+      0.9130448642351444
+     ]
+    }
+   },
+   "latence": {
+    "n": 116,
+    "moyenne_s": 1.953540685345521,
+    "mediane_s": 1.0436597999942023,
+    "p95_s": 4.331219425010204,
+    "min_s": 0.13098079999326728,
+    "max_s": 34.06317290000152,
+    "ic95_moyenne_s": [
+     1.460645107868418,
+     2.663835498641448
+    ]
+   },
+   "echecs": [
+    {
+     "categorie": "cap",
+     "phrase": "ryanair niner turn right heading two two five",
+     "attendu": [
+      "HDG RYR9 225"
+     ],
+     "obtenu": [
+      "HDG RYR99 225"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "niveau",
+     "phrase": "csa one delta zulu climb flight level two four zero",
+     "attendu": [
+      "ALT CSA1DZ 24000"
+     ],
+     "obtenu": [
+      "ALT CSAD1ZUL 24000"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "vitesse",
+     "phrase": "csa one delta zulu reduce 230",
+     "attendu": [
+      "SPD CSA1DZ 230"
+     ],
+     "obtenu": [
+      "SPD CSAD1ZUL 230"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "multi",
+     "phrase": "csa one delta zulu climb flight level two four zero reduce speed two five zero",
+     "attendu": [
+      "ALT CSA1DZ 24000",
+      "SPD CSA1DZ 250"
+     ],
+     "obtenu": [
+      "ALT CSAD1Z 24000",
+      "SPD CSAD1Z 250"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "multi",
+     "phrase": "AFR1234 turn left heading 050 descend flight level 90 reduce speed 230",
+     "attendu": [
+      "ALT AFR1234 9000",
+      "HDG AFR1234 50",
+      "SPD AFR1234 230"
+     ],
+     "obtenu": [
+      "ALT AFR1234 18000",
+      "ALT AFR1234 9000",
+      "HDG AFR1234 50",
+      "SPD AFR1234 230"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "multi",
+     "phrase": "speedbird five seven turn right heading two seven zero descend flight level one one zero",
+     "attendu": [
+      "ALT BAW57 11000",
+      "HDG BAW57 270"
+     ],
+     "obtenu": [
+      "ALT BAW57 11000",
+      "SPD BAW57 270"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "indicatif",
+     "phrase": "csa one delta zulu fly heading two one zero",
+     "attendu": [
+      "HDG CSA1DZ 210"
+     ],
+     "obtenu": [
+      "HDG CSAD1ZUL 210"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "francais",
+     "phrase": "AFR1234 descend niveau 1 0 0",
+     "attendu": [
+      "ALT AFR1234 10000"
+     ],
+     "obtenu": [
+      "ALT AFR1234 1000"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "francais",
+     "phrase": "DLH88 descendre niveau 1 0 0",
+     "attendu": [
+      "ALT DLH88 10000"
+     ],
+     "obtenu": [
+      "ALT DLH88 1000"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "francais",
+     "phrase": "BAW57 descendre au niveau 2 4 0",
+     "attendu": [
+      "ALT BAW57 24000"
+     ],
+     "obtenu": [
+      "ALT BAW57 2400"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "negatif",
+     "phrase": "AFR1234 descend flight level five five five",
+     "attendu": [],
+     "obtenu": [
+      "ALT AFR1234 5550"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "indicatif_ext",
+     "phrase": "november one two three alfa bravo descend flight level niner zero",
+     "attendu": [
+      "ALT N123AB 9000"
+     ],
+     "obtenu": [
+      "ALT AFR123 9000"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "multi_ext",
+     "phrase": "KLM123 turn right heading two two zero then direct NORTH",
+     "attendu": [
+      "ADDWPT KLM123 NORTH",
+      "HDG KLM123 220"
+     ],
+     "obtenu": [
+      "HDG KLM123 220"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "mixte",
+     "phrase": "EZY21 direct NOWHERE then speed two four zero",
+     "attendu": [
+      "SPD EZY21 240"
+     ],
+     "obtenu": [],
+     "erreur": ""
+    },
+    {
+     "categorie": "negatif_ext",
+     "phrase": "AFR1234 turn left twenty degrees",
+     "attendu": [],
+     "obtenu": [
+      "HDG AFR1234 20"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "negatif_ext",
+     "phrase": "AFR1234 squawk seven thousand",
+     "attendu": [],
+     "obtenu": [
+      "ALT AFR1234 7000"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "negatif_ext",
+     "phrase": "AFR1234 hold position",
+     "attendu": [],
+     "obtenu": [
+      "HDG AFR1234 0"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "negatif_ext",
+     "phrase": "expect higher in one zero miles",
+     "attendu": [],
+     "obtenu": [
+      "ALT NONE 10000"
+     ],
+     "erreur": ""
+    },
+    {
+     "categorie": "negatif_ext",
+     "phrase": "AFR1234 monter niveau cinq cents",
+     "attendu": [],
+     "obtenu": [
+      "ALT AFR1234 500"
+     ],
+     "erreur": ""
+    }
+   ],
+   "fournisseur": {
+    "url": "http://localhost:8765",
+    "modele": "mistral-7b-atc",
+    "note": "latences client via tunnel/reseau inclus"
+   },
+   "scenarios": {
+    "n_descriptions": 20,
+    "descriptions_conformes": 3,
+    "n_contraintes": 116,
+    "n_contraintes_ok": 82,
+    "taux_contraintes": 0.7068965517241379,
+    "ic95_taux": [
+     0.618499809228177,
+     0.7820293604961104
+    ],
+    "par_contrainte": {
+     "nombre": {
+      "n": 20,
+      "ok": 20
+     },
+     "type": {
+      "n": 18,
+      "ok": 18
+     },
+     "niveau": {
+      "n": 21,
+      "ok": 21
+     },
+     "cap": {
+      "n": 21,
+      "ok": 6
+     },
+     "direction": {
+      "n": 21,
+      "ok": 11
+     },
+     "espacement": {
+      "n": 10,
+      "ok": 1
+     },
+     "vitesse": {
+      "n": 5,
+      "ok": 5
+     }
+    },
+    "latence": {
+     "n": 20,
+     "moyenne_s": 16.617909380001947,
+     "mediane_s": 9.424831249998533,
+     "p95_s": 71.62576033501247,
+     "min_s": 3.1034634000097867,
+     "max_s": 86.29953889999888,
+     "ic95_moyenne_s": [
+      8.399339903253276,
+      27.540299150251336
+     ]
+    },
+    "echecs": [
+     {
+      "description": "three A320 from the north at FL300 heading 180, 8 miles apart",
+      "contrainte": "direction",
+      "detail": "azimuts=[0.0, 8.0, 16.0] attendu=0"
+     },
+     {
+      "description": "three A320 from the north at FL300 heading 180, 8 miles apart",
+      "contrainte": "espacement",
+      "detail": "dists=[1.4, 1.4] attendu=8"
+     },
+     {
+      "description": "two B738 from the south at flight level 240",
+      "contrainte": "cap",
+      "detail": "hdg=[180.0, 180.0] attendu=0.0"
+     },
+     {
+      "description": "un A319 venant de l ouest au niveau 120",
+      "contrainte": "cap",
+      "detail": "hdg=[270.0] attendu=90.0"
+     },
+     {
+      "description": "four aircraft from the north east at FL350, 6 miles apart, speed 270 knots",
+      "contrainte": "cap",
+      "detail": "hdg=[70.0, 100.0, 130.0, 160.0] attendu=225.0"
+     },
+     {
+      "description": "four aircraft from the north east at FL350, 6 miles apart, speed 270 knots",
+      "contrainte": "direction",
+      "detail": "azimuts=[0.0, 6.0, 12.0, 18.0] attendu=45"
+     },
+     {
+      "description": "four aircraft from the north east at FL350, 6 miles apart, speed 270 knots",
+      "contrainte": "espacement",
+      "detail": "dists=[1.05, 1.05, 1.05] attendu=6"
+     },
+     {
+      "description": "six A320 from the west at FL280, 10 miles apart",
+      "contrainte": "cap",
+      "detail": "hdg=[260.0, 260.0, 260.0, 260.0, 260.0, 260.0] attendu=90.0"
+     },
+     {
+      "description": "six A320 from the west at FL280, 10 miles apart",
+      "contrainte": "direction",
+      "detail": "azimuts=[260.0, 260.0, 260.0, 260.0, 260.0, 260.0] attendu=270"
+     },
+     {
+      "description": "deux A321 venant du sud est au niveau 310 espaces de 7 milles",
+      "contrainte": "cap",
+      "detail": "hdg=[135.0, 135.0] attendu=315.0"
+     },
+     {
+      "description": "deux A321 venant du sud est au niveau 310 espaces de 7 milles",
+      "contrainte": "espacement",
+      "detail": "dists=[4.0] attendu=7"
+     },
+     {
+      "description": "trois B738 venant du nord au niveau 300 cap 180 espaces de 8 milles",
+      "contrainte": "direction",
+      "detail": "azimuts=[0.0, 8.0, 16.0] attendu=0"
+     },
+     {
+      "description": "trois B738 venant du nord au niveau 300 cap 180 espaces de 8 milles",
+      "contrainte": "espacement",
+      "detail": "dists=[4.19, 4.19] attendu=8"
+     },
+     {
+      "description": "a single E190 from the north west at FL330",
+      "contrainte": "cap",
+      "detail": "hdg=[330.0] attendu=135.0"
+     },
+     {
+      "description": "a single E190 from the north west at FL330",
+      "contrainte": "direction",
+      "detail": "azimuts=[330.0] attendu=315"
+     },
+     {
+      "description": "two aircraft from the south west at flight level 250, 12 miles apart",
+      "contrainte": "cap",
+      "detail": "hdg=[240.0, 260.0] attendu=45.0"
+     },
+     {
+      "description": "two aircraft from the south west at flight level 250, 12 miles apart",
+      "contrainte": "direction",
+      "detail": "azimuts=[240.0, 228.0] attendu=225"
+     },
+     {
+      "description": "two aircraft from the south west at flight level 250, 12 miles apart",
+      "contrainte": "espacement",
+      "detail": "dists=[2.51] attendu=12"
+     },
+     {
+      "description": "cinq A320 venant de l est au niveau 290",
+      "contrainte": "cap",
+      "detail": "hdg=[180.0, 180.0, 180.0, 180.0, 180.0] attendu=270.0"
+     },
+     {
+      "description": "one CRJ9 from the south at FL200 speed 230 knots",
+      "contrainte": "cap",
+      "detail": "hdg=[180.0] attendu=0.0"
+     }
+    ]
+   }
+  }
+ },
+ "rows": {
+  "rules-parser": [
+   {
+    "categorie": "cap",
+    "phrase": "air france one two three four turn left heading two seven zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG AFR1234 270"
+    ],
+    "obtenu": [
+     "HDG AFR1234 270"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.0017547000024933368,
+    "erreur": ""
+   },
+   {
+    "categorie": "cap",
+    "phrase": "speedbird five seven turn right heading 090",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG BAW57 90"
+    ],
+    "obtenu": [
+     "HDG BAW57 90"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 5.01000031363219e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "cap",
+    "phrase": "AFR1234 fly heading three six zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG AFR1234 360"
+    ],
+    "obtenu": [
+     "HDG AFR1234 360"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.659998765215278e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "cap",
+    "phrase": "EZY21 fly heading 100",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG EZY21 100"
+    ],
+    "obtenu": [
+     "HDG EZY21 100"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.820001100189984e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "cap",
+    "phrase": "lufthansa eight eight heading one eight zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG DLH88 180"
+    ],
+    "obtenu": [
+     "HDG DLH88 180"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.950002090074122e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "cap",
+    "phrase": "ryanair niner turn right heading two two five",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG RYR9 225"
+    ],
+    "obtenu": [
+     "HDG RYR9 225"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.61999957729131e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "cap",
+    "phrase": "AFR1234 hdg 045",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG AFR1234 45"
+    ],
+    "obtenu": [
+     "HDG AFR1234 45"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.099998528137803e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "cap",
+    "phrase": "BAW57 turn left heading 310",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG BAW57 310"
+    ],
+    "obtenu": [
+     "HDG BAW57 310"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.509998739697039e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "air france one two three four descend flight level one zero zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 10000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 10000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.480000304989517e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "csa one delta zulu climb flight level two four zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT CSA1DZ 24000"
+    ],
+    "obtenu": [
+     "ALT CSA1DZ 24000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.9699993319809437e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "AFR1234 climb FL320",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 32000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.300000051036477e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "BAW57 descend to flight level 80",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT BAW57 8000"
+    ],
+    "obtenu": [
+     "ALT BAW57 8000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.7400004910305142e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "EZY21 climb 5 thousand feet",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT EZY21 5000"
+    ],
+    "obtenu": [
+     "ALT EZY21 5000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.920001861639321e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "AFR1234 descend altitude 6000 feet",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 6000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 6000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.95999925583601e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "air france one two three four climb to flight level three two zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 32000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.070000093430281e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "BAW57 maintain flight level 100",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT BAW57 10000"
+    ],
+    "obtenu": [
+     "ALT BAW57 10000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.579999272711575e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "DLH88 descend 4000 feet",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT DLH88 4000"
+    ],
+    "obtenu": [
+     "ALT DLH88 4000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.4300010409206152e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "speedbird five seven climb flight level one five zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT BAW57 15000"
+    ],
+    "obtenu": [
+     "ALT BAW57 15000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 4.199999966658652e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "vitesse",
+    "phrase": "AFR1234 reduce speed two five zero knots",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "SPD AFR1234 250"
+    ],
+    "obtenu": [
+     "SPD AFR1234 250"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.0800001695752144e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "vitesse",
+    "phrase": "AFR1234 increase speed 300",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "SPD AFR1234 300"
+    ],
+    "obtenu": [
+     "SPD AFR1234 300"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.3999979021027684e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "vitesse",
+    "phrase": "RYR9 increase speed to 280 knots",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "SPD RYR9 280"
+    ],
+    "obtenu": [
+     "SPD RYR9 280"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.7000001864507794e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "vitesse",
+    "phrase": "easyjet two one reduce speed two two zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "SPD EZY21 220"
+    ],
+    "obtenu": [
+     "SPD EZY21 220"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.370000584051013e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "vitesse",
+    "phrase": "BAW57 speed 250",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "SPD BAW57 250"
+    ],
+    "obtenu": [
+     "SPD BAW57 250"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.0500010577961802e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "vitesse",
+    "phrase": "csa one delta zulu reduce 230",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "SPD CSA1DZ 230"
+    ],
+    "obtenu": [
+     "SPD CSA1DZ 230"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.1499989088624716e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "vitesse",
+    "phrase": "AFR1234 maintain 250 knots",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "SPD AFR1234 250"
+    ],
+    "obtenu": [
+     "SPD AFR1234 250"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.5399989681318402e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "direct",
+    "phrase": "ryanair niner proceed direct delta",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ADDWPT RYR9 DELTA"
+    ],
+    "obtenu": [
+     "ADDWPT RYR9 DELTA"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.2899999748915434e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "direct",
+    "phrase": "AFR1234 direct CROSS",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ADDWPT AFR1234 CROSS"
+    ],
+    "obtenu": [
+     "ADDWPT AFR1234 CROSS"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.1499989088624716e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "direct",
+    "phrase": "AFR1234 proceed direct to NORTH",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ADDWPT AFR1234 NORTH"
+    ],
+    "obtenu": [
+     "ADDWPT AFR1234 NORTH"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.2899999748915434e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "direct",
+    "phrase": "BAW57 proceed direct ENTRY_W",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ADDWPT BAW57 ENTRY_W"
+    ],
+    "obtenu": [
+     "ADDWPT BAW57 ENTRY_W"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.1599989850074053e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "direct",
+    "phrase": "EZY21 direct BALMO",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ADDWPT EZY21 BALMO"
+    ],
+    "obtenu": [
+     "ADDWPT EZY21 BALMO"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.829999382607639e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "direct",
+    "phrase": "DLH88 proceed direct EXIT_E",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ADDWPT DLH88 EXIT_E"
+    ],
+    "obtenu": [
+     "ADDWPT DLH88 EXIT_E"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.020000829361379e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "taux",
+    "phrase": "AFR1234 climb FL320 expedite",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 32000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 7.929999264888465e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "taux",
+    "phrase": "BAW57 descend flight level 80 rate 1500",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT BAW57 8000"
+    ],
+    "obtenu": [
+     "ALT BAW57 8000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.580001066438854e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "taux",
+    "phrase": "AFR1234 descend flight level 80 1500 feet per minute",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 8000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 8000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.71999922208488e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "taux",
+    "phrase": "AFR1234 climb flight level 240 rate 2 thousand",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 24000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 24000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.309999010525644e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "taux",
+    "phrase": "EZY21 expedite climb flight level 200",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT EZY21 20000"
+    ],
+    "obtenu": [
+     "ALT EZY21 20000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.5399989681318402e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "multi",
+    "phrase": "csa one delta zulu climb flight level two four zero reduce speed two five zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT CSA1DZ 24000",
+     "SPD CSA1DZ 250"
+    ],
+    "obtenu": [
+     "ALT CSA1DZ 24000",
+     "SPD CSA1DZ 250"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 0,
+    "latence_s": 3.880000440403819e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "multi",
+    "phrase": "AFR1234 turn left heading 050 descend flight level 90 reduce speed 230",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 9000",
+     "HDG AFR1234 50",
+     "SPD AFR1234 230"
+    ],
+    "obtenu": [
+     "ALT AFR1234 9000",
+     "HDG AFR1234 50",
+     "SPD AFR1234 230"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 3,
+    "n_rejets": 0,
+    "latence_s": 4.260000423528254e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "multi",
+    "phrase": "speedbird five seven turn right heading two seven zero descend flight level one one zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT BAW57 11000",
+     "HDG BAW57 270"
+    ],
+    "obtenu": [
+     "ALT BAW57 11000",
+     "HDG BAW57 270"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 0,
+    "latence_s": 3.9000005926936865e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "multi",
+    "phrase": "DLH88 climb flight level 350 increase speed 290",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT DLH88 35000",
+     "SPD DLH88 290"
+    ],
+    "obtenu": [
+     "ALT DLH88 35000",
+     "SPD DLH88 290"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 0,
+    "latence_s": 3.399999695830047e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "multi",
+    "phrase": "EZY21 fly heading 180 reduce speed 240",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG EZY21 180",
+     "SPD EZY21 240"
+    ],
+    "obtenu": [
+     "HDG EZY21 180",
+     "SPD EZY21 240"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 0,
+    "latence_s": 2.9199989512562752e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "multi",
+    "phrase": "AFR1234 descend flight level 200 proceed direct CROSS",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ADDWPT AFR1234 CROSS",
+     "ALT AFR1234 20000"
+    ],
+    "obtenu": [
+     "ADDWPT AFR1234 CROSS",
+     "ALT AFR1234 20000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 0,
+    "latence_s": 3.279998782090843e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "indicatif",
+    "phrase": "speedbird five seven turn right heading two seven zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG BAW57 270"
+    ],
+    "obtenu": [
+     "HDG BAW57 270"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.549999044276774e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "indicatif",
+    "phrase": "ryanair niner fly heading one two zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG RYR9 120"
+    ],
+    "obtenu": [
+     "HDG RYR9 120"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.19999928958714e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "indicatif",
+    "phrase": "lufthansa eight eight climb flight level three one zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT DLH88 31000"
+    ],
+    "obtenu": [
+     "ALT DLH88 31000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.5999994250014424e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "indicatif",
+    "phrase": "easyjet two one descend flight level one three zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT EZY21 13000"
+    ],
+    "obtenu": [
+     "ALT EZY21 13000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.4900014977902174e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "indicatif",
+    "phrase": "csa one delta zulu fly heading two one zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG CSA1DZ 210"
+    ],
+    "obtenu": [
+     "HDG CSA1DZ 210"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.3600005079060793e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "indicatif",
+    "phrase": "air france one two three four reduce speed two four zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "SPD AFR1234 240"
+    ],
+    "obtenu": [
+     "SPD AFR1234 240"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.479998511262238e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "chiffres",
+    "phrase": "AFR1234 fly heading one zero zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG AFR1234 100"
+    ],
+    "obtenu": [
+     "HDG AFR1234 100"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.5100016500800848e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "chiffres",
+    "phrase": "AFR1234 fly heading 100",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG AFR1234 100"
+    ],
+    "obtenu": [
+     "HDG AFR1234 100"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.160001895390451e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "chiffres",
+    "phrase": "BAW57 climb flight level one zero zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT BAW57 10000"
+    ],
+    "obtenu": [
+     "ALT BAW57 10000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.880001557059586e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "chiffres",
+    "phrase": "BAW57 climb flight level 100",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT BAW57 10000"
+    ],
+    "obtenu": [
+     "ALT BAW57 10000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.500001573935151e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "francais",
+    "phrase": "AFR1234 descend niveau 1 0 0",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 10000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 10000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.200001083314419e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "francais",
+    "phrase": "lufthansa eight eight monter niveau 2 4 0",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT DLH88 24000"
+    ],
+    "obtenu": [
+     "ALT DLH88 24000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.820001100189984e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "francais",
+    "phrase": "DLH88 descendre niveau 1 0 0",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT DLH88 10000"
+    ],
+    "obtenu": [
+     "ALT DLH88 10000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.750000567175448e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "francais",
+    "phrase": "EZY21 cap 180",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG EZY21 180"
+    ],
+    "obtenu": [
+     "HDG EZY21 180"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.039998071268201e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "francais",
+    "phrase": "AFR1234 monter niveau 310",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 31000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 31000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.4300010409206152e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "francais",
+    "phrase": "BAW57 descendre au niveau 2 4 0",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT BAW57 24000"
+    ],
+    "obtenu": [
+     "ALT BAW57 24000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.780000795610249e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "turn left heading 180",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 1,
+    "latence_s": 1.5199999324977398e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "descend flight level one zero zero",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 1,
+    "latence_s": 1.6700010746717453e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "AFR1234 climb flight level 9 9 9",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 1,
+    "latence_s": 2.989999484270811e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "AFR1234 climb flight level 460",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 1,
+    "latence_s": 3.480000304989517e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "AFR1234 descend flight level five five five",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 1,
+    "latence_s": 2.780000795610249e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "AFR1234 speed 400",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 1,
+    "latence_s": 2.1499989088624716e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "AFR1234 proceed direct NOWHERE",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 1,
+    "latence_s": 2.549999044276774e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 7.700000423938036e-06,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "bonjour la tour",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 8.000002708286047e-06,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "uh radar contact good evening",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 2.1099986042827368e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "air france one two three four descend and maintain flight level one hundred",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT AFR1234 10000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 10000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.63999861292541e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "BAW57 make your heading zero nine zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "HDG BAW57 90"
+    ],
+    "obtenu": [
+     "HDG BAW57MAKEYOUR 90"
+    ],
+    "correct": false,
+    "correct_contrat_propre": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.4299981305375695e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "EZY21 pick up speed to three hundred knots",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "SPD EZY21 300"
+    ],
+    "obtenu": [
+     "SPD EZY21PICKUP 3"
+    ],
+    "correct": false,
+    "correct_contrat_propre": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.649999805726111e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "DLH88 when ready descend flight level one two zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT DLH88 12000"
+    ],
+    "obtenu": [
+     "ALT DLH88WHENREADY 12000"
+    ],
+    "correct": false,
+    "correct_contrat_propre": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.759997732937336e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "ryanair niner route direct to delta",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ADDWPT RYR9 DELTA"
+    ],
+    "obtenu": [
+     "ADDWPT RYR9ROUTE DELTA"
+    ],
+    "correct": false,
+    "correct_contrat_propre": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.1499989088624716e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "speedbird five seven climb now to flight level three five zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT BAW57 35000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "correct_contrat_propre": false,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 2.5199988158419728e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "KLM one two three turn right heading one five five",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "HDG KLM123 155"
+    ],
+    "obtenu": [
+     "HDG KLM123 155"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.5299988919869065e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "AFR1234 slow down to two three zero knots",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "SPD AFR1234 230"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "correct_contrat_propre": false,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 1.0899995686486363e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "BAW57 stop climb at flight level two eight zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT BAW57 28000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "correct_contrat_propre": false,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 2.4800014216452837e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "united four five one climb and maintain flight level three three zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT UAL451 33000"
+    ],
+    "obtenu": [
+     "ALT UAL451 33000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.070000093430281e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "american six three fly heading one two zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "HDG AAL63 120"
+    ],
+    "obtenu": [
+     "HDG AAL63 120"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.2599997464567423e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "bruit_stt",
+    "phrase": "uh air france one two three four er climb flight level three two zero please",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [
+     "ALT UHAIRFRANCE1234ER 32000"
+    ],
+    "correct": false,
+    "correct_contrat_propre": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.589998232200742e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "bruit_stt",
+    "phrase": "speedbird five seven speedbird five seven turn left heading two one zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "HDG BAW57 210"
+    ],
+    "obtenu": [
+     "HDG BAW57SPEEDBIRD57 210"
+    ],
+    "correct": false,
+    "correct_contrat_propre": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.8399983420968056e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "bruit_stt",
+    "phrase": "easyjet two one good evening climb flight level one eight zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT EZY21 18000"
+    ],
+    "obtenu": [
+     "ALT EZY21GOODEVENING 18000"
+    ],
+    "correct": false,
+    "correct_contrat_propre": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.720000338740647e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "bruit_stt",
+    "phrase": "AFR1234 roger climb flight level two four zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT AFR1234 24000"
+    ],
+    "obtenu": [
+     "ALT AFR1234ROGER 24000"
+    ],
+    "correct": false,
+    "correct_contrat_propre": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.5500019546598196e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "francais_ext",
+    "phrase": "AFR1234 tournez a gauche cap deux sept zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "HDG AFR1234 270"
+    ],
+    "obtenu": [
+     "HDG AFR1234 270"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.750000567175448e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "francais_ext",
+    "phrase": "BAW57 reduisez vitesse deux trois zero noeuds",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "SPD BAW57 230"
+    ],
+    "obtenu": [
+     "SPD BAW57 230"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.9099988751113415e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "francais_ext",
+    "phrase": "DLH88 directe BALMO",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ADDWPT DLH88 BALMO"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "correct_contrat_propre": false,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 8.499977411702275e-06,
+    "erreur": ""
+   },
+   {
+    "categorie": "francais_ext",
+    "phrase": "EZY21 montez niveau de vol trois un zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT EZY21 31000"
+    ],
+    "obtenu": [
+     "ALT EZY21 31000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 4.069998976774514e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "francais_ext",
+    "phrase": "air france un deux trois quatre montez niveau un zero zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT AFR1234 10000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 10000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.6699999580159783e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "chiffres_ext",
+    "phrase": "AFR1234 climb flight level two hundred",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT AFR1234 20000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 20000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.6900001103058457e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "chiffres_ext",
+    "phrase": "BAW57 reduce speed two hundred fifty knots",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "SPD BAW57 250"
+    ],
+    "obtenu": [
+     "SPD BAW57 2"
+    ],
+    "correct": false,
+    "correct_contrat_propre": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.9499991796910763e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "chiffres_ext",
+    "phrase": "EZY21 fly heading zero four five",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "HDG EZY21 45"
+    ],
+    "obtenu": [
+     "HDG EZY21 45"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.5999994250014424e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "chiffres_ext",
+    "phrase": "DLH88 descend flight level one hundred",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT DLH88 10000"
+    ],
+    "obtenu": [
+     "ALT DLH88 10000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.9600021662190557e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "indicatif_ext",
+    "phrase": "foxtrot golf alfa bravo charlie climb flight level one five zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT FGABC 15000"
+    ],
+    "obtenu": [
+     "ALT FGABC 15000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.1400006264448166e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "indicatif_ext",
+    "phrase": "november one two three alfa bravo descend flight level niner zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT N123AB 9000"
+    ],
+    "obtenu": [
+     "ALT N123AB 9000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.100000321865082e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "multi_ext",
+    "phrase": "AFR1234 climb flight level three one zero speed two eight zero knots direct CROSS",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ADDWPT AFR1234 CROSS",
+     "ALT AFR1234 31000",
+     "SPD AFR1234 280"
+    ],
+    "obtenu": [
+     "ADDWPT AFR1234 CROSS",
+     "ALT AFR1234 31000",
+     "SPD AFR1234 280"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 3,
+    "n_rejets": 0,
+    "latence_s": 4.959999932907522e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "multi_ext",
+    "phrase": "speedbird five seven descend flight level one four zero and reduce speed to two five zero knots",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT BAW57 14000",
+     "SPD BAW57 250"
+    ],
+    "obtenu": [
+     "ALT BAW57 14000",
+     "SPD BAW57 250"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 0,
+    "latence_s": 4.889999399892986e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "multi_ext",
+    "phrase": "KLM123 turn right heading two two zero then direct NORTH",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ADDWPT KLM123 NORTH",
+     "HDG KLM123 220"
+    ],
+    "obtenu": [
+     "ADDWPT KLM123 NORTH",
+     "HDG KLM123 220"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 0,
+    "latence_s": 9.9799974123016e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "multi_ext",
+    "phrase": "easyjet two one descend flight level niner zero speed two one zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT EZY21 9000",
+     "SPD EZY21 210"
+    ],
+    "obtenu": [
+     "ALT EZY21 9000",
+     "SPD EZY21 210"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 0,
+    "latence_s": 3.969998215325177e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "mixte",
+    "phrase": "AFR1234 climb flight level three two zero and increase speed four zero zero knots",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 32000"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 1,
+    "latence_s": 4.919999628327787e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "mixte",
+    "phrase": "BAW57 fly heading zero niner zero contact tower one one eight decimal one",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "HDG BAW57 90"
+    ],
+    "obtenu": [
+     "HDG BAW57 90"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 4.0300015825778246e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "mixte",
+    "phrase": "DLH88 descend flight level five one zero reduce speed two five zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "SPD DLH88 250"
+    ],
+    "obtenu": [
+     "SPD DLH88 250"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 1,
+    "latence_s": 4.169999738223851e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "mixte",
+    "phrase": "EZY21 direct NOWHERE then speed two four zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "SPD EZY21 240"
+    ],
+    "obtenu": [
+     "SPD EZY21 240"
+    ],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 1,
+    "latence_s": 3.600001218728721e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "AFR1234 turn left twenty degrees",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 2.5299988919869065e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "BAW57 contact marseille one three two decimal five five",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 3.0399998649954796e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "AFR1234 squawk seven thousand",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 9.800016414374113e-06,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "QNH one zero one three",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 9.000010322779417e-06,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "AFR1234 hold position",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 8.000002708286047e-06,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "EZY21 climb flight level six zero zero",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 1,
+    "latence_s": 3.0800001695752144e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "DLH88 increase speed four five zero knots",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 1,
+    "latence_s": 3.090000245720148e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "AFR1234 fly heading three seven zero",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 1,
+    "latence_s": 2.609999501146376e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "BAW57 direct KOLOS",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 1,
+    "latence_s": 2.239999594166875e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "radar contact",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 1.759998849593103e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "AFR1234 report your heading",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 1.8499995348975062e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "expect higher in one zero miles",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 1.0600022505968809e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "AFR1234 cleared ILS approach runway two six",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "correct_contrat_propre": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 2.570002106949687e-05,
+    "erreur": ""
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "AFR1234 monter niveau cinq cents",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [
+     "ALT AFR1234 500"
+    ],
+    "correct": false,
+    "correct_contrat_propre": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.81000102404505e-05,
+    "erreur": ""
+   }
+  ],
+  "mistral-7b-atc-romeo": [
+   {
+    "categorie": "cap",
+    "phrase": "air france one two three four turn left heading two seven zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG AFR1234 270"
+    ],
+    "obtenu": [
+     "HDG AFR1234 270"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 10.459265300014522,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"HDG\", \"value\": 270}]"
+   },
+   {
+    "categorie": "cap",
+    "phrase": "speedbird five seven turn right heading 090",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG BAW57 90"
+    ],
+    "obtenu": [
+     "HDG BAW57 90"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.236148800002411,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"HDG\", \"value\": 90}]"
+   },
+   {
+    "categorie": "cap",
+    "phrase": "AFR1234 fly heading three six zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG AFR1234 360"
+    ],
+    "obtenu": [
+     "HDG AFR1234 360"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.2631483000004664,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"HDG\", \"value\": 360}]"
+   },
+   {
+    "categorie": "cap",
+    "phrase": "EZY21 fly heading 100",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG EZY21 100"
+    ],
+    "obtenu": [
+     "HDG EZY21 100"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.2888758000044618,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"EZY21\", \"action\": \"HDG\", \"value\": 100}]"
+   },
+   {
+    "categorie": "cap",
+    "phrase": "lufthansa eight eight heading one eight zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG DLH88 180"
+    ],
+    "obtenu": [
+     "HDG DLH88 180"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.369143600022653,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"DLH88\", \"action\": \"HDG\", \"value\": 180}]"
+   },
+   {
+    "categorie": "cap",
+    "phrase": "ryanair niner turn right heading two two five",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG RYR9 225"
+    ],
+    "obtenu": [
+     "HDG RYR99 225"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.2950085999909788,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"RYR99\", \"action\": \"HDG\", \"value\": 225}]"
+   },
+   {
+    "categorie": "cap",
+    "phrase": "AFR1234 hdg 045",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG AFR1234 45"
+    ],
+    "obtenu": [
+     "HDG AFR1234 45"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.127096199983498,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"HDG\", \"value\": 45}]"
+   },
+   {
+    "categorie": "cap",
+    "phrase": "BAW57 turn left heading 310",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG BAW57 310"
+    ],
+    "obtenu": [
+     "HDG BAW57 310"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.263733100000536,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"HDG\", \"value\": 310}]"
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "air france one two three four descend flight level one zero zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 10000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 10000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.2299598999961745,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 10000}]"
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "csa one delta zulu climb flight level two four zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT CSA1DZ 24000"
+    ],
+    "obtenu": [
+     "ALT CSAD1ZUL 24000"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.3666765999805648,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"CSAD1ZUL\", \"action\": \"ALT\", \"value\": 24000}]"
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "AFR1234 climb FL320",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 32000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.5968678999925032,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 32000}]"
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "BAW57 descend to flight level 80",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT BAW57 8000"
+    ],
+    "obtenu": [
+     "ALT BAW57 8000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.2955816000176128,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"ALT\", \"value\": 8000}]"
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "EZY21 climb 5 thousand feet",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT EZY21 5000"
+    ],
+    "obtenu": [
+     "ALT EZY21 5000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9754026999871712,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"EZY21\", \"action\": \"ALT\", \"value\": 5000}]"
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "AFR1234 descend altitude 6000 feet",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 6000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 6000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.0092078000016045,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 6000}]"
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "air france one two three four climb to flight level three two zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 32000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.0427449999842793,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 32000}]"
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "BAW57 maintain flight level 100",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT BAW57 10000"
+    ],
+    "obtenu": [
+     "ALT BAW57 10000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9828688999987207,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"ALT\", \"value\": 10000}]"
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "DLH88 descend 4000 feet",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT DLH88 4000"
+    ],
+    "obtenu": [
+     "ALT DLH88 4000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.949965500010876,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"DLH88\", \"action\": \"ALT\", \"value\": 4000}]"
+   },
+   {
+    "categorie": "niveau",
+    "phrase": "speedbird five seven climb flight level one five zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT BAW57 15000"
+    ],
+    "obtenu": [
+     "ALT BAW57 15000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.6019173999957275,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"ALT\", \"value\": 15000}]"
+   },
+   {
+    "categorie": "vitesse",
+    "phrase": "AFR1234 reduce speed two five zero knots",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "SPD AFR1234 250"
+    ],
+    "obtenu": [
+     "SPD AFR1234 250"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.3201147000072524,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"SPD\", \"value\": 250}]"
+   },
+   {
+    "categorie": "vitesse",
+    "phrase": "AFR1234 increase speed 300",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "SPD AFR1234 300"
+    ],
+    "obtenu": [
+     "SPD AFR1234 300"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9785469000053126,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"SPD\", \"value\": 300}]"
+   },
+   {
+    "categorie": "vitesse",
+    "phrase": "RYR9 increase speed to 280 knots",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "SPD RYR9 280"
+    ],
+    "obtenu": [
+     "SPD RYR9 280"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9247206999862101,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"RYR9\", \"action\": \"SPD\", \"value\": 280}]"
+   },
+   {
+    "categorie": "vitesse",
+    "phrase": "easyjet two one reduce speed two two zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "SPD EZY21 220"
+    ],
+    "obtenu": [
+     "SPD EZY21 220"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9524431999889202,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"EZY21\", \"action\": \"SPD\", \"value\": 220}]"
+   },
+   {
+    "categorie": "vitesse",
+    "phrase": "BAW57 speed 250",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "SPD BAW57 250"
+    ],
+    "obtenu": [
+     "SPD BAW57 250"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9174038000055589,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"SPD\", \"value\": 250}]"
+   },
+   {
+    "categorie": "vitesse",
+    "phrase": "csa one delta zulu reduce 230",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "SPD CSA1DZ 230"
+    ],
+    "obtenu": [
+     "SPD CSAD1ZUL 230"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9523625000147149,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"CSAD1ZUL\", \"action\": \"SPD\", \"value\": 230}]"
+   },
+   {
+    "categorie": "vitesse",
+    "phrase": "AFR1234 maintain 250 knots",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "SPD AFR1234 250"
+    ],
+    "obtenu": [
+     "SPD AFR1234 250"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9779576000000816,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"SPD\", \"value\": 250}]"
+   },
+   {
+    "categorie": "direct",
+    "phrase": "ryanair niner proceed direct delta",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ADDWPT RYR9 DELTA"
+    ],
+    "obtenu": [
+     "ADDWPT RYR9 DELTA"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.9075136999890674,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"RYR9\", \"action\": \"ADDWPT\", \"wpt\": \"DELTA\"}]"
+   },
+   {
+    "categorie": "direct",
+    "phrase": "AFR1234 direct CROSS",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ADDWPT AFR1234 CROSS"
+    ],
+    "obtenu": [
+     "ADDWPT AFR1234 CROSS"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.0794091000279877,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ADDWPT\", \"wpt\": \"CROSS\"}]"
+   },
+   {
+    "categorie": "direct",
+    "phrase": "AFR1234 proceed direct to NORTH",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ADDWPT AFR1234 NORTH"
+    ],
+    "obtenu": [
+     "ADDWPT AFR1234 NORTH"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 4.826553299993975,
+    "erreur": "",
+    "brut": "[\n  {\n    \"callsign\": \"AFR1234\",\n    \"action\": \"ADDWPT\",\n    \"wpt\": \"NORTH\"\n  }\n]"
+   },
+   {
+    "categorie": "direct",
+    "phrase": "BAW57 proceed direct ENTRY_W",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ADDWPT BAW57 ENTRY_W"
+    ],
+    "obtenu": [
+     "ADDWPT BAW57 ENTRY_W"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.421177300013369,
+    "erreur": "",
+    "brut": "[\n  {\n    \"callsign\": \"BAW57\",\n    \"action\": \"ADDWPT\",\n    \"wpt\": \"ENTRY_W\"\n  }\n]"
+   },
+   {
+    "categorie": "direct",
+    "phrase": "EZY21 direct BALMO",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ADDWPT EZY21 BALMO"
+    ],
+    "obtenu": [
+     "ADDWPT EZY21 BALMO"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.558262799982913,
+    "erreur": "",
+    "brut": "[\n  {\n    \"callsign\": \"EZY21\",\n    \"action\": \"ADDWPT\",\n    \"wpt\": \"BALMO\"\n  }\n]"
+   },
+   {
+    "categorie": "direct",
+    "phrase": "DLH88 proceed direct EXIT_E",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ADDWPT DLH88 EXIT_E"
+    ],
+    "obtenu": [
+     "ADDWPT DLH88 EXIT_E"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.269590900017647,
+    "erreur": "",
+    "brut": "[\n  {\n    \"callsign\": \"DLH88\",\n    \"action\": \"ADDWPT\",\n    \"wpt\": \"EXIT_E\"\n  }\n]"
+   },
+   {
+    "categorie": "taux",
+    "phrase": "AFR1234 climb FL320 expedite",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 32000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.3338387999974657,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 32000}]"
+   },
+   {
+    "categorie": "taux",
+    "phrase": "BAW57 descend flight level 80 rate 1500",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT BAW57 8000"
+    ],
+    "obtenu": [
+     "ALT BAW57 8000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.629780399991432,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"ALT\", \"value\": 8000}]"
+   },
+   {
+    "categorie": "taux",
+    "phrase": "AFR1234 descend flight level 80 1500 feet per minute",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 8000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 8000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.1643701000139117,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 8000}]"
+   },
+   {
+    "categorie": "taux",
+    "phrase": "AFR1234 climb flight level 240 rate 2 thousand",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 24000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 24000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.930677900003502,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 24000}]"
+   },
+   {
+    "categorie": "taux",
+    "phrase": "EZY21 expedite climb flight level 200",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT EZY21 20000"
+    ],
+    "obtenu": [
+     "ALT EZY21 20000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.0165750000160187,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"EZY21\", \"action\": \"ALT\", \"value\": 20000}]"
+   },
+   {
+    "categorie": "multi",
+    "phrase": "csa one delta zulu climb flight level two four zero reduce speed two five zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT CSA1DZ 24000",
+     "SPD CSA1DZ 250"
+    ],
+    "obtenu": [
+     "ALT CSAD1Z 24000",
+     "SPD CSAD1Z 250"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 0,
+    "latence_s": 12.929420799977379,
+    "erreur": "",
+    "brut": "[\n  {\n    \"callsign\": \"CSAD1ZULU\",\n    \"action\": \"ALT\",\n    \"value\": 24000\n  },\n  {\n    \"callsign\": \"CSAD1ZULU\",\n    \"action\": \"SPD\",\n    \"value\": 250\n  }\n]"
+   },
+   {
+    "categorie": "multi",
+    "phrase": "AFR1234 turn left heading 050 descend flight level 90 reduce speed 230",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 9000",
+     "HDG AFR1234 50",
+     "SPD AFR1234 230"
+    ],
+    "obtenu": [
+     "ALT AFR1234 18000",
+     "ALT AFR1234 9000",
+     "HDG AFR1234 50",
+     "SPD AFR1234 230"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 4,
+    "n_rejets": 0,
+    "latence_s": 34.06317290000152,
+    "erreur": "",
+    "brut": "[\n  {\n    \"callsign\": \"AFR1234\",\n    \"action\": \"HDG\",\n    \"value\": 50\n  },\n  {\n    \"callsign\": \"AFR1234\",\n    \"action\": \"ALT\",\n    \"value\": 9000\n  },\n  {\n    \"callsign\": \"AFR1234\",\n    \"action\": \"ALT\",\n    \"value\": 18000\n  },\n  {\n    \"callsign\": \"AFR1234\",\n    \"action\": \"SPD\",\n    \"value\": 230\n  }\n]"
+   },
+   {
+    "categorie": "multi",
+    "phrase": "speedbird five seven turn right heading two seven zero descend flight level one one zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT BAW57 11000",
+     "HDG BAW57 270"
+    ],
+    "obtenu": [
+     "ALT BAW57 11000",
+     "SPD BAW57 270"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 0,
+    "latence_s": 4.48654810001608,
+    "erreur": "",
+    "brut": "[\n  {\n    \"callsign\": \"BAW57\",\n    \"action\": \"SPD\",\n    \"value\": 270\n  },\n  {\n    \"callsign\": \"BAW57\",\n    \"action\": \"ALT\",\n    \"value\": 11000\n  }\n]"
+   },
+   {
+    "categorie": "multi",
+    "phrase": "DLH88 climb flight level 350 increase speed 290",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT DLH88 35000",
+     "SPD DLH88 290"
+    ],
+    "obtenu": [
+     "ALT DLH88 35000",
+     "SPD DLH88 290"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 0,
+    "latence_s": 3.5936851000005845,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"DLH88\", \"action\": \"ALT\", \"value\": 35000}, {\"callsign\": \"DLH88\", \"action\": \"SPD\", \"value\": 290}]"
+   },
+   {
+    "categorie": "multi",
+    "phrase": "EZY21 fly heading 180 reduce speed 240",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG EZY21 180",
+     "SPD EZY21 240"
+    ],
+    "obtenu": [
+     "HDG EZY21 180",
+     "SPD EZY21 240"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 0,
+    "latence_s": 3.486725099995965,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"EZY21\", \"action\": \"HDG\", \"value\": 180}, {\"callsign\": \"EZY21\", \"action\": \"SPD\", \"value\": 240}]"
+   },
+   {
+    "categorie": "multi",
+    "phrase": "AFR1234 descend flight level 200 proceed direct CROSS",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ADDWPT AFR1234 CROSS",
+     "ALT AFR1234 20000"
+    ],
+    "obtenu": [
+     "ADDWPT AFR1234 CROSS",
+     "ALT AFR1234 20000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 0,
+    "latence_s": 2.3395873999979813,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 20000}, {\"callsign\": \"AFR1234\", \"action\": \"ADDWPT\", \"wpt\": \"CROSS\"}]"
+   },
+   {
+    "categorie": "indicatif",
+    "phrase": "speedbird five seven turn right heading two seven zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG BAW57 270"
+    ],
+    "obtenu": [
+     "HDG BAW57 270"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9185924000048544,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"HDG\", \"value\": 270}]"
+   },
+   {
+    "categorie": "indicatif",
+    "phrase": "ryanair niner fly heading one two zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG RYR9 120"
+    ],
+    "obtenu": [
+     "HDG RYR9 120"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9192987999995239,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"RYR9\", \"action\": \"HDG\", \"value\": 120}]"
+   },
+   {
+    "categorie": "indicatif",
+    "phrase": "lufthansa eight eight climb flight level three one zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT DLH88 31000"
+    ],
+    "obtenu": [
+     "ALT DLH88 31000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9843906000023708,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"DLH88\", \"action\": \"ALT\", \"value\": 31000}]"
+   },
+   {
+    "categorie": "indicatif",
+    "phrase": "easyjet two one descend flight level one three zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT EZY21 13000"
+    ],
+    "obtenu": [
+     "ALT EZY21 13000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.0410231999994721,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"EZY21\", \"action\": \"ALT\", \"value\": 13000}]"
+   },
+   {
+    "categorie": "indicatif",
+    "phrase": "csa one delta zulu fly heading two one zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG CSA1DZ 210"
+    ],
+    "obtenu": [
+     "HDG CSAD1ZUL 210"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9522904000186827,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"CSAD1ZUL\", \"action\": \"HDG\", \"value\": 210}]"
+   },
+   {
+    "categorie": "indicatif",
+    "phrase": "air france one two three four reduce speed two four zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "SPD AFR1234 240"
+    ],
+    "obtenu": [
+     "SPD AFR1234 240"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9833442999806721,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"SPD\", \"value\": 240}]"
+   },
+   {
+    "categorie": "chiffres",
+    "phrase": "AFR1234 fly heading one zero zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG AFR1234 100"
+    ],
+    "obtenu": [
+     "HDG AFR1234 100"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9818792000005487,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"HDG\", \"value\": 100}]"
+   },
+   {
+    "categorie": "chiffres",
+    "phrase": "AFR1234 fly heading 100",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG AFR1234 100"
+    ],
+    "obtenu": [
+     "HDG AFR1234 100"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9824107000022195,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"HDG\", \"value\": 100}]"
+   },
+   {
+    "categorie": "chiffres",
+    "phrase": "BAW57 climb flight level one zero zero",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT BAW57 10000"
+    ],
+    "obtenu": [
+     "ALT BAW57 10000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9843186999787576,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"ALT\", \"value\": 10000}]"
+   },
+   {
+    "categorie": "chiffres",
+    "phrase": "BAW57 climb flight level 100",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT BAW57 10000"
+    ],
+    "obtenu": [
+     "ALT BAW57 10000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9815240000025369,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"ALT\", \"value\": 10000}]"
+   },
+   {
+    "categorie": "francais",
+    "phrase": "AFR1234 descend niveau 1 0 0",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 10000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 1000"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.0123007999791298,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 1000}]"
+   },
+   {
+    "categorie": "francais",
+    "phrase": "lufthansa eight eight monter niveau 2 4 0",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT DLH88 24000"
+    ],
+    "obtenu": [
+     "ALT DLH88 24000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9822531999961939,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"DLH88\", \"action\": \"ALT\", \"value\": 24000}]"
+   },
+   {
+    "categorie": "francais",
+    "phrase": "DLH88 descendre niveau 1 0 0",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT DLH88 10000"
+    ],
+    "obtenu": [
+     "ALT DLH88 1000"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9567535000096541,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"DLH88\", \"action\": \"ALT\", \"value\": 1000}]"
+   },
+   {
+    "categorie": "francais",
+    "phrase": "EZY21 cap 180",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "HDG EZY21 180"
+    ],
+    "obtenu": [
+     "HDG EZY21 180"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9500510999932885,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"EZY21\", \"action\": \"HDG\", \"value\": 180}]"
+   },
+   {
+    "categorie": "francais",
+    "phrase": "AFR1234 monter niveau 310",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT AFR1234 31000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 31000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.04802909999853,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 31000}]"
+   },
+   {
+    "categorie": "francais",
+    "phrase": "BAW57 descendre au niveau 2 4 0",
+    "negatif": false,
+    "in_grammar": true,
+    "attendu": [
+     "ALT BAW57 24000"
+    ],
+    "obtenu": [
+     "ALT BAW57 2400"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9488941000017803,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"ALT\", \"value\": 2400}]"
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "turn left heading 180",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 1,
+    "latence_s": 0.795513299992308,
+    "erreur": "",
+    "brut": "[{\"callsign\": null, \"action\": \"HDG\", \"value\": 180}]"
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "descend flight level one zero zero",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 1,
+    "latence_s": 1.478891900012968,
+    "erreur": "",
+    "brut": "[{\"callsign\": null, \"action\": \"ALT\", \"value\": 10000}]"
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "AFR1234 climb flight level 9 9 9",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 1,
+    "latence_s": 1.044075099984184,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 99000}]"
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "AFR1234 climb flight level 460",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 1,
+    "latence_s": 1.0448353000101633,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 46000}]"
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "AFR1234 descend flight level five five five",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [
+     "ALT AFR1234 5550"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.0134796000202186,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 5550}]"
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "AFR1234 speed 400",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 1,
+    "latence_s": 0.9678941000020131,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"SPD\", \"value\": 400}]"
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "AFR1234 proceed direct NOWHERE",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 1,
+    "latence_s": 1.078112000017427,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ADDWPT\", \"wpt\": \"NOWHERE\"}]"
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": false,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 3.637699800019618,
+    "erreur": "",
+    "brut": "Based on the provided controller transcription, there are no actionable orders in the transcription. Therefore, the JSON array of orders is:\n\n[]"
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "bonjour la tour",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 0.47902690002229065,
+    "erreur": "",
+    "brut": "[]"
+   },
+   {
+    "categorie": "negatif",
+    "phrase": "uh radar contact good evening",
+    "negatif": true,
+    "in_grammar": true,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 0.47628220001934096,
+    "erreur": "",
+    "brut": "[]"
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "air france one two three four descend and maintain flight level one hundred",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT AFR1234 10000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 10000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.045805300003849,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 10000}]"
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "BAW57 make your heading zero nine zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "HDG BAW57 90"
+    ],
+    "obtenu": [
+     "HDG BAW57 90"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.8864189000159968,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"HDG\", \"value\": 90}]"
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "EZY21 pick up speed to three hundred knots",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "SPD EZY21 300"
+    ],
+    "obtenu": [
+     "SPD EZY21 300"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 3.0079518999846186,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"EZY21\", \"action\": \"SPD\", \"value\": 300}]"
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "DLH88 when ready descend flight level one two zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT DLH88 12000"
+    ],
+    "obtenu": [
+     "ALT DLH88 12000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.302241299999878,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"DLH88\", \"action\": \"ALT\", \"value\": 12000}]"
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "ryanair niner route direct to delta",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ADDWPT RYR9 DELTA"
+    ],
+    "obtenu": [
+     "ADDWPT RYR9 DELTA"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.433520899998257,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"RYR9\", \"action\": \"ADDWPT\", \"wpt\": \"DELTA\"}]"
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "speedbird five seven climb now to flight level three five zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT BAW57 35000"
+    ],
+    "obtenu": [
+     "ALT BAW57 35000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.122272599983262,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"ALT\", \"value\": 35000}]"
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "KLM one two three turn right heading one five five",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "HDG KLM123 155"
+    ],
+    "obtenu": [
+     "HDG KLM123 155"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 4.582596599997487,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"KLM123\", \"action\": \"HDG\", \"value\": 155}]"
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "AFR1234 slow down to two three zero knots",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "SPD AFR1234 230"
+    ],
+    "obtenu": [
+     "SPD AFR1234 230"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.902920799999265,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"SPD\", \"value\": 230}]"
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "BAW57 stop climb at flight level two eight zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT BAW57 28000"
+    ],
+    "obtenu": [
+     "ALT BAW57 28000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 2.730039200017927,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"ALT\", \"value\": 28000}]"
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "united four five one climb and maintain flight level three three zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT UAL451 33000"
+    ],
+    "obtenu": [
+     "ALT UAL451 33000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.1200422999972943,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"UAL451\", \"action\": \"ALT\", \"value\": 33000}]"
+   },
+   {
+    "categorie": "paraphrase",
+    "phrase": "american six three fly heading one two zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "HDG AAL63 120"
+    ],
+    "obtenu": [
+     "HDG AAL63 120"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9181472999916878,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AAL63\", \"action\": \"HDG\", \"value\": 120}]"
+   },
+   {
+    "categorie": "bruit_stt",
+    "phrase": "uh air france one two three four er climb flight level three two zero please",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 32000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.042344100016635,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 32000}]"
+   },
+   {
+    "categorie": "bruit_stt",
+    "phrase": "speedbird five seven speedbird five seven turn left heading two one zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "HDG BAW57 210"
+    ],
+    "obtenu": [
+     "HDG BAW57 210"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9258467000036035,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"HDG\", \"value\": 210}]"
+   },
+   {
+    "categorie": "bruit_stt",
+    "phrase": "easyjet two one good evening climb flight level one eight zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT EZY21 18000"
+    ],
+    "obtenu": [
+     "ALT EZY21 18000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.0125802000111435,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"EZY21\", \"action\": \"ALT\", \"value\": 18000}]"
+   },
+   {
+    "categorie": "bruit_stt",
+    "phrase": "AFR1234 roger climb flight level two four zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT AFR1234 24000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 24000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.0432445000042208,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 24000}]"
+   },
+   {
+    "categorie": "francais_ext",
+    "phrase": "AFR1234 tournez a gauche cap deux sept zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "HDG AFR1234 270"
+    ],
+    "obtenu": [
+     "HDG AFR1234 270"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9820379999873694,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"HDG\", \"value\": 270}]"
+   },
+   {
+    "categorie": "francais_ext",
+    "phrase": "BAW57 reduisez vitesse deux trois zero noeuds",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "SPD BAW57 230"
+    ],
+    "obtenu": [
+     "SPD BAW57 230"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.922722099989187,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"SPD\", \"value\": 230}]"
+   },
+   {
+    "categorie": "francais_ext",
+    "phrase": "DLH88 directe BALMO",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ADDWPT DLH88 BALMO"
+    ],
+    "obtenu": [
+     "ADDWPT DLH88 BALMO"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.0163750000065193,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"DLH88\", \"action\": \"ADDWPT\", \"wpt\": \"BALMO\"}]"
+   },
+   {
+    "categorie": "francais_ext",
+    "phrase": "EZY21 montez niveau de vol trois un zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT EZY21 31000"
+    ],
+    "obtenu": [
+     "ALT EZY21 31000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.0139912000158802,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"EZY21\", \"action\": \"ALT\", \"value\": 31000}]"
+   },
+   {
+    "categorie": "francais_ext",
+    "phrase": "air france un deux trois quatre montez niveau un zero zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT AFR1234 10000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 10000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.040674299991224,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 10000}]"
+   },
+   {
+    "categorie": "chiffres_ext",
+    "phrase": "AFR1234 climb flight level two hundred",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT AFR1234 20000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 20000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.0451481000054628,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 20000}]"
+   },
+   {
+    "categorie": "chiffres_ext",
+    "phrase": "BAW57 reduce speed two hundred fifty knots",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "SPD BAW57 250"
+    ],
+    "obtenu": [
+     "SPD BAW57 250"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9200618000177201,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"SPD\", \"value\": 250}]"
+   },
+   {
+    "categorie": "chiffres_ext",
+    "phrase": "EZY21 fly heading zero four five",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "HDG EZY21 45"
+    ],
+    "obtenu": [
+     "HDG EZY21 45"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9236122000147589,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"EZY21\", \"action\": \"HDG\", \"value\": 45}]"
+   },
+   {
+    "categorie": "chiffres_ext",
+    "phrase": "DLH88 descend flight level one hundred",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT DLH88 10000"
+    ],
+    "obtenu": [
+     "ALT DLH88 10000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9833123999997042,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"DLH88\", \"action\": \"ALT\", \"value\": 10000}]"
+   },
+   {
+    "categorie": "indicatif_ext",
+    "phrase": "foxtrot golf alfa bravo charlie climb flight level one five zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT FGABC 15000"
+    ],
+    "obtenu": [
+     "ALT FGABC 15000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9787337000016123,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"FGABC\", \"action\": \"ALT\", \"value\": 15000}]"
+   },
+   {
+    "categorie": "indicatif_ext",
+    "phrase": "november one two three alfa bravo descend flight level niner zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT N123AB 9000"
+    ],
+    "obtenu": [
+     "ALT AFR123 9000"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.982460600003833,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR123\", \"action\": \"ALT\", \"value\": 9000}]"
+   },
+   {
+    "categorie": "multi_ext",
+    "phrase": "AFR1234 climb flight level three one zero speed two eight zero knots direct CROSS",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ADDWPT AFR1234 CROSS",
+     "ALT AFR1234 31000",
+     "SPD AFR1234 280"
+    ],
+    "obtenu": [
+     "ADDWPT AFR1234 CROSS",
+     "ALT AFR1234 31000",
+     "SPD AFR1234 280"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 3,
+    "n_rejets": 0,
+    "latence_s": 4.279443200008245,
+    "erreur": "",
+    "brut": "[\n  {\n    \"callsign\": \"AFR1234\",\n    \"action\": \"ALT\",\n    \"value\": 31000\n  },\n  {\n    \"callsign\": \"AFR1234\",\n    \"action\": \"SPD\",\n    \"value\": 280\n  },\n  {\n    \"callsign\": \"AFR1234\",\n    \"action\": \"ADDWPT\",\n    \"wpt\": \"CROSS\"\n  }\n]"
+   },
+   {
+    "categorie": "multi_ext",
+    "phrase": "speedbird five seven descend flight level one four zero and reduce speed to two five zero knots",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT BAW57 14000",
+     "SPD BAW57 250"
+    ],
+    "obtenu": [
+     "ALT BAW57 14000",
+     "SPD BAW57 250"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 0,
+    "latence_s": 2.5070728000137024,
+    "erreur": "",
+    "brut": "[\n  {\n    \"callsign\": \"BAW57\",\n    \"action\": \"ALT\",\n    \"value\": 14000\n  },\n  {\n    \"callsign\": \"BAW57\",\n    \"action\": \"SPD\",\n    \"value\": 250\n  }\n]"
+   },
+   {
+    "categorie": "multi_ext",
+    "phrase": "KLM123 turn right heading two two zero then direct NORTH",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ADDWPT KLM123 NORTH",
+     "HDG KLM123 220"
+    ],
+    "obtenu": [
+     "HDG KLM123 220"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9496662000019569,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"KLM123\", \"action\": \"HDG\", \"value\": 220}]"
+   },
+   {
+    "categorie": "multi_ext",
+    "phrase": "easyjet two one descend flight level niner zero speed two one zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT EZY21 9000",
+     "SPD EZY21 210"
+    ],
+    "obtenu": [
+     "ALT EZY21 9000",
+     "SPD EZY21 210"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 0,
+    "latence_s": 1.7877375000098255,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"EZY21\", \"action\": \"ALT\", \"value\": 9000}, {\"callsign\": \"EZY21\", \"action\": \"SPD\", \"value\": 210}]"
+   },
+   {
+    "categorie": "mixte",
+    "phrase": "AFR1234 climb flight level three two zero and increase speed four zero zero knots",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [
+     "ALT AFR1234 32000"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 1,
+    "latence_s": 1.8863674000022002,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 32000}, {\"callsign\": \"AFR1234\", \"action\": \"SPD\", \"value\": 400}]"
+   },
+   {
+    "categorie": "mixte",
+    "phrase": "BAW57 fly heading zero niner zero contact tower one one eight decimal one",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "HDG BAW57 90"
+    ],
+    "obtenu": [
+     "HDG BAW57 90"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.2947404000151437,
+    "erreur": "",
+    "brut": "[\n  {\n    \"callsign\": \"BAW57\",\n    \"action\": \"HDG\",\n    \"value\": 90\n  }\n]"
+   },
+   {
+    "categorie": "mixte",
+    "phrase": "DLH88 descend flight level five one zero reduce speed two five zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "SPD DLH88 250"
+    ],
+    "obtenu": [
+     "SPD DLH88 250"
+    ],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 2,
+    "n_rejets": 1,
+    "latence_s": 2.5077316999959294,
+    "erreur": "",
+    "brut": "[\n  {\n    \"callsign\": \"DLH88\",\n    \"action\": \"ALT\",\n    \"value\": 51000\n  },\n  {\n    \"callsign\": \"DLH88\",\n    \"action\": \"SPD\",\n    \"value\": 250\n  }\n]"
+   },
+   {
+    "categorie": "mixte",
+    "phrase": "EZY21 direct NOWHERE then speed two four zero",
+    "negatif": false,
+    "in_grammar": false,
+    "attendu": [
+     "SPD EZY21 240"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 1,
+    "latence_s": 1.0735441999859177,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"EZY21\", \"action\": \"ADDWPT\", \"wpt\": \"NOWHERE\"}]"
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "AFR1234 turn left twenty degrees",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [
+     "HDG AFR1234 20"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9469497000100091,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"HDG\", \"value\": 20}]"
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "BAW57 contact marseille one three two decimal five five",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 0.16342859997530468,
+    "erreur": "",
+    "brut": "[ ]"
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "AFR1234 squawk seven thousand",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [
+     "ALT AFR1234 7000"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.0108868000097573,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 7000}]"
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "QNH one zero one three",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 0.13098079999326728,
+    "erreur": "",
+    "brut": "[]"
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "AFR1234 hold position",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [
+     "HDG AFR1234 0"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9201790999795776,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"HDG\", \"value\": 0}]"
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "EZY21 climb flight level six zero zero",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 1,
+    "latence_s": 1.0088469999900553,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"EZY21\", \"action\": \"ALT\", \"value\": 60000}]"
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "DLH88 increase speed four five zero knots",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 1,
+    "latence_s": 0.9160675999883097,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"DLH88\", \"action\": \"SPD\", \"value\": 450}]"
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "AFR1234 fly heading three seven zero",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 1,
+    "latence_s": 0.9810053999826778,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"HDG\", \"value\": 370}]"
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "BAW57 direct KOLOS",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 1,
+    "latence_s": 1.0444877999834716,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"BAW57\", \"action\": \"ADDWPT\", \"wpt\": \"KOLOS\"}]"
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "radar contact",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 1,
+    "latence_s": 1.0796139999874867,
+    "erreur": "",
+    "brut": "[\n  {\n    \"callsign\": \"RADAR\"\n  }\n]"
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "AFR1234 report your heading",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": false,
+    "n_orders_bruts": 0,
+    "n_rejets": 0,
+    "latence_s": 1.8643504999927245,
+    "erreur": "",
+    "brut": "[\n  {\n    \"callsign\": \"AFR1234\",\n    \"action\": \"HDG\",\n    \"value\": 0 // The heading is not provided, so it's assumed to be the current heading\n  }\n]"
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "expect higher in one zero miles",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [
+     "ALT NONE 10000"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 1.2319610000122339,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"None\", \"action\": \"ALT\", \"value\": 10000}]"
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "AFR1234 cleared ILS approach runway two six",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [],
+    "correct": true,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 1,
+    "latence_s": 1.1023492999956943,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ADDWPT\", \"wpt\": \"runway two six\"}]"
+   },
+   {
+    "categorie": "negatif_ext",
+    "phrase": "AFR1234 monter niveau cinq cents",
+    "negatif": true,
+    "in_grammar": false,
+    "attendu": [],
+    "obtenu": [
+     "ALT AFR1234 500"
+    ],
+    "correct": false,
+    "json_strict": true,
+    "n_orders_bruts": 1,
+    "n_rejets": 0,
+    "latence_s": 0.9809910999902058,
+    "erreur": "",
+    "brut": "[{\"callsign\": \"AFR1234\", \"action\": \"ALT\", \"value\": 500}]"
+   }
+  ]
+ },
+ "mcnemar": {
+  "rules-parser vs mistral-7b-atc-romeo": {
+   "n01": 18,
+   "n10": 13,
+   "p_value": 0.47312965989112854
+  }
+ }
+}

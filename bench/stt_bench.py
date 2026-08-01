@@ -145,6 +145,30 @@ class FasterWhisper:
         return " ".join(s.text.strip() for s in segments).strip()
 
 
+class HttpStt:
+    """Fournisseur STT OpenAI-compatible DEJA en service (ex. facade ROMEO via
+    tunnel SSH). L'audio est envoye TEL QUEL : la facade applique elle-meme le
+    passe-bande d'inference (server.py, bandpass=True) — les resultats sont donc
+    ranges sous la condition 'vhf_bandpass' (chemin de production), la condition
+    'brut' n'a pas d'equivalent cote serveur et est sautee. Les latences
+    incluent le reseau/tunnel (realite de deploiement)."""
+    served_condition = "vhf_bandpass"
+
+    def __init__(self, url, model_id):
+        import ai_client
+        os.environ["ATC_STT_URL"] = url
+        os.environ["ATC_STT_KEY"] = ""
+        os.environ["ATC_STT_MODEL"] = model_id
+        self.client = ai_client.SttClient(ai_client.ProviderConfig.from_env("stt"))
+        self.device = f"api:{url}"
+
+    def transcribe_one(self, wav, bandpass):
+        import soundfile as sf
+        buf = io.BytesIO()
+        sf.write(buf, wav, 16000, format="WAV", subtype="PCM_16")
+        return self.client.transcribe(buf.getvalue())
+
+
 # --- evaluation ---------------------------------------------------------------------
 def eval_hf(engine, corpus, bandpass, batch=8):
     normalizer = atc_asr.get_normalizer()
@@ -236,24 +260,32 @@ def main():
                 engines[name] = ("hf", HfWhisper(adapter_path=ADAPTER))
             elif name.startswith("fw-"):
                 engines[name] = ("fw", FasterWhisper(name[3:]))
+            elif name.startswith("api:"):
+                # 'api:URL|modele' — fournisseur en service (ex. facade ROMEO)
+                url, _, model_id = name[4:].partition("|")
+                engines[name] = ("fw", HttpStt(url, model_id or "whisper-atc-lora"))
             else:
                 raise ValueError(name)
         return engines[name]
 
     for name in systems:
         kind, engine = get_engine(name)
-        results["systems"][name] = {}
+        store = "romeo-lora" if name.startswith("api:") else name
+        results["systems"][store] = {}
         if kind == "fw":
-            results["systems"][name]["device"] = engine.device
+            results["systems"][store]["device"] = engine.device
         for ckey, corpus in corpora.items():
             for bandpass in (False, True):
                 cond = "vhf_bandpass" if bandpass else "brut"
-                print(f"[stt_bench] {name} / {ckey} / {cond} ...", flush=True)
+                served = getattr(engine, "served_condition", None)
+                if served and cond != served:
+                    continue          # la facade applique son propre passe-bande
+                print(f"[stt_bench] {store} / {ckey} / {cond} ...", flush=True)
                 t0 = time.perf_counter()
                 r = (eval_hf(engine, corpus, bandpass) if kind == "hf"
                      else eval_fw(engine, corpus, bandpass))
                 r["duree_eval_s"] = round(time.perf_counter() - t0, 1)
-                results["systems"][name].setdefault(ckey, {})[cond] = r
+                results["systems"][store].setdefault(ckey, {})[cond] = r
                 print(f"    WER corpus = {r['wer_corpus']:.1%}  RTF = {r['rtf']:.3f}")
                 with open(args.out, "w", encoding="utf-8") as f:
                     json.dump(results, f, indent=1, ensure_ascii=False)

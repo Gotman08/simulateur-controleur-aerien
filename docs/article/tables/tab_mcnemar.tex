@@ -1,25 +1,31 @@
 \begin{table}[t]\centering\small
-\caption{Tests exacts de McNemar entre systèmes appariés sur les 116 clairances ($n_{01}$ : A correct / B faux).}
+\caption{Tests exacts de McNemar entre systèmes appariés sur les 116 clairances ($n_{01}$ : A correct / B faux ; RC = rapport de cotes $n_{01}/n_{10}$ ; $p_{\mathrm{Holm}}$ : correction de Holm-Bonferroni sur la famille complète de 21 comparaisons ; * : $p_{\mathrm{Holm}}<0{,}05$).}
 \label{tab:mcnemar}
-\begin{tabular}{lrrr}
+\begin{tabular}{lrrrrr}
 \toprule
-Paire (A vs B) & $n_{01}$ & $n_{10}$ & $p$ \\
+Paire (A vs B) & $n_{01}$ & $n_{10}$ & RC & $p$ & $p_{\mathrm{Holm}}$ \\
 \midrule
-Parseur à règles vs Llama-3.2-1b & 98 & 0 & $<10^{-4}$ \\
-Parseur à règles vs Mistral-7B & 19 & 12 & 0,2810 \\
-Parseur à règles vs Qwen2.5-3b-bartowski & 76 & 1 & $<10^{-4}$ \\
-Parseur à règles vs Qwen2.5-1.5b & 25 & 10 & 0,0167 \\
-Parseur à règles vs Qwen2.5-3b & 75 & 1 & $<10^{-4}$ \\
-Llama-3.2-1b vs Mistral-7B & 0 & 91 & $<10^{-4}$ \\
-Llama-3.2-1b vs Qwen2.5-3b-bartowski & 0 & 23 & $<10^{-4}$ \\
-Llama-3.2-1b vs Qwen2.5-1.5b & 1 & 84 & $<10^{-4}$ \\
-Llama-3.2-1b vs Qwen2.5-3b & 0 & 24 & $<10^{-4}$ \\
-Mistral-7B vs Qwen2.5-3b-bartowski & 73 & 5 & $<10^{-4}$ \\
-Mistral-7B vs Qwen2.5-1.5b & 16 & 8 & 0,1516 \\
-Mistral-7B vs Qwen2.5-3b & 73 & 6 & $<10^{-4}$ \\
-Qwen2.5-3b-bartowski vs Qwen2.5-1.5b & 7 & 67 & $<10^{-4}$ \\
-Qwen2.5-3b-bartowski vs Qwen2.5-3b & 3 & 4 & 1,0000 \\
-Qwen2.5-1.5b vs Qwen2.5-3b & 65 & 6 & $<10^{-4}$ \\
+Parseur à règles vs Llama-3.2-1b & 98 & 0 & $\infty$ & $<10^{-4}$ & $<10^{-4}$* \\
+Parseur à règles vs Mistral-7B & 19 & 12 & 1,6 & 0,2810 & 1,0000\phantom{*} \\
+Parseur à règles vs Qwen2.5-3b-bartowski & 76 & 1 & 76,0 & $<10^{-4}$ & $<10^{-4}$* \\
+Parseur à règles vs Qwen2.5-1.5b & 25 & 10 & 2,5 & 0,0167 & 0,1167\phantom{*} \\
+Parseur à règles vs Qwen2.5-3b & 75 & 1 & 75,0 & $<10^{-4}$ & $<10^{-4}$* \\
+Parseur à règles vs Mistral-7B ROMEO (bf16) & 18 & 13 & 1,4 & 0,4731 & 1,0000\phantom{*} \\
+Llama-3.2-1b vs Mistral-7B & 0 & 91 & 0,0 & $<10^{-4}$ & $<10^{-4}$* \\
+Llama-3.2-1b vs Qwen2.5-3b-bartowski & 0 & 23 & 0,0 & $<10^{-4}$ & $<10^{-4}$* \\
+Llama-3.2-1b vs Qwen2.5-1.5b & 1 & 84 & 0,0 & $<10^{-4}$ & $<10^{-4}$* \\
+Llama-3.2-1b vs Qwen2.5-3b & 0 & 24 & 0,0 & $<10^{-4}$ & $<10^{-4}$* \\
+Llama-3.2-1b vs Mistral-7B ROMEO (bf16) & 0 & 93 & 0,0 & $<10^{-4}$ & $<10^{-4}$* \\
+Mistral-7B vs Qwen2.5-3b-bartowski & 73 & 5 & 14,6 & $<10^{-4}$ & $<10^{-4}$* \\
+Mistral-7B vs Qwen2.5-1.5b & 16 & 8 & 2,0 & 0,1516 & 0,7579\phantom{*} \\
+Mistral-7B vs Qwen2.5-3b & 73 & 6 & 12,2 & $<10^{-4}$ & $<10^{-4}$* \\
+Mistral-7B vs Mistral-7B ROMEO (bf16) & 6 & 8 & 0,8 & 0,7905 & 1,0000\phantom{*} \\
+Qwen2.5-3b-bartowski vs Qwen2.5-1.5b & 7 & 67 & 0,1 & $<10^{-4}$ & $<10^{-4}$* \\
+Qwen2.5-3b-bartowski vs Qwen2.5-3b & 3 & 4 & 0,8 & 1,0000 & 1,0000\phantom{*} \\
+Qwen2.5-3b-bartowski vs Mistral-7B ROMEO (bf16) & 6 & 76 & 0,1 & $<10^{-4}$ & $<10^{-4}$* \\
+Qwen2.5-1.5b vs Qwen2.5-3b & 65 & 6 & 10,8 & $<10^{-4}$ & $<10^{-4}$* \\
+Qwen2.5-1.5b vs Mistral-7B ROMEO (bf16) & 10 & 20 & 0,5 & 0,0987 & 0,5924\phantom{*} \\
+Qwen2.5-3b vs Mistral-7B ROMEO (bf16) & 6 & 75 & 0,1 & $<10^{-4}$ & $<10^{-4}$* \\
 \bottomrule
 \end{tabular}
 \end{table}
