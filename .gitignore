@@ -22,8 +22,25 @@ outputs/
 # BlueSky local working data
 bluesky/
 
-# Interface web (frontend/dist est VERSIONNE pour lancer sans Node.js)
+# Interface web (build locally with npm ci and npm run build)
 frontend/node_modules/
+frontend/dist/
+*.tsbuildinfo
+.bench-runtime/
+.codegraph/
+
+# Local verification output and optional raster previews
+bench/results/local/
+docs/assets/local-*.png
+
+# Generated report auxiliaries
+*.aux
+*.out
+*.toc
+*.nav
+*.snm
+*.fls
+*.fdb_latexmk
 
 # Rapports d'exercice generes a l'usage
 reports/
@@ -55,3 +72,34 @@ bench/results/server_*.log
 bench/results/llm_usage.jsonl
 # voix du locuteur humain (donnees personnelles, jamais versionnees)
 bench/results/human_audio/
+
+# Report images share the canonical docs/bench assets
+/rapport_final/figures/fig_conflit_garanti.png
+/rapport_final/figures/fig_cpa_multiseed.png
+/rapport_final/figures/fig_sim_scaling.png
+/rapport_final/figures/app_debrief.png
+/rapport_final/figures/app_exercice.png
+/rapport_final/figures/app_radar.png
+/rapport_S6-S7/figures/app_romeo.png
+/rapport_S6/figures/app_romeo.png
+/rapport_final/figures/app_romeo.png
+/rapport_S6-S7/figures/fig_butterworth_bode.png
+/rapport_S6/figures/fig_butterworth_bode.png
+/rapport_final/figures/fig_butterworth_bode.png
+/rapport_S4-S5/figures/fig_mel_avant_apres_s4.png
+/rapport_final/figures/fig_mel_avant_apres_s4.png
+/rapport_S4-S5/figures/fig_rag_s5.png
+/rapport_final/figures/fig_rag_s5.png
+/rapport_S4-S5/figures/fig_secteur_graphe.png
+/rapport_S6-S7/figures/fig_secteur_graphe.png
+/rapport_S7/figures/fig_secteur_graphe.png
+/rapport_final/figures/fig_secteur_graphe.png
+/rapport_S6-S7/figures/fig_spectrogramme_avant_apres.png
+/rapport_S6/figures/fig_spectrogramme_avant_apres.png
+/rapport_final/figures/fig_spectrogramme_avant_apres.png
+/rapport_S4-S5/figures/fig_wer_s4.png
+/rapport_final/figures/fig_wer_s4.png
+/rapport_final/figures/fig_bluesky_scatter.png
+/rapport_final/figures/fig_generateur_contraintes.png
+/rapport_final/figures/fig_parseur_categories.png
+/rapport_final/figures/fig_perf_latences.png
