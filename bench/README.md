@@ -1,92 +1,69 @@
-# Banc de benchmark scientifique
+# Reproducible local campaign
 
-Campagne de mesures **réelles et reproductibles** de chaque étage du système
-(STT, LLM, TTS, simulateur, boucle vocale complète), exécutée localement
-(GPU grand public) et conçue pour compléter les mesures ROMEO historiques
-(`validation/results_perf.json`, `rapport_S6-S7`).
+The current portfolio report uses the WSL campaign in
+[`results/wsl-2026-09-12/`](results/wsl-2026-09-12/). It calls the existing
+production parser, conflict detector, exercise constructor and BlueSky
+runtime. Every parser decision and geometry case is saved, together with
+each timing repetition and its warmup flag.
 
-Les chiffres publiés dans `docs/` et dans l'article (`docs/article/`) sont
-générés par ces scripts - aucune valeur n'est saisie à la main.
-
-## Principes de rigueur
-
-- **Chemin de production, pas de reconstitution** : le benchmark LLM passe par
-  `atc_llm.build_messages` (prompt système + KB OACI inlinée + indices NER),
-  `ai_client.LlmClient` (HTTP OpenAI-compatible, température 0) et
-  `atc_llm.postprocess_orders` (bornes + graphe secteur) - exactement le code
-  exécuté par l'application. Idem STT (`atc_asr`) et TTS (`readback`,
-  `voices`, dégradation VHF client).
-- **Vérité terrain annotée** : 116 clairances (68 historiques + 48 étendues
-  dont paraphrases hors grammaire, bruit STT, cas mixtes valide+invalide,
-  14 négatifs de sécurité supplémentaires) ; 20 descriptions de scénarios
-  (116 contraintes vérifiables) ; corpus audio ATC **réels** (ATCO2, UWB-ATCC).
-- **Statistiques** : IC 95 % bootstrap (B=10 000, graine fixée) pour les
-  moyennes, IC de Wilson pour les proportions, McNemar exact pour les
-  comparaisons appariées de modèles, bootstrap apparié pour les deltas de WER.
-- **Graines fixées partout** ; chaque script écrit un JSON auto-suffisant
-  (protocole + résultats) dans `bench/results/`.
-
-## Scripts
-
-| Script | Venv | Mesure |
-|---|---|---|
-| `sim_bench.py` | app (`src/bluesky-env`) | CPA multi-graines (5×200 k), garantie de conflit de l'exercice (2 000 tirages), montée en charge BlueSky répétée (5×), latence parseur |
-| `llm_bench.py` | bench | Exactitude TrafScript exacte de 4 LLM locaux + parseur à règles sur 116 clairances ; scénarios ; JSON strict ; latence ; tokens/s |
-| `stt_bench.py` | bench | WER de whisper-small (vanilla vs **LoRA ATC du dépôt**) et faster-whisper tiny/base/small sur ATCO2 + UWB-ATCC, avec/sans passe-bande VHF d'inférence ; RTF |
-| `tts_bench.py` | bench | RTF et intelligibilité aller-retour (TTS→juge STT fixe→WER) de Kokoro-82M (4 voix) et Windows SAPI, avant/après dégradation VHF |
-| `e2e_bench.py` | bench | Boucle vocale complète (voix contrôleur SAPI + canal radio SNR 12 dB → STT → LLM → validation → TTS) : taux de réussite, attribution des échecs STT/LLM, latences par étage |
-| `figures.py` | bench | Toutes les figures (`bench/figures/*.png`) |
-| `run_all.py` | bench | Orchestrateur complet |
-| `local_server.py` | bench | Façade OpenAI-compatible **100 % locale** (llama.cpp GPU / faster-whisper / Kokoro) - miroir de `src/server.py`, utilisable aussi comme fournisseur de l'application |
-
-## Reproduire
-
-```bat
-:: 1. venv de benchmark (une fois) - Python 3.12
-py -3.12 -m venv bench\bench-env
-bench\bench-env\Scripts\python -m pip install torch --index-url https://download.pytorch.org/whl/cu124
-bench\bench-env\Scripts\python -m pip install faster-whisper transformers peft datasets jiwer soundfile matplotlib scipy pandas httpx requests fastapi uvicorn python-multipart kokoro-onnx
-bench\bench-env\Scripts\python -m pip install llama-cpp-python --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu124
-
-:: 2. modèles GGUF + Kokoro dans bench\models\ (voir URLs dans l'historique git
-::    ou les en-têtes des scripts) : Llama-3.2-1B, Qwen2.5-1.5B/3B,
-::    Mistral-7B-Instruct-v0.3 (Q4_K_M), kokoro-v1.0.onnx + voices-v1.0.bin
-
-:: 3. campagne complète
-bench\bench-env\Scripts\python bench\run_all.py
+```bash
+python3.12 -m venv .venv-bench
+source .venv-bench/bin/activate
+python -m pip install -r bench/requirements-wsl.txt
+bash bench/run.sh
+python bench/plot.py --latest
 ```
 
-Matériel de référence : RTX 4070 Laptop 8 Go, i9-13900H, 32 Go RAM, Windows 11.
+Run the commands from the repository root. Each run writes a fresh timestamped
+directory under `bench/results/local/`. Existing output directories are rejected
+to prevent interrupted or repeated campaigns from mixing their files.
+Use `python bench/plot.py` without `--latest` to regenerate the committed campaign.
+An explicit `--output` can select a different, new directory. The optional
+`--skip-simulator` flag records the simulator as `non mesuré`.
 
-## Campagne contre un fournisseur distant (façade ROMEO)
+The protocol excludes one warmup and keeps five timed repetitions for each
+input size. Parser prefixes contain 16, 68 and 116 annotated clearances;
+their language mix differs, so the graph does not establish asymptotic
+scaling. BlueSky trials contain 5, 25 and 100 aircraft, using the same seeded
+initial traffic at each repetition. Reported speed is actual simulated
+seconds divided by wall-clock seconds. Setup, aircraft creation and model
+loading are outside that timer. Graphs show the median and interquartile
+range, using linear quantile interpolation. These intervals describe the
+observed spread and are not confidence intervals.
 
-Chaque banc accepte un fournisseur OpenAI-compatible **déjà en service**
-(mêmes protocoles, mêmes graines — c'est ainsi qu'a été produite la
-comparaison cluster/local d'août 2026, tunnel SSH compris dans les latences) :
+BlueSky is initialized with the recorded `bench/bluesky.cfg` in the ignored
+`.bench-runtime/` directory. The benchmark then uses the unchanged application
+wrapper for traffic creation, resets, state reads and time stepping. This keeps
+an existing user's BlueSky settings out of the experiment.
 
-```bat
-:: façade GH200 lancée par start_romeo.ps1 (tunnel 8765/8766)
-bench\bench-env\Scripts\python bench\llm_bench.py --external "mistral-7b-atc-romeo=http://localhost:8765=mistral-7b-atc" --out bench\results\llm_bench_romeo.json
-bench\bench-env\Scripts\python bench\stt_bench.py --systems "api:http://localhost:8765|whisper-atc-lora" --out bench\results\stt_bench_romeo.json
-bench\bench-env\Scripts\python bench\tts_bench.py --xtts-url http://localhost:8766 --out bench\results\tts_bench_romeo.json
-bench\bench-env\Scripts\python bench\e2e_bench.py --external-stt-url http://localhost:8765 --external-llm-url http://localhost:8765 --external-tts-url http://localhost:8766 --out bench\results\e2e_bench_romeo.json
-```
+The numerical geometry reference samples straight-line trajectories every
+0.05 seconds over 300 seconds. It cannot resolve every threshold boundary;
+ambiguous cases are marked in the CSV. The constructor check uses an
+independent relative-motion calculation. Neither is an operational flight
+safety validation.
 
-`gen_tables.py` et `figures.py` fusionnent automatiquement les fichiers
-`*_romeo.json` (lignes « ROMEO » des tableaux, barres supplémentaires des
-figures). NB : la condition STT distante est rangée sous `vhf_bandpass`
-(la façade applique elle-même le passe-bande d'inférence — chemin de
-production) ; `capture_versions.py` fige l'environnement logiciel exact.
+`measure_local.py` records the machine, exposed processors and memory,
+interpreter, installed packages, source hashes, seeds and all inputs.
+`plot.py` regenerates the summary and both SVG themes in `docs/assets/`.
+The optional PNG files are local previews and are ignored by Git.
 
-## Limites documentées
+## Historical experiments
 
-- L'intelligibilité TTS aller-retour partage le biais du juge STT entre tous
-  les moteurs : métrique **relative**, pas absolue.
-- Les énoncés contrôleur E2E sont synthétiques (SAPI + canal VHF simulé) :
-  le WER STT y est optimiste par rapport à de la parole spontanée ; les corpus
-  ATCO2/UWB (voix réelles) couvrent ce cas dans `stt_bench`.
-- `_analyze` publie dCPA arrondi à 0,1 NM : l'erreur mesurée vs grille fine est
-  bornée par cette quantification d'affichage (0,05 NM), la décision de
-  prédiction étant elle exacte (0 désaccord / 10⁶ géométries).
-- Les LLM locaux quantifiés Q4_K_M minorent légèrement la qualité des mêmes
-  modèles en pleine précision (Mistral-7B ROMEO tourne en bf16).
+The existing `sim_bench.py`, `llm_bench.py`, `stt_bench.py`, `tts_bench.py`,
+`e2e_bench.py`, `human_e2e.py` and `run_all.py` describe earlier experiments.
+Their JSON files remain at the top of `results/` and their figures under
+`figures/`. They are preserved as historical records and are not presented
+as new measurements in the portfolio README.
+
+Speech-recognition WER, LLM accuracy, speech-synthesis intelligibility,
+complete voice-loop latency and ROMEO parity: **non mesuré** in this WSL
+campaign because no corresponding model services were configured. A GPU
+being visible does not by itself reproduce their providers, models,
+audio corpora or preprocessing. The previous scripts and result files
+remain available for a separate replay with those dependencies.
+
+The local corpus is hand-authored and reuses development examples. Its
+extended cases reveal parser failures, but neither stratum is a held-out
+sample of spontaneous controller speech. The full parser contract includes
+vertical-speed commands; the older LLM comparison filters those commands.
+Those accuracy figures must not be compared as identical tasks.

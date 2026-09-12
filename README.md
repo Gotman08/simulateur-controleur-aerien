@@ -1,396 +1,212 @@
-# Simulateur Controleur Aerien
+# Air traffic control training simulator
 
-### An AI co-pilot for air traffic control: from pilot speech to simulator action, and back to voice
+A BlueSky training simulator whose local text parser matches **102 of 116 annotated clearances** in the recorded WSL campaign.
 
-![CI](https://github.com/Gotman08/simulateur-controleur-aerien/actions/workflows/ci.yml/badge.svg)
-![Python](https://img.shields.io/badge/Python-3.11%20|%203.12-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
-![Status](https://img.shields.io/badge/status-training%20app-success)
-![HPC](https://img.shields.io/badge/HPC-ROMEO%20GH200-7b3fa0)
+## Abstract
 
-A proof of concept that automates the pilot and controller radio dialogue inside an air traffic
-simulator. A spoken instruction is transcribed, grounded in ICAO phraseology, turned into a
-validated command, executed in the BlueSky simulator, and answered by a synthesized pilot readback
-voice. The full chain runs as a real time loop, with the AI models hosted on a GPU cluster and the
-simulator running on a local machine.
+This university internship project connects a training interface, traffic simulation and speech-model services.
+The difficult part is preserving callsigns, quantities and intent across the voice-to-command chain.
+A local application constructs prompts, validates model output, sends TrafScript commands to BlueSky and builds pilot readbacks.
+The new offline campaign measures the existing text parser and local simulation components.
+The parser matches all 68 base-grammar examples and 34 of 48 extended examples.
+Its failures on the harder corpus, and the absence of a new speech-provider evaluation, limit what these results establish.
 
-![ATC Trainer - live radar with programmed conflicts, storm cell and flight strips](docs/assets/app_radar_live.gif)
+## Context and problem
 
-> Internship project (10 week PoC), University of Reims Champagne-Ardenne (URCA). AI compute on the
-> ROMEO supercomputer (NVIDIA GH200, Grace-Hopper, aarch64). Author: Nicolas Marano.
+The project was developed at Université de Reims Champagne-Ardenne by Nicolas Marano.
+It explores a simulated pilot/controller dialogue and scored training exercises.
+A plausible transcript is insufficient: a mistaken callsign, level or heading can turn into the wrong simulator action.
+The repository therefore keeps parsing, command validation, traffic execution and readback construction as separate steps.
 
----
+The current report covers a local WSL replay. Earlier model and cluster experiments remain historical records.
+Their figures are not treated as measurements made during this audit.
 
-## Table of contents
+## Approach
 
-1. [What it does](#what-it-does)
-2. [Architecture](#architecture)
-3. [Key results](#key-results)
-4. [Demos](#demos)
-5. [Pipeline stages](#pipeline-stages)
-6. [How to run](#how-to-run)
-7. [Repository layout](#repository-layout)
-8. [Tech stack](#tech-stack)
-9. [Status and roadmap](#status-and-roadmap)
-10. [Limitations](#limitations)
-11. [References](#references)
-12. [License and acknowledgements](#license-and-acknowledgements)
-
----
-
-## What it does
-
-The target pipeline closes a full voice loop between a pilot, an AI controller, and a traffic
-simulator:
-
-```
-pilot voice (VHF) -> Whisper STT -> NER + LLM with RAG (ICAO Doc 4444) -> validated JSON
-                  -> BlueSky simulator (aircraft maneuver) -> synthesized pilot readback voice -> loop
+```mermaid
+flowchart LR
+    A[Text or speech] --> B[Provider clients and phraseology context]
+    B --> C[Command parsing and validation]
+    C --> D[BlueSky traffic]
+    D --> E[Radar and exercise state]
+    C --> F[Readback and speech synthesis]
 ```
 
-Every brick is trained or grounded on its own, then assembled:
+The main application consumes speech recognition, language-model and speech-synthesis services through configured APIs.
+The offline reference parser, `src/atc_ai.py`, is evaluated directly against the checked-in corpus.
+The local conflict detector extrapolates straight-line relative motion; the exercise constructor creates example conflict pairs.
+[Design decisions and alternatives](docs/design.md) describe their costs and the boundaries between these components.
 
-- Speech recognition is a Whisper model fine tuned on real, noisy air traffic control audio.
-- The reasoning layer is a local LLM grounded by retrieval in a phraseology knowledge base, and by a
-  graph model of the airspace sector. It outputs a strict JSON command and refuses unsafe orders.
-- The command is executed in BlueSky, a research air traffic simulator, which moves the aircraft.
-- The aircraft answers with a readback, synthesized in a cloned pilot voice and degraded to sound
-  like a real VHF radio.
+## Results
 
-## Architecture
+All following results were collected on the machine below. Individual decisions, geometry inputs,
+timing samples and source hashes are in [the raw campaign](bench/results/wsl-2026-09-12/).
+Tables are derived from [summary.json](bench/results/wsl-2026-09-12/summary.json) by `bench/plot.py`.
 
-**API-first, single mode.** The three AI services (STT, LLM, TTS) are consumed through the
-standard **OpenAI-compatible REST contract**, configured by URL + API key + model name in a `.env`
-file (see `.env.example`). Swapping a model - self-hosted or cloud - means changing three
-environment variables, nothing else. The project's own models (fine-tuned Whisper, Mistral 7B,
-XTTS voice cloning) remain available behind a self-hosted façade (`src/server.py`) that speaks the
-same contract, typically reached through an SSH tunnel to the GPU cluster.
+| Check | Observed result | Conditions |
+|---|---:|---|
+| Full text-parser contract | 102 / 116 exact | Fixed annotated corpus; vertical-speed commands included |
+| Base grammar | 68 / 68 exact | Development examples |
+| Extended corpus | 34 / 48 exact | Paraphrases, transcription-like noise, mixed orders and negative cases |
+| Conflict decision vs numerical grid | 0 disagreements / 1,500 cases | Three seeds, straight-line trajectories, equal altitude; only seven positive predictions |
+| Constructed conflict examples | 200 / 200 meet the recorded criterion | Seeds 0 through 199; independent relative-motion calculation |
+| Local Python suite | 205 tests pass | Pure modules and mocked model-provider calls |
 
-```
-        LOCAL PC (Windows, Python 3.12)               AI providers (interchangeable via .env)
-  +------------------------------------+            +-------------------------------------------+
-  | training app (FastAPI + React)     |   HTTPS    | ANY OpenAI-compatible service:            |
-  |   + BlueSky simulator (headless)   | =========> |  - self-hosted facade server.py (ROMEO,   |
-  |   prompt building + KB (ICAO)      |    /v1/    |    fine-tuned Whisper / Mistral / XTTS)   |
-  |   deterministic safety validation  |  audio/*   |  - OpenAI, Mistral API, Groq, ...         |
-  |   per-callsign voice + VHF filter  |   chat/*   |  - any local gateway (vLLM, LiteLLM...)   |
-  +------------------------------------+            +-------------------------------------------+
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/local-parser-dark.svg">
+  <img alt="Parser exact-match counts by corpus stratum, with median batch-average latency and interquartile range" src="docs/assets/local-parser-light.svg">
+</picture>
 
-The prompt engineering stays **client-side** (ICAO knowledge base inlined in the system prompt,
-NER hints, sector graph) and every LLM output goes through the **deterministic safety validation**
-(bounds, known waypoints) - identical whatever the provider. The VHF radio degradation is also
-applied client-side, so the pilot voice sounds like a real radio with any TTS backend.
+The accuracy bars describe these fixed examples, without a population confidence claim.
+Latency uses five batch repetitions after one discarded warmup. Error bars span the first to third quartile.
+At a corpus size of 116, the median batch-average cost is **0.03309 ms per clearance**, with an **IQR of 0.00246 ms**.
+This excludes speech inference, HTTP transport and simulator execution.
 
-## Key results
+| Simulated aircraft | Median simulation/wall-time ratio | Interquartile range |
+|---|---:|---:|
+| 5 | 156.45 | 8.82 |
+| 25 | 146.39 | 2.20 |
+| 100 | 125.03 | 11.26 |
 
-| Brick | Metric | Result |
-|---|---|---|
-| Whisper fine tuning (S4) | WER on ATCO2 test, zero shot to fine tuned | 74.3% to 29.2% (about 60% relative) |
-| Whisper fine tuning (S4) | Validation WER (UWB + ATCOSIM), 3 epochs | 6.68% |
-| RAG to JSON (S5) | Parseable JSON on 40 real transcriptions | 100% |
-| RAG to JSON (S5) | Valid orders among proposed | 27 / 33 (81.8%) |
-| Safety (S5) | Out of bounds or unknown orders blocked | 5 / 5 (100%) |
-| Sector graph (S5) | Shortest path ENTRY_W to EXIT_E | 101 NM, ADDWPT validated against sector fixes |
-| Voice loop (S6 + S8) | Re-transcription WER of the synthesized voice | about 22 to 24% |
-| Live interaction (S8) | Aircraft maneuver on spoken instruction | confirmed (heading and level changes in BlueSky) |
-| Conflict prediction (CPA) | Closed form vs numerical minimum, 100 000 random geometries | max error 5.5e-4 NM (~1 m) |
-| Conflict prediction (CPA) | Predicted vs measured in BlueSky, 200 encounters | MAE 0.067 NM, precision = recall = F1 = **1.000** |
-| Clearance parser (local) | 68 annotated phrases (EN + FR), 10 negative/safety cases | **100%** exact, 100% unsafe rejected |
-| Scenario generator (local) | 20 descriptions, 116 constraints | **100%** conformity |
-| Unit tests | pytest suite over the pure modules | 209 / 209 pass |
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/local-simulator-dark.svg">
+  <img alt="BlueSky simulation-to-wall-time ratio for the recorded aircraft counts, with interquartile ranges" src="docs/assets/local-simulator-light.svg">
+</picture>
 
-The full mathematical derivation (CPA closed form, convexity proof, conflict
-predicate), the empirical campaign against BlueSky, the exercise scoring model
-and the guaranteed-conflict construction are documented with figures in
-**[docs/VALIDATION.md](docs/VALIDATION.md)** - reproducible with
-`src\bluesky-env\Scripts\python.exe validation\run_all.py`.
+Each trial advances approximately ten simulated seconds and uses the actual advance returned by the runtime.
+A ratio above one means simulation progressed faster than wall time.
+Initialization, traffic creation, browser rendering and model services are excluded.
+This sweep compares workload sizes within the same simulator; it is not a speedup against another simulator.
 
-Performance, usefulness and limits (AI latency local vs ROMEO, ASR/TTS
-real-time factors, BlueSky scaling up to 200 aircraft at 55x real time, the
-multilayer safety net) are measured and discussed in
-**[docs/PERFORMANCE.md](docs/PERFORMANCE.md)** - reproducible with
-`src\bluesky-env\Scripts\python.exe validation\05_performance.py`.
+| Environment | Recorded value |
+|---|---|
+| CPU | Intel Core i9-13900H |
+| Processors exposed to WSL | 20 logical CPUs; virtual topology is not a count of physical host cores |
+| RAM exposed to WSL | 16,537,264,128 bytes |
+| System | Ubuntu 24.04.4 LTS, WSL2 kernel 6.6.87.2-microsoft-standard-WSL2 |
+| Interpreter | CPython 3.12.3, built with GCC 13.3.0 |
+| Compilation options | No project compilation for this Python campaign |
+| Library thread limits | OpenMP, OpenBLAS and MKL set to one |
+| Main packages | BlueSky 1.1.1, navigation data 1.0.0, OpenAP 2.6.1, NumPy 2.5.3, SciPy 1.18.1, Matplotlib 3.11.2 |
+| Configuration | [Pinned BlueSky settings](bench/bluesky.cfg), isolated local working directory |
+| Full dependency record | [Environment JSON](bench/results/wsl-2026-09-12/environment.json) and [requirements lock](bench/requirements-wsl.txt) |
 
-### Benchmark campaign on consumer and HPC hardware (July-August 2026)
+## What works
 
-Every stage was re-measured **for real** on a local RTX 4070 Laptop (8 GB),
-through the production code path, with seeded protocols, bootstrap/Wilson 95% CIs
-and paired McNemar tests - see **[bench/README.md](bench/README.md)** (methodology),
-`bench/results/*.json` (raw data) and the full research-style article
-**[docs/article/article.pdf](docs/article/article.pdf)**. Production-readiness
-review and fixes: **[docs/PRODUCTION.md](docs/PRODUCTION.md)**.
+- The parser produces the expected command lists for the cases marked `correct` in [parser_cases.json](bench/results/wsl-2026-09-12/parser_cases.json).
+- The sampled geometry comparisons agree under the recorded conditions in [geometry.csv](bench/results/wsl-2026-09-12/geometry.csv).
+- Constructed conflict examples satisfy their explicit criteria in [constructed_conflicts.json](bench/results/wsl-2026-09-12/constructed_conflicts.json).
+- BlueSky creates the requested traffic and advances simulation time in [bluesky_timing.csv](bench/results/wsl-2026-09-12/bluesky_timing.csv).
+- Python checks and the frontend build complete under WSL; see [validation records](docs/results.md#functional-validation).
 
-<!-- BENCH:START - bloc généré par tools/gen_readme_bench.py, ne pas éditer à la main -->
-| Stage | Protocol | Headline result |
-|---|---|---|
-| Conflict geometry | 1 000 000 Monte-Carlo geometries, 5 seeds, vs independent fine grid | **0 decision disagreement**, dCPA error bounded by display rounding |
-| Guaranteed exercise conflicts | 2 000 seeded draws | **100.0%** guarantee (max dCPA 0.082 NM ≪ 5 NM) |
-| BlueSky scaling | 5 reps x 5..200 aircraft | x105 real-time @5 → x67 @200 |
-| STT (real VHF audio) | ATCO2 + UWB-ATCC samples (n=150 each), production bandpass, project WER protocol | LoRA **28.5%** vs vanilla 71.9% on ATCO2 (paired bootstrap: significant); UWB 19.2% |
-| Clearance interpretation | 116 annotated clearances (standard + out-of-grammar + adversarial), full production chain, 5 local LLMs | best local **Mistral-7B-v0.3 81.9%** (rules parser 87.9%; out-of-grammar: LLM 77% vs parser 71%) |
-| TTS (local Kokoro-82M, 4 voices) | 30 ICAO readbacks, round-trip intelligibility (fixed STT judge, semantic normalization) | RTF **0.34**, round-trip WER after VHF **21.4%** |
-| Full voice loop (E2E) | 25 spoken clearances through radio channel (SNR 12 dB), STT→LLM→validation→TTS | **76%** exact execution (text control: 88%), mean voice latency **2.6 s** |
-| Cluster parity (ROMEO GH200, Aug 2026) | same seeded protocols replayed against the production façade through the SSH tunnel | Mistral-7B **bf16 83.6%** vs Q4 local (quantization cost isolated); E2E **76%**, 9.0 s mean (SSH tunnel incl.) |
-| Human speaker validation | same 25 clearances spoken by a real (non-native) speaker, replayed through the exact bench chain | raw mic **80%**, simulated radio 72% — failure taxonomy in the article |
+## What does not work
 
-The July 2026 campaign proves the architecture on consumer hardware; the August 2026 campaign replays the same seeded protocols against the GH200 production façade (deployment parity), plus a real-speaker validation. Historical first-campaign figures remain in the table above.
-<!-- BENCH:END -->
+The parser fails 14 extended cases. [The failure table](docs/results.md#parser-failures)
+preserves the expected and actual commands. Missed paraphrases, unsupported wording and partial interpretation
+are visible symptoms; extending the grammar requires a separate implementation change and a held-out evaluation.
+One of the 24 negative examples produces a command: the French phrase
+`AFR1234 monter niveau cinq cents` returns `ALT AFR1234 500` instead of an empty command list.
+The mismatch shows that numeric bounds alone do not guarantee correct interpretation of spoken numbers.
 
-## Demos
+The geometry sample contains few predicted conflicts. It cannot establish sensitivity across operational traffic,
+turns or altitude changes. The detector rounds displayed closest-approach distance and time.
+The largest recorded displayed-distance difference from the fine grid is 0.04746 NM;
+the grid and output quantization both limit this comparison.
 
-### A scored exercise in progress
+The BlueSky run reports unavailable RTree helpers and BADA data. The measured path uses OpenAP and completes,
+but spatial-index helpers and the BADA performance model were not validated.
 
-The control-room interface during a *Difficile* exercise: the engine has placed conflict pairs
-(amber CONF tags and dashed line with time-to-CPA), a storm cell (CB) and a 40 kt wind; the radar
-shows velocity leaders, data blocks with climb/descend trends and cleared levels, FMS routes, and
-the strip bay sorts alerts first. The live score updates in the Exercice tab while the student
-works the frequency.
+Speech recognition, model interpretation, synthesized readbacks and the complete voice loop are **non mesuré**
+in this campaign because no corresponding model services were configured.
+The frontend build also reports dependency advisories and a large bundle warning; these remain dependency and packaging follow-ups.
 
-![Exercise in progress - objectives and live scoring](docs/assets/app_exercice.png)
+Hosted GitHub Actions have not run for this local branch. Their component commands passed under WSL.
+The UI bundle must now be built during installation because generated bundles are excluded from version control.
 
-### Whisper fine tuning and RAG results
+## Limits and scope
 
-| Whisper WER | RAG and safety | VHF preprocessing |
-|---|---|---|
-| ![WER](docs/assets/fig_wer_s4.png) | ![RAG](docs/assets/fig_rag_s5.png) | ![Mel](docs/assets/fig_mel_avant_apres_s4.png) |
+The text corpus is hand-authored and partly used during development.
+The combined score does not measure spontaneous speech understanding.
+The earlier LLM experiment filters vertical-speed commands, so its score uses a different contract.
 
-### Two way voice (the aircraft talk back)
+The geometry uses equal-altitude, constant-velocity cases and a finite numerical grid.
+The simulator timings cover one local process and short synthetic traffic runs.
+They do not establish concurrent-session capacity, human usability, model quality or operational ATC suitability.
+The WSL host, thermal state and virtualization can affect timing.
 
-The controller speaks, the order is executed, then the pilot reads it back in the cloned aircraft
-voice over VHF. Listen to the recorded radio exchange: [audio/session_radio.wav](audio/session_radio.wav)
-and the per exchange files in [audio/](audio/).
+## Reproducibility
 
-## Pipeline stages
-
-| Stage | What | Key files | Result |
-|---|---|---|---|
-| Foundations | VHF bandpass, airspace graph, JSON to BlueSky connector, rule based NER | `src/01_..05_`, `src/secteur_graphe.json` | reusable building blocks |
-| Whisper fine tuning | LoRA fine tuning of whisper-small on ATC audio, VHF augmentation | `src/06_..10_`, `src/atc_*` | WER 74.3% to 29.2% |
-| RAG OACI | phraseology knowledge base, retrieval, Mistral strict JSON, graph validation | `src/11_..16_`, `src/atc_llm.py`, `src/kb_oaci.py`, `src/graph_secteur.py` | 100% valid JSON, 100% unsafe blocked |
-| Voice synthesis | XTTS zero shot voice cloning + VHF degradation, pilot readback | `src/tts_atc.py`, `src/readback.py`, `src/make_pilot_voices.py` | intelligible cloned voices |
-| BlueSky live | run the simulator, execute TrafScript, read flight state, radar render | `src/bluesky_runtime.py`, `src/radar_*.py` | aircraft maneuver for real |
-| Real time link | OpenAI-compatible facade (ROMEO) + SSH tunnel + local orchestrator | `src/server.py`, `src/ai_client.py`, `src/tunnel.sh`, `src/pipeline_e2e.py` | full closed loop |
-
-## How to run
-
-The app consumes STT/LLM/TTS through OpenAI-compatible APIs. Pick a provider configuration in
-`.env` (copy `.env.example`), then launch the app. Two typical setups:
-
-### Option 1 - self-hosted façade on the ROMEO cluster (project models)
+Use the overhaul branch until its pull request is merged:
 
 ```bash
-# one time environment setup (Whisper + Mistral, then XTTS)
-sbatch setup_romeo.sh           # base env, fine tuning stack
-sbatch setup_rag.sh             # Mistral
-sbatch setup_tts_romeo.sh       # XTTS voice cloning
-
-# launch the OpenAI-compatible facade (STT + LLM on GPU, TTS on CPU)
-sbatch job_server.slurm         # prints SERVER_NODE in the log
-bash tunnel.sh <SERVER_NODE>    # forward ports 8765 and 8766
-#   (or, from Windows, one command: .\start_romeo.ps1)
-
-# then in .env (config A of .env.example):
-#   ATC_STT_URL=http://localhost:8765   ATC_LLM_URL=http://localhost:8765
-#   ATC_TTS_URL=http://localhost:8766   ATC_TTS_VOICES=pilot_1,pilot_2,pilot_3
+git clone --branch chore/repo-overhaul https://github.com/Gotman08/simulateur-controleur-aerien.git
+cd simulateur-controleur-aerien
+python3.12 -m venv .venv-bench
+source .venv-bench/bin/activate
+python -m pip install -r bench/requirements-wsl.txt
+bash bench/run.sh
+python bench/plot.py --latest
 ```
 
-### Option 2 - cloud providers (no cluster at all)
+One warmup is excluded and five measured repetitions are retained for each timing configuration.
+Parser prefixes contain 16, 68 and 116 examples, with order shuffled from the recorded seed.
+Geometry uses seeds 42, 43 and 44, with 500 cases per seed.
+The reference grid has a 0.05-second step over 300 seconds; threshold-adjacent cases are marked explicitly.
+Constructed conflicts use seeds 0 through 199. Simulator traffic uses seed 4242 at each repetition.
+Quantiles use linear interpolation; the IQR is the third quartile minus the first.
+See [the complete protocol](bench/README.md) and [protocol.json](bench/results/wsl-2026-09-12/protocol.json).
 
-Fill `.env` with any OpenAI-compatible service (config B/C of `.env.example`): e.g. OpenAI
-(`whisper-1` / `gpt-4o-mini` / `gpt-4o-mini-tts`), or a mix (Groq STT + Mistral API LLM + a
-compatible TTS server). **Changing provider = changing URL + key + model name.**
+The plotting command regenerates both SVG themes and the summary solely from the raw files.
+Existing historical JSON files at the top of `bench/results/` are retained without overwriting them.
+Each run creates a fresh timestamped directory under `bench/results/local/`.
+An explicit `--output` directory must not already exist. To regenerate the committed campaign's
+figures directly, use `python bench/plot.py` without `--latest`.
 
-### Option 3 - fully local façade (consumer GPU, no network at all)
+## Installation and usage
 
-The benchmark harness ships an OpenAI-compatible façade backed by local engines
-(llama.cpp CUDA, faster-whisper, Kokoro TTS) - same 4 routes as `src/server.py`.
-Measured on an RTX 4070 Laptop (8 GB): see the benchmark campaign below.
+For the interactive application on the recorded WSL environment, install the pinned runtime, build the UI and configure your model services. The frontend was built with Node 20.20.0 and npm 10.8.2:
 
 ```bash
-# once: bench venv + models (see bench/README.md for the full list)
-bench/bench-env/Scripts/python bench/local_server.py --role all --warm \
-  --llm-gguf bench/models/Mistral-7B-Instruct-v0.3-Q4_K_M.gguf \
-  --stt hf-lora:model/whisper-lora-adapter --merge-system
-# .env : ATC_STT_URL=ATC_LLM_URL=ATC_TTS_URL=http://127.0.0.1:8901
-#        ATC_TTS_MODEL=kokoro-82m  ATC_TTS_VOICES=af_bella,am_adam,bm_george
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-local-wsl.txt
+(cd frontend && npm ci && npm run build)
+cp .env.example .env
+# Edit .env with your provider URLs, model names and local credentials.
+ATC_APP_NOBROWSER=1 python src/atc_app.py
 ```
 
-This is also the proven continuity path: during the July 2026 ROMEO security
-maintenance (cluster fully down), the app stayed operational by switching `.env`
-to this façade - no code change.
-
-### Demos (need a configured provider)
-
-```bash
-bash setup_bluesky_local.sh                  # Python 3.12 venv + bluesky-simulator
-bluesky-env/Scripts/python.exe pipeline_e2e.py        # audio -> STT -> LLM -> BlueSky
-bluesky-env/Scripts/python.exe live_demo.py           # instructions deviate the aircraft
-bluesky-env/Scripts/python.exe voice_exchange.py      # controller and pilot radio exchange
-bluesky-env/Scripts/python.exe radar_anim.py          # radar scope image + animation
-```
-
-### Training app (interactive radar + voice) - recommended
-
-A single launchable application with a professional control-room interface (React + Tailwind,
-pre-built - **no Node.js needed to run it**): a live radar scope with zoom/pan and flight strips,
-an instructor panel that turns a natural-language description into traffic, a push-to-talk
-controller position, and a full **exercise mode** where the AI builds the situation and the
-student is scored like in a real check-ride.
-
-![Training app - radar and flight strips](docs/assets/app_radar.png)
-
-```bash
-cd src
-bash setup_bluesky_local.sh                                  # one time: venv + BlueSky
-bluesky-env/Scripts/python.exe -m pip install -r ../requirements-local.txt
-bluesky-env/Scripts/python.exe atc_app.py                    # opens http://127.0.0.1:8000
-```
-
-The AI backend is **API-first, single mode** (configured in `.env`):
-
-- **STT / LLM / TTS are three OpenAI-compatible endpoints** - the self-hosted façade (project
-  models: fine-tuned Whisper, Mistral, XTTS cloned voices) or any cloud service, interchangeable.
-  Three status badges (STT / LLM / TTS) in the top bar show each provider's health; click to
-  re-test. Any provider error is **loudly visible** (UI log + HTTP 502) - never silent.
-- **Every readback is spoken** through the TTS API, for typed *and* spoken clearances, and **each
-  aircraft keeps its own stable voice** (deterministic callsign hash over the `ATC_TTS_VOICES`
-  pool). The VHF radio degradation is applied client-side, whatever the TTS provider.
-
-Workflow: the instructor types a situation (e.g. `three A320 from the north at FL300 heading 180, 8
-miles apart` or `trois A320 venant du nord au niveau 300`) or loads a saved scenario from
-`src/scenarios/`; the aircraft appear and fly live; the student holds the push-to-talk key (`V`) and
-says e.g. `air france one two three four descend flight level one zero zero` (French
-phraseology works too: `... descendez niveau 1 0 0`); the aircraft maneuvers and the pilot reads
-back with its own voice. A clearance to a callsign that is not on the scope gets **no answer**,
-like on a real frequency (deliberate exception to the always-speak rule). App code:
-`src/atc_app.py` (server), `src/ai_client.py` (OpenAI-compatible AI client), `src/atc_sim.py`
-(real-time BlueSky), `src/atc_exercise.py` (exercise engine), `src/atc_ai.py` (reference rules
-parser, kept for tests/validation), `frontend/` (UI).
-
-### Exercise mode (the AI builds the situation, the student adapts)
-
-Pick a difficulty (Facile / Moyen / Difficile) and a duration: the engine constructs aircraft pairs
-that are **mathematically guaranteed to conflict** (same arrival time at a crossing point - proof in
-[docs/VALIDATION.md](docs/VALIDATION.md) §7), adds AI-generated filler traffic, wind, storm cells
-and turbulence, then measures everything in real time: losses of separation (5 NM / 1000 ft),
-predicted conflicts resolved before they degenerate, weather-zone penetrations, radio quality. The
-final debrief shows a 0-100 score with the documented breakdown (§6), the minimum-separation
-timeline, every event and every clearance:
-
-![Exercise debrief](docs/assets/app_debrief.png)
-
-The app leans on BlueSky's own engine for the hard parts, and the web radar renders everything it
-computes:
-
-- **Conflict detection (BlueSky CD&R, StateBased)**: predicted conflicts (amber, with time-to-CPA and
-  minimum distance) and actual loss of separation (red), in 3D. The radar badge shows `CD BlueSky`.
-- **Weather - wind**: `WIND` from the instructor (e.g. `200/40`); aircraft crab and their **ground speed**
-  changes (shown in the data block); a wind vector is drawn on the scope.
-- **Weather - storm cells and restricted zones**: click the radar to drop a `CIRCLE` area; aircraft that
-  penetrate it are ringed and a banner fires (containment is computed locally because BlueSky's compiled
-  `kwikdist` is incompatible with numpy 2.x).
-- **Turbulence**: BlueSky's turbulence model, set from a slider.
-- **Routes / FMS**: `proceed direct <fix>` (ADDWPT), vertical-speed clearances (`expedite`, `rate 1500`);
-  each aircraft's FMS route and active waypoint are drawn.
-- **Native BlueSky GUI**: the "GUI BlueSky natif" button exports the current situation to a `.scn` and
-  launches BlueSky's official Qt/OpenGL scope on it. This needs the optional GUI dependencies:
-  `bluesky-env/Scripts/python.exe -m pip install pyqt5 pyopengl`.
-
-Python dependencies are listed in `requirements-romeo.txt` (AI side) and `requirements-local.txt`
-(simulator side).
+Open [the local application](http://127.0.0.1:8000). Local startup served the UI and `/api/state` successfully in [the HTTP smoke check](bench/results/wsl-2026-09-12/app-smoke.json). Voice features require configured providers.
+The offline benchmark above needs no model provider. For functional checks, follow [tests/README.md](tests/README.md).
 
 ## Repository layout
 
-```
-simulateur-controleur-aerien/
-  README.md
-  LICENSE
-  requirements-romeo.txt        AI stack (cluster side, self-hosted facade)
-  requirements-local.txt        BlueSky client + app (local side)
-  .env.example                  AI provider configuration (OpenAI-compatible URLs/keys/models)
-  start_romeo.ps1               one-command self-hosted facade (sbatch + tunnel, Windows)
-  pytest.ini / tests/           unit tests (pure modules + mocked API client)
-  validation/                   mathematical + empirical validation campaign (reproducible)
-  bench/                        scientific benchmark harness (STT/LLM/TTS/E2E/simulator)
-  bench/results/                raw measurement JSONs (source of every published figure)
-  docs/VALIDATION.md            CPA derivation, BlueSky campaign, scoring model, proofs
-  docs/PRODUCTION.md            production-readiness review, fixes, deployment guide
-  docs/article/                 research-style article (LaTeX -> article.pdf, auto-injected numbers)
-  docs/assets/                  figures, screenshots and radar GIFs used in this page
-  frontend/                     web UI source (React + TypeScript + Tailwind)
-  frontend/dist/                pre-built UI served by atc_app.py (no Node.js needed)
-  src/                          all runtime code (flat, see note below)
-  src/scenarios/                saved training scenarios (JSON)
-  model/whisper-lora-adapter/   trained LoRA adapter for whisper-small
-  audio/                        recorded radio exchanges (controller and pilot)
-  reports/                      exercise debrief reports (generated at use)
-```
+| Path | Purpose |
+|---|---|
+| `src/` | Application, model clients, parser, simulation wrappers and earlier training scripts |
+| `frontend/` | React interface source and dependency lock; generated output is ignored |
+| `tests/` | Local verification suite and pinned test dependencies |
+| `bench/` | Current reproducible campaign and preserved historical experiment scripts |
+| `bench/results/wsl-2026-09-12/` | Raw inputs, decisions, timing repetitions and environment |
+| `docs/` | Design, detailed results, regenerated SVGs and historical reports |
+| `model/` | Retained LoRA adapter and tokenizer assets |
+| `audio/`, `rapport*/` | Historical demonstration audio and academic reports |
 
-Note: `src/` is intentionally flat. The reasoning and server modules load sibling files by path
-(for example `03_bluesky_connector.py`, `04_ner_extraction.py`, `graph_secteur`, `atc_callsign`,
-`atc_asr`, `tts_atc`). Keeping them together preserves these imports and matches the working
-directory used on the cluster.
+## Possible next steps
 
-To rebuild the web UI after changing `frontend/src/` (requires Node 20+):
-
-```bash
-cd frontend && npm install && npm run build      # output goes to frontend/dist
-```
-
-## Tech stack
-
-- Speech recognition: OpenAI Whisper (small), LoRA fine tuning with Hugging Face Transformers and PEFT.
-- Reasoning: Mistral 7B Instruct, retrieval with sentence-transformers (bge-small), numpy cosine search.
-- Airspace model: a graph of the sector (nodes, segments, separation), Dijkstra routing.
-- Voice synthesis: Coqui XTTS v2 (zero shot voice cloning), VHF bandpass degradation.
-- Simulator: BlueSky (TU Delft), headless, driven by TrafScript.
-- Serving: FastAPI and Uvicorn, WebSocket state streaming, SSH tunnel between the cluster and the local PC.
-- Web UI: React 19 + TypeScript, Vite, Tailwind CSS 4, Recharts (debrief charts), lucide icons;
-  canvas-rendered radar scope at 60 fps (zoom, pan, selection, trails, data blocks).
-- Quality: pytest unit suite (209 tests), reproducible validation campaign with regression
-  gates (`validation/run_all.py`), full local benchmark harness (`bench/run_all.py`).
-- Local inference (option 3 / benchmarks): llama.cpp (CUDA), faster-whisper (CTranslate2),
-  Kokoro-82M (ONNX) behind the same OpenAI-compatible façade.
-- Datasets: ATCO2, UWB-ATCC, ATCOSIM (public ATC speech corpora).
-- HPC: ROMEO (URCA), NVIDIA GH200 (Grace-Hopper, aarch64), SLURM.
-
-## Status and roadmap
-
-Done: foundations (S1 to S3), Whisper fine tuning (S4), RAG and sector graph (S5), voice synthesis
-(S6), BlueSky live and the real time loop (S8), the two way voice readback, the professional
-training interface (radar, strips, instructor, radio), the scored exercise mode with debrief, and
-the mathematical/empirical validation campaign (docs/VALIDATION.md).
-
-Next: unified situation aware query that feeds the live traffic state to the LLM (S7), scripted end
-to end scenarios (S9), and a quantitative evaluation over 20 scenarios with a demonstration video (S10).
-
-## Limitations
-
-- Speech recognition can still mishear some callsigns and digit groups on long or noisy utterances.
-  An unsafe or unknown order is rejected by the validation layer rather than applied.
-- Voice synthesis runs on CPU on the cluster (a known cuFFT issue with torchaudio on the GH200 GPU),
-  so it is reliable but not real time fast.
+1. Add a held-out clearance corpus, then address the observed parser failures.
+2. Replay the complete voice chain with pinned models, audio inputs and provider configuration.
+3. Expand geometry checks with targeted conflict, turn and altitude-change scenarios.
+4. Review frontend dependency advisories and split the production bundle.
+5. Measure concurrent sessions and evaluate training usefulness with users.
 
 ## References
 
-State of the art that informed the design (full BibTeX in `src/references.bib`):
+- [BlueSky ATC simulator](https://github.com/TUDelft-CNS-ATM/bluesky), the simulation dependency.
+- [Whisper](https://github.com/openai/whisper), the base speech-recognition implementation used by the historical model experiments.
+- [Project validation sources](validation/), including the annotated base corpus.
+- [Historical benchmark scripts and records](bench/README.md#historical-experiments).
 
-1. Zuluaga-Gomez, J. et al. ATCO2 corpus: A Large-Scale Dataset for Research on ASR and NLU of Air Traffic Control Communications. arXiv:2211.04054, 2023. https://arxiv.org/abs/2211.04054
-2. Zhang, Q. and Mott, J. H. An Exploratory Assessment of LLM's Potential Toward Flight Trajectory Reconstruction Analysis. arXiv:2401.06204, 2024. https://arxiv.org/abs/2401.06204
-3. Sharifi, I., Zongo, A. and Wei, P. Fine-Tuning Large Language Models for Cooperative Tactical Deconfliction of Small Unmanned Aerial Systems. arXiv:2603.28561, 2026. https://arxiv.org/abs/2603.28561
-4. Sid, D. et al. AirTrafficGen: Configurable Air Traffic Scenario Generation with Large Language Models. arXiv:2508.02269, 2025. https://arxiv.org/abs/2508.02269
-5. van Doorn, J. L. P. M. Applying Large-Scale Weakly Supervised Automatic Speech Recognition to Air Traffic Control. Master's Thesis, TU Delft, 2023.
-6. Su, J. and Haq, O. Fine-Tuning Whisper for American English Air Traffic Control Speech Recognition: A Data-Efficient Pipeline. Research Square, 2026. https://doi.org/10.21203/rs.3.rs-8970162/v1
-7. ICAO. Doc 4444: Procedures for Air Navigation Services, Air Traffic Management (PANS-ATM), 16th edition, 2016.
+## License
 
-## License and acknowledgements
-
-Released under the MIT License (see `LICENSE`).
-
-This work builds on open research and tools: the ATCO2, UWB-ATCC and ATCOSIM speech corpora, the
-BlueSky simulator (TU Delft), OpenAI Whisper, Mistral, Coqui XTTS, and the ICAO radiotelephony
-phraseology standards. The phraseology knowledge base is made of concise factual rule cards written
-for this project, not a reproduction of any protected document.
-
-Author: Nicolas Marano. Internship in Artificial Intelligence and Air Traffic Control, 2026.
+[MIT](LICENSE). The model adapter, external base models and datasets retain their respective published terms.

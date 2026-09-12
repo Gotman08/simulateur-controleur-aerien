@@ -1,5 +1,7 @@
 # Audit de fonctionnement - Simulateur d'entraînement au contrôle aérien
 
+> Historical document. Its earlier measurements and readiness claims were not replayed in full during the portfolio overhaul. See the [current README](../README.md) and [new recorded results](results.md) for the scope verified under WSL.
+
 > **⚠️ Note (2026-07-02) - refactoring majeur postérieur à cet audit.** L'architecture décrite ici
 > (deux modes LOCAL/ROMEO avec bascule silencieuse) a été remplacée par une architecture
 > **API-first à mode unique** : STT/LLM/TTS sont désormais trois services au contrat

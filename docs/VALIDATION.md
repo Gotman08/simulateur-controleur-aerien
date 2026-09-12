@@ -1,5 +1,7 @@
 # Validation mathématique et empirique du simulateur d'entraînement ATC
 
+> Historical document. Its earlier measurements and readiness claims were not replayed in full during the portfolio overhaul. See the [current README](../README.md) and [new recorded results](results.md) for the scope verified under WSL.
+
 Ce rapport rassemble la campagne de validation du simulateur d'entraînement au
 contrôle aérien (FastAPI + BlueSky + IA hybride). Quatre briques critiques sont
 validées : **le prédicteur de conflits CPA** (`src/atc_sim.py`), **le parseur

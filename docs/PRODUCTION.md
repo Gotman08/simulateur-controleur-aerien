@@ -1,5 +1,7 @@
 # Rapport de préparation à la production
 
+> Historical document. Its earlier measurements and readiness claims were not replayed in full during the portfolio overhaul. See the [current README](../README.md) and [new recorded results](results.md) for the scope verified under WSL.
+
 État de préparation du simulateur pour une remise commerciale : périmètre,
 posture de sûreté, revue de code (juillet 2026), correctifs appliqués, guide
 de déploiement et limites assumées. Complète `AUDIT.md` (audit de traçabilité

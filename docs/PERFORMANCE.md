@@ -1,5 +1,7 @@
 # Étude de performance, utilité et limites
 
+> Historical document. Its earlier measurements and readiness claims were not replayed in full during the portfolio overhaul. See the [current README](../README.md) and [new recorded results](results.md) for the scope verified under WSL.
+
 Mesures réalisées le 2026-06-11 sur la configuration cible de l'époque :
 application sur le PC local (Windows, Python 3.12), modèles IA sur le
 supercalculateur **ROMEO** (nœud `armgpu` GH200, job SLURM `job_server.slurm`,
