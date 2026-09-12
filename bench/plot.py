@@ -118,6 +118,9 @@ def main():
                 fig.savefig(assets / f"local-simulator-{theme}.{extension}", facecolor=background,
                             metadata={"Date": None} if extension == "svg" else None, dpi=160)
             plt.close(fig)
+    for path in assets.glob("local-*.svg"):
+        path.write_text("\n".join(line.rstrip() for line in path.read_text(encoding="utf-8").splitlines()) + "\n",
+                        encoding="utf-8")
     print(json.dumps(summary, indent=2))
 
 

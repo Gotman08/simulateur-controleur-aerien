@@ -7,3 +7,5 @@
 *.wav binary
 *.safetensors binary
 *.bin binary
+# Preserve the exact upstream settings snapshot used by the measured campaign.
+bench/bluesky.cfg whitespace=-blank-at-eof
