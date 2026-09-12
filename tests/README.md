@@ -1,13 +1,22 @@
-# Tests unitaires
+# Local verification
 
-Lancer depuis la racine du projet :
+The Python tests exercise the parser, callsigns, readbacks, sector graph,
+simulator geometry, exercise scoring, radio filtering, voice assignment,
+application helpers and mocked provider clients. They do not run a trained
+speech model or validate a complete spoken interaction.
 
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r tests/requirements.txt
+python -m pytest -ra
+ruff check src tests validation tools bench
 ```
-src\bluesky-env\Scripts\python.exe -m pytest -q
-```
 
-Couvre les modules purs (sans BlueSky ni reseau) : atc_callsign, readback,
-03_bluesky_connector, graph_secteur, atc_ai (parseur a regles de reference),
-les helpers geometriques de atc_sim, la notation d'exercice (atc_exercise),
-le pretraitement VHF (atc_audio), l'attribution des voix (voices) et le client
-API OpenAI-compatible (ai_client, reseau entierement mocke).
+The WSL campaign passed 205 tests. The recorded test output and dependency
+versions are in [the campaign results](../bench/results/wsl-2026-09-12/).
+The frontend was also built with `npm ci` and `npm run build` from `frontend/`.
+
+These are functional checks. Their durations were collected while other
+repositories were being built and are not comparative performance results.
+Use [bench/run.sh](../bench/run.sh) for the separate measurement protocol.
