@@ -1,0 +1,25 @@
+{
+  "command": "ATC_APP_NOBROWSER=1 ATC_APP_PORT=18080 python src/atc_app.py",
+  "scope": "Local HTTP startup and UI serving; providers explicitly set to an unreachable loopback port. No voice evaluation.",
+  "checks": [
+    {
+      "path": "/",
+      "status": 200,
+      "html_root": true
+    },
+    {
+      "path": "/api/state",
+      "status": 200,
+      "json_object": true,
+      "keys": [
+        "aircraft",
+        "conflicts",
+        "paused",
+        "running",
+        "sim_alive",
+        "speed",
+        "t"
+      ]
+    }
+  ]
+}

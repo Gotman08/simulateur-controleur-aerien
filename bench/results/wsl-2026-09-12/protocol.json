@@ -1,0 +1,27 @@
+{
+  "repetitions": 5,
+  "warmups": 1,
+  "parser_order_seed": 20260912,
+  "parser_sizes": [
+    16,
+    68,
+    116
+  ],
+  "geometry_seeds": [
+    42,
+    43,
+    44
+  ],
+  "geometry_per_seed": 500,
+  "grid_dt_s": 0.05,
+  "grid_horizon_s": 300,
+  "constructed_cases": 200,
+  "simulator_seed": 4242,
+  "simulator_counts": [
+    5,
+    25,
+    100
+  ],
+  "simulated_s_per_trial": 10,
+  "summary": "median and linearly interpolated quartiles"
+}

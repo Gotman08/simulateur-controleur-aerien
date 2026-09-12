@@ -1,0 +1,70 @@
+Parser: 102/116 exact
+Reading config from <repository>/bench/bluesky.cfg
+Using compiled geo functions
+Reading magnetic variation data
+Warning: RTree could not be loaded. areafilter get_intersecting and get_knearest won't work
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+Successfully loaded OpenAP performance model
+Failed to load BADA performance model
+Successfully loaded legacy performance model
+Successfully loaded plugin AREA
+Successfully loaded plugin DATAFEED
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=5 repetition=-1 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=5 repetition=0 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=5 repetition=1 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=5 repetition=2 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=5 repetition=3 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=5 repetition=4 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=25 repetition=-1 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=25 repetition=0 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=25 repetition=1 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=25 repetition=2 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=25 repetition=3 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=25 repetition=4 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=100 repetition=-1 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=100 repetition=0 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=100 repetition=1 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=100 repetition=2 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=100 repetition=3 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+BlueSky aircraft=100 repetition=4 completed
+Loading global navigation database...
+Reading cache: <repository>/.bench-runtime/cache/navdata.p
+{"geometry_agreements": 1500, "geometry_cases": 1500, "constructed_passes": 200, "constructed_cases": 200, "simulator": {"status": "measured"}}
+Completed campaign: <repository>/bench/results/wsl-2026-09-12

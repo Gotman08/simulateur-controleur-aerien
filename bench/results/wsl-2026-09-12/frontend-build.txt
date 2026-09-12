@@ -1,0 +1,33 @@
+2026-09-12T04:53:14+00:00
+v20.20.0
+10.8.2
+
+added 122 packages, and audited 123 packages in 2m
+
+14 packages are looking for funding
+  run `npm fund` for details
+
+4 vulnerabilities (1 moderate, 3 high)
+
+To address all issues, run:
+  npm audit fix
+
+Run `npm audit` for details.
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 12.0.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.0.2
+npm notice To update run: npm install -g npm@12.0.2
+npm notice
+
+> atc-trainer-ui@1.0.0 build
+> tsc -b && vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 2311 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.77 kB │ gzip:   0.45 kB
+dist/assets/index-C_Q-8kAq.css   20.81 kB │ gzip:   4.59 kB
+dist/assets/index-Dnp6Nwad.js   609.17 kB │ gzip: 186.68 kB
+✓ built in 25.49s

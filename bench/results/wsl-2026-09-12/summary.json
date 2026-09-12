@@ -1,0 +1,79 @@
+{
+  "parser_correct": 102,
+  "parser_total": 116,
+  "parser_strata": [
+    {
+      "label": "Base grammar",
+      "correct": 68,
+      "total": 68
+    },
+    {
+      "label": "Extended corpus",
+      "correct": 34,
+      "total": 48
+    }
+  ],
+  "parser_timing_ms_per_clearance": [
+    {
+      "size": 16,
+      "n": 5,
+      "median": 0.032842625,
+      "q1": 0.0326535625,
+      "q3": 0.0392180625,
+      "iqr": 0.006564500000000001
+    },
+    {
+      "size": 68,
+      "n": 5,
+      "median": 0.03385825,
+      "q1": 0.032918573529411764,
+      "q3": 0.035720205882352946,
+      "iqr": 0.0028016323529411816
+    },
+    {
+      "size": 116,
+      "n": 5,
+      "median": 0.03309297413793103,
+      "q1": 0.0320251724137931,
+      "q3": 0.03448499137931035,
+      "iqr": 0.002459818965517245
+    }
+  ],
+  "geometry_total": 1500,
+  "geometry_unambiguous": 1500,
+  "geometry_disagreements": 0,
+  "geometry_prediction_count": 7,
+  "max_reported_dcpa_error_nm": 0.04746073647603133,
+  "constructed_passes": 200,
+  "constructed_total": 200,
+  "constructed_max_distance_nm": 0.07999975131602964,
+  "bluesky_real_time_factor": [
+    {
+      "size": 5,
+      "n": 5,
+      "median": 156.44599260617466,
+      "q1": 151.00456390153752,
+      "q3": 159.82121503886947,
+      "iqr": 8.816651137331945
+    },
+    {
+      "size": 25,
+      "n": 5,
+      "median": 146.39224152740627,
+      "q1": 145.71933709592318,
+      "q3": 147.91807309019535,
+      "iqr": 2.1987359942721696
+    },
+    {
+      "size": 100,
+      "n": 5,
+      "median": 125.03331200014964,
+      "q1": 118.57473172466946,
+      "q3": 129.83853863608638,
+      "iqr": 11.263806911416921
+    }
+  ],
+  "simulator_status": {
+    "status": "measured"
+  }
+}

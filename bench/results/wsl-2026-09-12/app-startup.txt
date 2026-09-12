@@ -1,0 +1,11 @@
+[*] Application d'entrainement ATC : http://127.0.0.1:18080
+[*] Fournisseurs IA : stt=KO  llm=KO  tts=KO  (config : .env, voir .env.example)
+Reading config from <HOME>/bluesky/settings.cfg
+Using compiled geo functions
+Reading magnetic variation data
+Warning: RTree could not be loaded. areafilter get_intersecting and get_knearest won't work
+Loading global navigation database...
+Reading cache: <HOME>/bluesky/cache/navdata.p
+Successfully loaded OpenAP performance model
+Failed to load BADA performance model
+Successfully loaded legacy performance model
