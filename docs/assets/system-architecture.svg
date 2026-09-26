@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1360" height="656" viewBox="0 0 1360 656" role="img" aria-labelledby="title description">
+<title id="title">ATC training system architecture</title>
+<desc id="description">The local Windows application uses FastAPI, React and a headless BlueSky simulator. Prompt building, the ICAO knowledge base, deterministic safety validation, per-callsign voices and the VHF filter stay on the local PC. A double-headed HTTPS connection using /v1/audio/* and /v1/chat/* connects the application to interchangeable OpenAI-compatible providers: the self-hosted server.py facade on ROMEO with fine-tuned Whisper, Mistral and XTTS; hosted APIs such as OpenAI, Mistral API and Groq; or local gateways such as vLLM and LiteLLM.</desc>
+<rect width="1360" height="656" fill="#ffffff"/>
+<text x="32" y="44" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" text-anchor="start" fill="#20252c">ATC training system</text>
+<line x1="32" y1="64" x2="1328" y2="64" stroke="#d8dce1" stroke-width="1"/>
+<rect x="32" y="92" width="480" height="528" fill="white" stroke="#747d89" stroke-width="1.25"/>
+<line x1="32" y1="180" x2="512" y2="180" stroke="#d8dce1" stroke-width="1"/>
+<rect x="848" y="92" width="480" height="528" fill="white" stroke="#747d89" stroke-width="1.25"/>
+<line x1="848" y1="180" x2="1328" y2="180" stroke="#d8dce1" stroke-width="1"/>
+<text x="56" y="130" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" text-anchor="start" fill="#20252c">LOCAL PC</text>
+<text x="56" y="158" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" text-anchor="start" fill="#59616d">Windows · Python 3.12</text>
+<text x="872" y="130" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" text-anchor="start" fill="#20252c">AI PROVIDERS</text>
+<text x="872" y="158" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" text-anchor="start" fill="#59616d">Interchangeable via .env</text>
+<rect x="56" y="204" width="432" height="392" fill="white" stroke="#747d89" stroke-width="1.25"/>
+<rect x="56" y="204" width="432" height="80" fill="#f5f6f8" stroke="#747d89" stroke-width="1.25"/>
+<text x="80" y="240" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" text-anchor="start" fill="#20252c">Training application</text>
+<text x="80" y="267" font-family="Consolas, Liberation Mono, monospace" font-size="17" font-weight="400" text-anchor="start" fill="#59616d">FastAPI + React</text>
+<text x="80" y="331" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" text-anchor="start" fill="#20252c">BlueSky simulator (headless)</text>
+<line x1="56" y1="361" x2="488" y2="361" stroke="#d8dce1" stroke-width="1"/>
+<text x="80" y="408" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" text-anchor="start" fill="#20252c">Prompt building + KB (ICAO)</text>
+<line x1="56" y1="438" x2="488" y2="438" stroke="#d8dce1" stroke-width="1"/>
+<text x="80" y="485" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" text-anchor="start" fill="#20252c">Deterministic safety validation</text>
+<line x1="56" y1="515" x2="488" y2="515" stroke="#d8dce1" stroke-width="1"/>
+<text x="80" y="562" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" text-anchor="start" fill="#20252c">Per-callsign voice + VHF filter</text>
+<text x="872" y="216" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" text-anchor="start" fill="#20252c">Any OpenAI-compatible service</text>
+<rect x="872" y="236" width="432" height="120" fill="#f5f6f8" stroke="#747d89" stroke-width="1.25"/>
+<text x="896" y="268" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" text-anchor="start" fill="#20252c">Self-hosted façade</text>
+<text x="896" y="296" font-family="Consolas, Liberation Mono, monospace" font-size="17" font-weight="400" text-anchor="start" fill="#59616d">server.py · ROMEO</text>
+<text x="896" y="327" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" text-anchor="start" fill="#20252c">Fine-tuned Whisper / Mistral / XTTS</text>
+<rect x="872" y="374" width="432" height="100" fill="#f5f6f8" stroke="#747d89" stroke-width="1.25"/>
+<text x="896" y="409" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" text-anchor="start" fill="#20252c">Hosted APIs</text>
+<text x="896" y="443" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" text-anchor="start" fill="#20252c">OpenAI · Mistral API · Groq · …</text>
+<rect x="872" y="492" width="432" height="104" fill="#f5f6f8" stroke="#747d89" stroke-width="1.25"/>
+<text x="896" y="528" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" text-anchor="start" fill="#20252c">Local gateways</text>
+<text x="896" y="562" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="400" text-anchor="start" fill="#20252c">vLLM · LiteLLM · …</text>
+<text x="680" y="303" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="400" text-anchor="middle" fill="#59616d">Request / response</text>
+<text x="680" y="331" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" text-anchor="middle" fill="#344b65">HTTPS</text>
+<line x1="521" y1="356" x2="839" y2="356" stroke="#344b65" stroke-width="1.75"/>
+<polygon id="arrowhead-to-local" points="512,356 523,350.5 523,361.5" fill="#344b65"/>
+<polygon id="arrowhead-to-provider" points="848,356 837,350.5 837,361.5" fill="#344b65"/>
+<text x="680" y="399" font-family="Consolas, Liberation Mono, monospace" font-size="18" font-weight="400" text-anchor="middle" fill="#59616d">/v1/audio/*</text>
+<text x="680" y="429" font-family="Consolas, Liberation Mono, monospace" font-size="18" font-weight="400" text-anchor="middle" fill="#59616d">/v1/chat/*</text>
+</svg>

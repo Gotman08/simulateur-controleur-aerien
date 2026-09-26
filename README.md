@@ -66,16 +66,9 @@ environment variables, nothing else. The project's own models (fine-tuned Whispe
 XTTS voice cloning) remain available behind a self-hosted façade (`src/server.py`) that speaks the
 same contract, typically reached through an SSH tunnel to the GPU cluster.
 
-```
-        LOCAL PC (Windows, Python 3.12)               AI providers (interchangeable via .env)
-  +------------------------------------+            +-------------------------------------------+
-  | training app (FastAPI + React)     |   HTTPS    | ANY OpenAI-compatible service:            |
-  |   + BlueSky simulator (headless)   | =========> |  - self-hosted facade server.py (ROMEO,   |
-  |   prompt building + KB (ICAO)      |    /v1/    |    fine-tuned Whisper / Mistral / XTTS)   |
-  |   deterministic safety validation  |  audio/*   |  - OpenAI, Mistral API, Groq, ...         |
-  |   per-callsign voice + VHF filter  |   chat/*   |  - any local gateway (vLLM, LiteLLM...)   |
-  +------------------------------------+            +-------------------------------------------+
-```
+![Local PC and interchangeable AI providers communicating over bidirectional HTTPS.](docs/assets/system-architecture.svg)
+
+[PNG version](docs/assets/system-architecture.png)
 
 The prompt engineering stays **client-side** (ICAO knowledge base inlined in the system prompt,
 NER hints, sector graph) and every LLM output goes through the **deterministic safety validation**
