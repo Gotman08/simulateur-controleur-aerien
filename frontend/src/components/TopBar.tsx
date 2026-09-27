@@ -1,104 +1,67 @@
-/** Barre superieure : identite du poste, horloge simu, alertes, controles
- *  simulation (pause / vitesse / reset) et etat du backend IA. */
-import { Gauge, Pause, Play, RotateCcw, Satellite, TowerControl, Wind } from "lucide-react";
+/** Simulation controls and live operational status. */
+import { Pause, Play, RotateCcw, TowerControl } from "lucide-react";
 import type { SimHub } from "../useSim";
 import { api } from "../api";
 import { Badge, Btn, fmtTime } from "./ui";
 
 export default function TopBar({ hub }: { hub: SimHub }) {
   const st = hub.state;
-  const nlos = st.conflicts?.length ?? 0;
-  const npred = st.predicted?.length ?? 0;
-  const ex = hub.exerciseLive;
-
+  const ready = hub.connection === "connected" && st.sim_alive !== false;
+  const action = (promise: Promise<unknown>) => void promise.catch((e) => hub.pushLog("rej", String(e)));
   return (
-    <header className="flex h-12 shrink-0 items-center gap-3 border-b border-edge bg-panel px-4">
-      <div className="flex items-center gap-2 font-semibold tracking-wide text-ink">
-        <TowerControl size={18} className="text-acc" />
-        ATC&nbsp;TRAINER
-        <span className="text-[12px] font-normal text-mut">CTR Reims · 70 NM</span>
+    <header className="shrink-0 border-b border-edge bg-panel2 px-5 py-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="rounded border border-acc/25 bg-acc/5 p-2.5"><TowerControl size={23} className="text-acc" /></div>
+          <div>
+            <h1 className="text-[17px] font-semibold tracking-tight">Poste de contrôle</h1>
+            <p className="text-xs text-mut">Secteur Reims <span className="px-1.5">/</span> Entraînement ATC</p>
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="font-mono text-sm tabular-nums" aria-label="Temps de simulation">T+ {fmtTime(st.t)}</span>
+          <div className="hidden h-6 border-l border-edge sm:block" />
+          <Btn disabled={!ready} title={st.paused ? "Reprendre la simulation" : "Mettre en pause"}
+            onClick={() => action(st.paused ? api.resume() : api.pause())}>
+            {st.paused ? <Play size={14} /> : <Pause size={14} />}
+            {st.paused ? "Reprendre" : "Pause"}
+          </Btn>
+          <label className="flex items-center gap-2 text-xs text-mut">
+            Vitesse
+            <select className="rounded border border-edge bg-panel2 px-2 py-2 font-mono text-ink"
+              aria-label="Vitesse de simulation" value={st.speed} disabled={!ready}
+              onChange={(e) => action(api.setSpeed(Number(e.target.value)))}>
+              {[0.5, 1, 2, 5, 10, 20].map((n) => <option key={n} value={n}>{n}×</option>)}
+              {![0.5, 1, 2, 5, 10, 20].includes(st.speed) && <option value={st.speed}>{st.speed}×</option>}
+            </select>
+          </label>
+          <Btn variant="ghost" disabled={!ready} title="Réinitialiser la simulation"
+            onClick={() => { if (confirm("Vider le radar et terminer l’exercice en cours ?")) action(api.reset()); }}>
+            <RotateCcw size={15} />
+          </Btn>
+        </div>
       </div>
-
-      <div className="ml-2 flex items-center gap-2 font-mono text-[12px] text-mut">
-        <span>t+{fmtTime(st.t)}</span>
-        <span>·</span>
-        <span>{st.aircraft.length} vols</span>
-        {st.cd_engine && (
-          <Badge tone="mut" title="Moteur de détection de conflits">
-            CD {st.cd_engine === "bluesky" ? "BlueSky" : "géo"}
-          </Badge>
-        )}
-        {st.wind && (
-          <Badge tone="acc" title="Vent actif">
-            <Wind size={11} />
-            {String(st.wind.dir).padStart(3, "0")}/{st.wind.spd} kt
-          </Badge>
-        )}
-      </div>
-
-      {/* alertes au centre */}
-      <div className="flex flex-1 justify-center">
-        {nlos > 0 ? (
-          <Badge tone="dang" className="animate-alert text-[12px]!">⚠ PERTE DE SÉPARATION ({nlos})</Badge>
-        ) : npred > 0 ? (
-          <Badge tone="warn" className="text-[12px]!">
-            △ conflit prédit - CPA dans {Math.min(...st.predicted.map((p) => p.t))}s
-          </Badge>
-        ) : ex ? (
-          <Badge tone="acc" className="text-[12px]!">
-            <Gauge size={12} /> exercice - reste {fmtTime(ex.remaining_s)} · score {ex.score?.total ?? "-"}
-          </Badge>
-        ) : null}
-      </div>
-
-      {/* controles simulation */}
-      <div className="flex items-center gap-2">
-        <Btn
-          variant="ghost"
-          title={st.paused ? "Reprendre" : "Pause"}
-          onClick={() => {
-            void (st.paused ? api.resume() : api.pause())
-              .catch((e) => hub.pushLog("rej", `⊘ pause/reprise : ${e}`));
-          }}
-        >
-          {st.paused ? <Play size={15} /> : <Pause size={15} />}
-        </Btn>
-        <label className="flex items-center gap-1.5 text-[12px] text-mut" title="Vitesse de simulation">
-          <input
-            type="range" min={1} max={10} step={1}
-            value={Math.round(st.speed ?? 1)}
-            className="w-20"
-            onChange={(e) => {
-              void api.setSpeed(+e.target.value)
-                .catch((err) => hub.pushLog("rej", `⊘ vitesse : ${err}`));
-            }}
-          />
-          <span className="w-6 font-mono text-acc">{st.speed}×</span>
-        </label>
-        <Btn
-          variant="ghost"
-          title="Vider le radar (RESET)"
-          onClick={() => {
-            if (confirm("Réinitialiser la simulation ?")) {
-              void api.reset().catch((e) => hub.pushLog("rej", `⊘ reset : ${e}`));
-            }
-          }}
-        >
-          <RotateCcw size={15} />
-        </Btn>
-        {(["stt", "llm", "tts"] as const).map((p) => (
-          <Badge
-            key={p}
-            tone={hub.providers[p] ? "ok" : "dang"}
-            className="cursor-pointer"
-            title={`Fournisseur ${p.toUpperCase()} ${hub.providers[p] ? "joignable" : "injoignable"} `
-              + "(config .env - cliquer pour re-tester)"}
-            onClick={() => { hub.pushLog("info", "Test des fournisseurs IA…"); void hub.refreshHealth(); }}
-          >
-            <Satellite size={11} />
-            {p.toUpperCase()}
-          </Badge>
-        ))}
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-edge/70 pt-2.5 text-xs">
+        <div className="flex flex-wrap items-center gap-3" role="status">
+          <span className={ready ? "text-rdr" : "text-dang"}>
+            <span className="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-current" />
+            {hub.connection === "connecting" ? "Connexion…" : hub.connection !== "connected" ? "Connexion interrompue" : st.sim_alive === false ? "Simulateur arrêté" : st.paused ? "Simulation en pause" : "Simulation en cours"}
+          </span>
+          <span className="text-mut">{st.aircraft.length} aéronefs</span>
+          <span className="text-mut">Détection : {st.cd_engine === "bluesky" ? "BlueSky" : st.cd_engine === "geometry" ? "secours géométrique" : "initialisation"}</span>
+          {st.wind && <span className="font-mono text-mut">Vent {String(st.wind.dir).padStart(3, "0")}° / {st.wind.spd} kt</span>}
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="mr-1 text-mut">Services radio</span>
+          {(["stt", "llm", "tts"] as const).map((p) => (
+            <button key={p} type="button" className="rounded px-1 py-0.5"
+              aria-label={`Retester le service ${p.toUpperCase()}`}
+              title={`${p.toUpperCase()} : ${hub.providers[p] ? "disponible" : "indisponible"}. Cliquer pour retester.`}
+              onClick={() => void hub.refreshHealth()}>
+              <Badge tone={hub.providers[p] ? "ok" : "mut"}>{p.toUpperCase()} {hub.providers[p] ? "✓" : "—"}</Badge>
+            </button>
+          ))}
+        </div>
       </div>
     </header>
   );

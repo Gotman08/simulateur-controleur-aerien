@@ -10,14 +10,19 @@ import { type SimHub } from "../useSim";
 import { Btn, Input } from "./ui";
 
 export default function RadioPanel({ hub, prefill }: { hub: SimHub; prefill: string }) {
+  const { pushLog } = hub;
   const [text, setText] = useState("");
   const [talking, setTalking] = useState(false);
   const [busy, setBusy] = useState(false);
   const wavRef = useRef<WavRecorder | null>(null);
+  const pendingRef = useRef(false);
+  const connectionRef = useRef(hub.connection);
+  connectionRef.current = hub.connection;
   const providersRef = useRef(hub.providers);
   providersRef.current = hub.providers;
   const talkingRef = useRef(false);
   talkingRef.current = talking;
+  useEffect(() => () => { void wavRef.current?.stop(); wavRef.current = null; }, []);
 
   // selection d'un avion au radar -> indicatif pre-rempli
   useEffect(() => {
@@ -26,18 +31,24 @@ export default function RadioPanel({ hub, prefill }: { hub: SimHub; prefill: str
 
   const send = useCallback(async (t: string) => {
     const txt = t.trim();
-    if (!txt) return;
+    if (!txt || pendingRef.current || connectionRef.current !== "connected") return;
+    pendingRef.current = true;
+    setBusy(true);
     try {
       await api.command(txt);          // readback texte + audio arrivent via l'event WS
+      setText("");
     } catch (e) {
-      hub.pushLog("rej", `⊘ Erreur commande : ${e}`);
+      pushLog("rej", `Erreur commande : ${e}`);
+    } finally {
+      pendingRef.current = false;
+      setBusy(false);
     }
-  }, [hub]);
+  }, [pushLog]);
 
   const startTalk = useCallback(async () => {
-    if (wavRef.current) return;        // deja en cours d'emission
+    if (wavRef.current || pendingRef.current || connectionRef.current !== "connected") return;
     if (!providersRef.current.stt) {
-      hub.pushLog("rej", "⊘ STT non configuré ou injoignable (voir .env) - tapez la clairance.");
+      pushLog("rej", "Service de reconnaissance vocale indisponible. Tapez la clairance.");
       return;
     }
     const rec = new WavRecorder();
@@ -46,11 +57,11 @@ export default function RadioPanel({ hub, prefill }: { hub: SimHub; prefill: str
     try {
       await rec.start();               // si stopTalk arrive pendant l'attente,
     } catch (e) {                      // WavRecorder (flag cancelled) ferme le flux
-      hub.pushLog("rej", `⊘ Micro indisponible : ${e}`);
+      pushLog("rej", `Micro indisponible : ${e}`);
       if (wavRef.current === rec) wavRef.current = null;
       setTalking(false);
     }
-  }, [hub]);
+  }, [pushLog]);
 
   const stopTalk = useCallback(async () => {
     setTalking(false);
@@ -59,22 +70,24 @@ export default function RadioPanel({ hub, prefill }: { hub: SimHub; prefill: str
     const rec = wavRef.current;
     wavRef.current = null;
     if (!rec) return;
-    const wav = await rec.stop();
-    if (!wav) return;
+    pendingRef.current = true;
     setBusy(true);
     try {
+      const wav = await rec.stop();
+      if (!wav) return;
       await api.voice(wav);            // reponse (texte + audio) via l'event WS
     } catch (e) {
-      hub.pushLog("rej", `⊘ Erreur /api/voice : ${e}`);
+      pushLog("rej", `Erreur transmission : ${e}`);
     } finally {
+      pendingRef.current = false;
       setBusy(false);
     }
-  }, [hub]);
+  }, [pushLog]);
 
   // touche « V » = alternat (hors champs de saisie)
   useEffect(() => {
     const isTyping = (t: EventTarget | null) =>
-      t instanceof HTMLElement && (t.tagName === "INPUT" || t.tagName === "TEXTAREA");
+      t instanceof HTMLElement && (t.isContentEditable || ["INPUT", "TEXTAREA", "SELECT", "BUTTON"].includes(t.tagName));
     // Ctrl+V / Cmd+V / Alt+V restent des raccourcis systeme (coller...) :
     // seul « V » nu declenche l'alternat.
     const plainV = (e: KeyboardEvent) =>
@@ -83,7 +96,7 @@ export default function RadioPanel({ hub, prefill }: { hub: SimHub; prefill: str
       if (plainV(e) && !isTyping(e.target) && !e.repeat) { e.preventDefault(); void startTalk(); }
     };
     const up = (e: KeyboardEvent) => {
-      if (plainV(e) && !isTyping(e.target)) { e.preventDefault(); void stopTalk(); }
+      if (e.code === "KeyV" && wavRef.current) { e.preventDefault(); void stopTalk(); }
     };
     // Si le focus est perdu pendant la transmission (alt-tab, popup permission
     // micro...), le keyup « V » peut ne jamais arriver : on coupe le micro pour
@@ -105,10 +118,19 @@ export default function RadioPanel({ hub, prefill }: { hub: SimHub; prefill: str
   const m = hub.lastExchange;
   return (
     <div className="shrink-0 border-t border-edge bg-panel px-4 py-3">
-      <div
+      <button
+        type="button"
+        disabled={busy || hub.connection !== "connected"}
+        aria-label="Transmission radio : maintenir pour parler"
+        onPointerDown={(e) => { if (e.button === 0) { e.currentTarget.setPointerCapture(e.pointerId); void startTalk(); } }}
+        onPointerUp={() => void stopTalk()}
+        onPointerCancel={() => void stopTalk()}
+        onKeyDown={(e) => { if ((e.key === " " || e.key === "Enter") && !e.repeat) { e.preventDefault(); void startTalk(); } }}
+        onKeyUp={(e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); void stopTalk(); } }}
+        onBlur={() => { if (wavRef.current) void stopTalk(); }}
         aria-live="polite"
         className={`flex w-full select-none items-center justify-center gap-1.5 rounded-lg
-          border-2 px-4 py-3.5 text-[14px] font-bold tracking-wide transition-colors ${talking
+          border px-4 py-3 text-[13px] font-medium transition-colors disabled:opacity-50 ${talking
             ? "border-dang bg-dang text-white"
             : "border-edge bg-panel2 text-mut"}`}
         title="Maintenir la touche V pour parler"
@@ -118,20 +140,22 @@ export default function RadioPanel({ hub, prefill }: { hub: SimHub; prefill: str
           ? "TRANSMISSION…"
           : busy
             ? "TRAITEMENT…"
-            : "MAINTENIR « V » POUR PARLER"}
-      </div>
+            : "Maintenir pour parler · V"}
+      </button>
 
       <div className="mt-2 flex gap-2">
         <Input
           className="flex-1 font-mono"
+          aria-label="Clairance radio"
+          disabled={busy || hub.connection !== "connected"}
           placeholder="air france one two three four descend flight level one zero zero"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === "Enter") { void send(text); setText(""); }
+            if (e.key === "Enter") void send(text);
           }}
         />
-        <Btn variant="primary" title="Envoyer" onClick={() => { void send(text); setText(""); }}>
+        <Btn variant="primary" title="Envoyer la clairance" disabled={busy || !text.trim() || hub.connection !== "connected"} onClick={() => void send(text)}>
           <SendHorizonal size={15} />
         </Btn>
       </div>

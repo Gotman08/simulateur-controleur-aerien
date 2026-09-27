@@ -145,3 +145,72 @@ def test_import_atc_sim_ne_charge_pas_bluesky():
     # Garantit que tester atc_sim ne tire pas la dependance lourde bluesky.
     import sys
     assert "bluesky" not in sys.modules
+
+
+def test_ground_track_is_used_with_crosswind():
+    a = {**_ac("A", 0, 0, 30000, 0, 300), "trk": 90}
+    b = {**_ac("B", 20, 0, 30000, 0, 300), "trk": 270}
+    assert SimManager._analyze([a, b])[1][0]["t"] == 120
+
+
+def test_vertical_convergence_is_predicted_even_with_equal_ground_velocity():
+    a = {**_ac("A", 0, 0, 30000, 90, 300), "vs_fpm": 1500}
+    b = _ac("B", 2, 0, 32000, 90, 300)
+    assert SimManager._analyze([a, b])[1]
+
+
+def test_vertical_and_horizontal_conflict_windows_must_overlap():
+    a = {**_ac("A", 0, 0, 30000, 90, 300), "vs_fpm": -3000}
+    b = _ac("B", 20, 0, 30000, 270, 300)
+    assert SimManager._analyze([a, b]) == ([], [])
+
+
+def test_loss_enters_horizon_even_when_cpa_is_later():
+    a = _ac("A", 0, 0, 30000, 90, 300)
+    b = _ac("B", 24, 0, 30000, 270, 300)
+    # At 120 seconds the distance is 4 NM; CPA is at 144 seconds.
+    assert SimManager._analyze([a, b])[1][0]["d"] == 4
+
+
+def test_snapshot_nested_values_are_detached():
+    sim = SimManager()
+    sim._snapshot.update(aircraft=[{"id": "A", "route": [[1, 2]]}],
+                         predicted=[{"pair": ["A", "B"]}], wind={"spd": 20},
+                         zones=[{"points": [[3, 4]]}])
+    snap = sim.snapshot()
+    snap["aircraft"][0]["route"][0][0] = 99
+    snap["predicted"][0]["pair"].clear()
+    snap["wind"]["spd"] = 99
+    snap["zones"][0]["points"].clear()
+    assert sim.snapshot()["aircraft"][0]["route"] == [[1, 2]]
+    assert sim.snapshot()["predicted"][0]["pair"] == ["A", "B"]
+    assert sim.snapshot()["wind"]["spd"] == 20
+    assert sim.snapshot()["zones"][0]["points"] == [[3, 4]]
+
+
+def test_initial_snapshot_has_empty_prediction_list():
+    assert SimManager().snapshot()["predicted"] == []
+
+
+def test_queue_is_bounded_per_tick_under_continuous_production(monkeypatch):
+    sim = SimManager()
+    applied = []
+    def produce(item):
+        applied.append(item)
+        sim.enqueue("HDG A 90")
+    monkeypatch.setattr(sim, "_apply", produce)
+    sim.enqueue("HDG A 90")
+    sim._drain_queue()
+    assert 1 <= len(applied) <= 64
+    assert sim._cmd_q.qsize() == 1
+
+
+def test_initialization_failure_is_reported(monkeypatch):
+    sim = SimManager()
+    def fail():
+        raise RuntimeError("BlueSky unavailable")
+    monkeypatch.setattr(sim, "_run_loop", fail)
+    sim._running = True
+    sim._run()
+    assert not sim.snapshot()["running"]
+    assert sim.snapshot()["last_error"] == "BlueSky unavailable"

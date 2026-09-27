@@ -14,7 +14,12 @@ validated command, executed in the BlueSky simulator, and answered by a synthesi
 voice. The full chain runs as a real time loop, with the AI models hosted on a GPU cluster and the
 simulator running on a local machine.
 
-![ATC Trainer - live radar with programmed conflicts, storm cell and flight strips](docs/assets/app_radar_live.gif)
+![ATC Trainer - desktop Flowbite console with live BlueSky traffic](docs/assets/desk-flowbite.png)
+
+The desktop console keeps the radar, instructor, exercises, debrief and radio together.
+See the [ROMEO validation report](docs/validation-romeo-2026-09-27.md) for the Flowbite
+refresh, concurrent tests up to 1,000 aircraft, BlueSky coverage and remaining limits.
+The [earlier animated demonstration](docs/assets/app_radar_live.gif) is also available.
 
 > Internship project (10 week PoC), University of Reims Champagne-Ardenne (URCA). AI compute on the
 > ROMEO supercomputer (NVIDIA GH200, Grace-Hopper, aarch64). Author: Nicolas Marano.
@@ -91,7 +96,7 @@ applied client-side, so the pilot voice sounds like a real radio with any TTS ba
 | Conflict prediction (CPA) | Predicted vs measured in BlueSky, 200 encounters | MAE 0.067 NM, precision = recall = F1 = **1.000** |
 | Clearance parser (local) | 68 annotated phrases (EN + FR), 10 negative/safety cases | **100%** exact, 100% unsafe rejected |
 | Scenario generator (local) | 20 descriptions, 116 constraints | **100%** conformity |
-| Unit tests | pytest suite over the pure modules | 209 / 209 pass |
+| Unit and API tests | pytest suite validated on ROMEO, 2026-09-27 | 224 / 224 pass |
 
 The full mathematical derivation (CPA closed form, convexity proof, conflict
 predicate), the empirical campaign against BlueSky, the exercise scoring model

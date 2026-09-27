@@ -15,8 +15,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Dependances de test (modules purs uniquement, sans BlueSky)
-        run: pip install pytest ruff requests numpy scipy soundfile python-dotenv
+      - name: Dependances de test (logique et API, sans moteur BlueSky)
+        run: pip install pytest ruff requests numpy scipy soundfile python-dotenv fastapi python-multipart httpx
       - name: Ruff
         run: ruff check src tests validation tools bench
       - name: Pytest
@@ -37,3 +37,6 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
       - run: npm run build
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e

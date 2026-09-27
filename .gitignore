@@ -24,6 +24,11 @@ bluesky/
 
 # Interface web (frontend/dist est VERSIONNE pour lancer sans Node.js)
 frontend/node_modules/
+frontend/.flowbite-react/class-list.json
+frontend/test-results/
+frontend/playwright-report/
+.romeo-provenance/
+.romeo-mcp-build.sh
 
 # Rapports d'exercice generes a l'usage
 reports/

@@ -1,11 +1,12 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import flowbiteReact from "flowbite-react/plugin/vite";
 
 // Servi en production par FastAPI (atc_app.py monte frontend/dist sur "/").
 // En dev (`npm run dev`), /api et /ws sont proxifies vers le serveur local.
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), flowbiteReact()],
   build: { outDir: "dist", chunkSizeWarningLimit: 900 },
   server: {
     proxy: {

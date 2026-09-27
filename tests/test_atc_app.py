@@ -55,6 +55,23 @@ def test_wind_suppression_ok():
     assert atc_app.weather_wind({"dir": ""}) == {"ok": True}
 
 
+@pytest.mark.parametrize("payload", [
+    {"shape": "UNKNOWN"}, {"ztype": "invalid"},
+    {"shape": "POLY", "points": [[0, 0], [1, 1]]},
+    {"shape": "CIRCLE", "x": 0, "y": 0, "r": -1},
+    {"shape": "CIRCLE", "x": 0, "y": 0, "r": 0},
+])
+def test_invalid_zone_is_rejected_before_enqueue(payload):
+    assert _status(atc_app.weather_zone, payload) == 400
+
+
+def test_excessive_weather_and_instruction_are_rejected():
+    assert _status(atc_app.weather_turb, {"level": -1}) == 400
+    assert _status(atc_app.weather_wind, {"dir": 90, "spd": 9999}) == 400
+    assert _status(atc_app.command, {"text": "A" * 4001}) == 400
+    assert _status(atc_app.scenario, {"description": []}) == 400
+
+
 # ------------------------------------------- garde semantique climb/descend
 def test_alt_coherence_retire_ordre_ET_ligne_meme_si_value_float():
     """Bug corrige : la ligne TrafScript etait retiree par egalite de chaine

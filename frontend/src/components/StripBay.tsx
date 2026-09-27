@@ -42,6 +42,9 @@ function Strip({ a, sel, onSelect, onCenter }: {
   return (
     <li
       onClick={() => onSelect(a.id)}
+      onKeyDown={(e) => { if (e.currentTarget === e.target && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); onSelect(a.id); } }}
+      tabIndex={0}
+      aria-label={`Vol ${a.id}, FL${a.fl}, ${a.gs} nœuds${sel ? ", sélectionné" : ""}`}
       className={`cursor-pointer rounded-md border bg-panel2 px-3 py-2 transition-colors
         hover:border-acc/50 ${border} ${sel ? "bg-acc/5" : ""}`}
     >
@@ -53,6 +56,8 @@ function Strip({ a, sel, onSelect, onCenter }: {
           {a.alert === "predicted" && <Badge tone="warn">CONF</Badge>}
           {a.inzone && <Badge tone="dang" className="border-mag/50! text-mag!">{a.inzone}</Badge>}
           <button
+            type="button"
+            aria-label={`Centrer le radar sur ${a.id}`}
             title="Centrer le radar sur ce vol"
             className="rounded p-1 text-mut hover:bg-edge hover:text-acc"
             onClick={(e) => { e.stopPropagation(); onCenter(a.id); }}
@@ -68,10 +73,18 @@ function Strip({ a, sel, onSelect, onCenter }: {
           {a.vs_fpm < -300 && <ArrowDown size={11} className="inline text-warn" />}
         </span>
         {cfl != null && <span title="Niveau autorisé">→ FL{String(cfl).padStart(3, "0")}</span>}
-        <span>{a.gs} kt</span>
+        <span title="Vitesse sol">GS {a.gs} kt</span>
         <span>CAP {String(Math.round(a.hdg)).padStart(3, "0")}°</span>
         {Math.abs(a.vs_fpm) > 300 && <span>{a.vs_fpm > 0 ? "+" : ""}{a.vs_fpm} fpm</span>}
       </div>
+      {sel && (
+        <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 border-t border-edge pt-2 text-[11px] text-mut">
+          <div><dt className="inline">Route sol </dt><dd className="inline font-mono text-ink">{Math.round(a.trk)}°</dd></div>
+          <div><dt className="inline">Vitesse air </dt><dd className="inline font-mono text-ink">CAS {a.cas_kt ?? "—"} / TAS {a.tas_kt ?? "—"} kt</dd></div>
+          <div><dt className="inline">Guidage </dt><dd className="inline text-ink">LNAV {a.lnav == null ? "—" : a.lnav ? "ON" : "OFF"} · VNAV {a.vnav == null ? "—" : a.vnav ? "ON" : "OFF"}</dd></div>
+          <div><dt className="inline">Prochain point </dt><dd className="inline font-mono text-ink">{a.route_names?.[a.actwp] ?? "—"}</dd></div>
+        </dl>
+      )}
     </li>
   );
 }

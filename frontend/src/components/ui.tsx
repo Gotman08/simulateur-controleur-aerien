@@ -1,5 +1,6 @@
 /** Primitives UI partagees (DRY) : boutons, sections, badges, champs. */
 import type { ButtonHTMLAttributes, InputHTMLAttributes, ReactNode } from "react";
+import { Button, TextInput } from "flowbite-react";
 
 const VARIANTS = {
   default: "bg-panel2 border-edge text-ink hover:border-acc/60",
@@ -14,9 +15,13 @@ export function Btn({
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: keyof typeof VARIANTS }) {
   return (
-    <button
-      className={`rounded-md border px-3 py-1.5 text-[13px] transition-colors
-        disabled:cursor-not-allowed disabled:opacity-40 ${VARIANTS[variant]} ${className}`}
+    <Button
+      type="button"
+      color="control"
+      size="sm"
+      aria-label={props["aria-label"] ?? props.title}
+      theme={{ base: "inline-flex items-center justify-center gap-1.5 rounded-md border font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-acc disabled:cursor-not-allowed disabled:opacity-45", color: { control: VARIANTS[variant] }, size: { sm: "px-3 py-2 text-[13px]" } }}
+      className={className}
       {...props}
     />
   );
@@ -24,9 +29,12 @@ export function Btn({
 
 export function Input({ className = "", ...props }: InputHTMLAttributes<HTMLInputElement>) {
   return (
-    <input
-      className={`rounded-md border border-edge bg-panel2 px-2.5 py-1.5 text-[13px] text-ink
-        outline-none placeholder:text-mut/60 focus:border-acc/60 ${className}`}
+    <TextInput
+      sizing="sm"
+      color="control"
+      aria-label={props["aria-label"] ?? props.title ?? props.placeholder}
+      theme={{ field: { input: { base: "block w-full border disabled:cursor-not-allowed disabled:opacity-50 focus:ring-1 focus:ring-acc focus:border-acc", sizes: { sm: "px-2.5 py-2 text-[13px]" }, colors: { control: "border-edge bg-panel2 text-ink placeholder:text-mut/70" } } } }}
+      className={className}
       {...props}
     />
   );

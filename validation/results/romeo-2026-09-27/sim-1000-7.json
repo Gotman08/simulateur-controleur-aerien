@@ -1,0 +1,40 @@
+{
+  "case": "sim",
+  "job_id": "722778",
+  "versions": {
+    "bluesky-simulator": "1.1.1",
+    "numpy": "2.5.3",
+    "fastapi": "0.141.1"
+  },
+  "aircraft": 1000,
+  "seed": 7,
+  "simulated_seconds": 150.0,
+  "step_5s": {
+    "median_ms": 922.62,
+    "p95_ms": 1019.68,
+    "max_ms": 1022.97
+  },
+  "snapshot": {
+    "median_ms": 37.71,
+    "p95_ms": 122.84,
+    "max_ms": 129.13
+  },
+  "peak_conflict_pairs": 1740,
+  "rss_mb": 247.9,
+  "rss_growth_mb": -3.3,
+  "checks": [
+    "native CD",
+    "finite snapshots",
+    "ALT",
+    "SPD",
+    "HDG",
+    "FMS route",
+    "wind",
+    "turbulence",
+    "zones",
+    "reset",
+    "paused clock"
+  ],
+  "passed": true,
+  "wall_seconds": 38.88
+}

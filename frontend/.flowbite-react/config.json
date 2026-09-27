@@ -1,0 +1,10 @@
+{
+  "$schema": "https://unpkg.com/flowbite-react/schema.json",
+  "components": ["Button", "TextInput"],
+  "dark": false,
+  "path": "src/components",
+  "prefix": "",
+  "rsc": false,
+  "tsx": true,
+  "version": 4
+}
