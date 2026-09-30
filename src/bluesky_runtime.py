@@ -9,6 +9,8 @@ lecture de l'etat des vols.
 Self-test (V4+V5) :  bluesky-env/Scripts/python.exe bluesky_runtime.py
 """
 import math
+import os
+from pathlib import Path
 
 _BS = {}
 NM2DEG = 1.0 / 60.0          # 1 NM ~ 1/60 degre de latitude
@@ -19,7 +21,12 @@ MS2KT = 1.0 / 0.514444
 def bs():
     import bluesky as _b
     if "init" not in _BS:
-        _b.init(mode="sim", detached=True)
+        options = {}
+        if workdir := os.environ.get("ATC_BLUESKY_WORKDIR"):
+            path = Path(workdir).expanduser().resolve()
+            path.mkdir(parents=True, exist_ok=True)
+            options["workdir"] = str(path)
+        _b.init(mode="sim", detached=True, **options)
         _BS["init"] = True
     return _b
 
@@ -31,6 +38,11 @@ def advance(seconds):
     d'erreur interne), on sort apres 10 000 pas immobiles au lieu de bruler
     500 000 step() a CHAQUE appel (spin CPU quasi permanent)."""
     b = bs()
+    b.stack.process()
+    # A detached simulator stays in INIT until its first aircraft exists.
+    # There is no physics to advance; do not spin thousands of idle steps.
+    if b.sim.state == b.INIT and b.traf.ntraf == 0:
+        return 0.0
     t0 = float(b.sim.simt)
     guard = 0
     last_t = t0
@@ -49,18 +61,23 @@ def advance(seconds):
     return float(b.sim.simt) - t0
 
 
+def flush_commands():
+    """Execute les commandes en attente sans faire avancer l'horloge."""
+    bs().stack.process()
+
+
 def reset():
     bs().stack.stack("RESET")
-    advance(0.1)
+    flush_commands()
 
 
 def create(cs, actype, lat, lon, hdg, alt_ft, spd_kt):
     bs().stack.stack(f"CRE {cs} {actype} {lat} {lon} {hdg} {alt_ft} {spd_kt}")
-    advance(0.1)
+    flush_commands()
 
 
 def cmd(line):
-    """Applique une ligne TrafScript (ex. 'HDG AFR1234 270')."""
+    """Empile une ligne TrafScript, executee par flush_commands ou advance."""
     bs().stack.stack(line)
 
 
@@ -71,7 +88,7 @@ def define_waypoints(fixes, center_lat=48.0, center_lon=2.0):
         lat = center_lat + (y_nm - 25) * NM2DEG
         lon = center_lon + (x_nm - 50) * NM2DEG / max(0.2, math.cos(math.radians(center_lat)))
         b.stack.stack(f"DEFWPT {name} {lat:.5f} {lon:.5f} FIX")
-    advance(0.1)
+    flush_commands()
 
 
 def state():

@@ -1,0 +1,34 @@
+import { expect, test } from "@playwright/test";
+
+test("real BlueSky traffic, weather, pause and reset on a full-HD workstation", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/");
+  await expect(page.getByText("Simulation en cours", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Mettre en pause", exact: true }).click();
+  await expect(page.getByText("Simulation en pause", { exact: true })).toBeVisible();
+  const clock = page.getByLabel("Temps de simulation", { exact: true });
+  const initial = await clock.textContent();
+  await page.getByRole("tab", { name: "Instructeur", exact: true }).click();
+  await page.getByLabel("Scénario sauvegardé", { exact: true }).selectOption("trafic_mixte");
+  await page.getByRole("button", { name: "Charger", exact: true }).click();
+  await expect(page.getByText("5 aéronefs", { exact: true })).toBeVisible();
+  await expect(clock).toHaveText(initial!);
+  await page.getByRole("textbox", { name: "dir°", exact: true }).fill("270");
+  await page.getByRole("textbox", { name: "kt", exact: true }).fill("35");
+  await page.getByRole("button", { name: "Vent", exact: true }).click();
+  await expect(page.getByText("Vent 270° / 35 kt", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: "Reprendre la simulation", exact: true }).click();
+  await expect(clock).not.toHaveText(initial!);
+  await page.getByRole("button", { name: "Mettre en pause", exact: true }).click();
+  await expect(page.getByText("Simulation en pause", { exact: true })).toBeVisible();
+  await page.getByRole("tab", { name: "Trafic", exact: true }).click();
+  await page.getByRole("listitem", { name: /Vol AFR410,/ }).click();
+  await expect(page.getByText(/CAS 300 \/ TAS/)).toBeVisible();
+  expect(errors).toEqual([]);
+  await page.screenshot({ path: "test-results/desk-live-fullhd.png", fullPage: true });
+  page.once("dialog", (dialog) => dialog.accept());
+  await page.getByRole("button", { name: "Réinitialiser la simulation", exact: true }).click();
+  await expect(page.getByText("0 aéronefs", { exact: true })).toBeVisible();
+  await expect(page.getByText("Vent 270° / 35 kt", { exact: true })).toHaveCount(0);
+});

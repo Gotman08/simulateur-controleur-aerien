@@ -16,18 +16,24 @@ export interface RadarOptions {
   labels: boolean;
   trails: boolean;
   rings: boolean;
+  routes: boolean;
+  waypoints: boolean;
 }
 
+export const DEFAULT_RADAR_OPTIONS: RadarOptions = {
+  sweep: false, labels: true, trails: true, rings: true, routes: true, waypoints: true,
+};
+
 const C = {
-  bg: "#05080d",
-  grid: "#13314a",
-  gridText: "#2d5a7a",
-  sector: "#3a72c4",
-  route: "#173c54",
-  wpt: "#4f8fe8",
-  fix: "#3fc6d6",
+  bg: "#101b18",
+  grid: "#21382d",
+  gridText: "#6a8976",
+  sector: "#789586",
+  route: "#2f463b",
+  wpt: "#83a797",
+  fix: "#b1c6aa",
   apt: "#caa54e",
-  ok: "#38d97f",
+  ok: "#a4d4b0",
   warn: "#ffb454",
   dang: "#ff5868",
   sel: "#9ad9ff",
@@ -64,10 +70,9 @@ export function drawScope(
 
   if (opt.rings) drawRings(ctx, v, nav.range_nm);
   drawSector(ctx, v, nav.sector);
-  drawRoutes(ctx, v, nav);
-  drawWaypoints(ctx, v, nav);
+  if (opt.waypoints) { drawRoutes(ctx, v, nav); drawWaypoints(ctx, v, nav); }
   drawZones(ctx, v, st);
-  drawFmsRoutes(ctx, v, st);
+  if (opt.routes) drawFmsRoutes(ctx, v, st);
   if (opt.sweep) drawSweep(ctx, v, nav.range_nm, sweepDeg);
   drawConflictLines(ctx, v, st);
   for (const a of st.aircraft ?? [])
@@ -336,7 +341,7 @@ function drawCenterMark(ctx: CanvasRenderingContext2D, v: View) {
 export function drawWindArrow(ctx: CanvasRenderingContext2D, v: View, st: SimState) {
   const w = st.wind;
   if (!w) return;
-  const ox = 60, oy = v.h - 52, len = 24;
+  const ox = 60, oy = v.h - 100, len = 24; // Leave room for the keyboard/pointer help.
   const a = ((90 - (w.dir + 180)) * Math.PI) / 180;   // fleche orientee "vers ou va" le vent
   ctx.save();
   ctx.strokeStyle = C.wind;

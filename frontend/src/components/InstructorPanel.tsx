@@ -1,7 +1,7 @@
 /** Panneau instructeur : generation de situation en langage naturel, scenarios
  *  sauvegardes, meteo (vent / turbulence / zones) et GUI BlueSky natif. */
 import { useEffect, useRef, useState } from "react";
-import { CloudLightning, Mic, MonitorUp, OctagonMinus, Sparkles, Wind, X } from "lucide-react";
+import { CloudLightning, Mic, MonitorUp, OctagonMinus, Plus, Wind, X } from "lucide-react";
 import { api } from "../api";
 import { WavRecorder } from "../audio";
 import type { PlaceMode, ScenarioMeta } from "../types";
@@ -75,6 +75,7 @@ export default function InstructorPanel({ hub, placeMode, setPlaceMode }: {
     <>
       <Section title="Situation (langage naturel)">
         <textarea
+          aria-label="Description de la situation"
           className="min-h-[60px] w-full resize-y rounded-md border border-edge bg-panel2 px-2.5
             py-1.5 text-[13px] text-ink outline-none placeholder:text-mut/60 focus:border-acc/60"
           placeholder="ex : three A320 from the north at FL300 heading 180, 8 miles apart - ou en français"
@@ -84,7 +85,7 @@ export default function InstructorPanel({ hub, placeMode, setPlaceMode }: {
         />
         <Row>
           <Btn variant="primary" className="flex-1" disabled={genBusy} onClick={() => void generate()}>
-            <Sparkles size={13} className="mr-1 inline" />
+            <Plus size={13} className="mr-1 inline" />
             {genBusy ? "Génération…" : "Générer la situation"}
           </Btn>
           <Btn
@@ -97,6 +98,7 @@ export default function InstructorPanel({ hub, placeMode, setPlaceMode }: {
         </Row>
         <Row>
           <select
+            aria-label="Scénario sauvegardé"
             className="min-w-0 flex-1 rounded-md border border-edge bg-panel2 px-2 py-1.5 text-[13px]"
             value={scenario}
             onChange={(e) => setScenario(e.target.value)}
@@ -151,7 +153,7 @@ export default function InstructorPanel({ hub, placeMode, setPlaceMode }: {
             turbulence
             <input
               type="range" min={0} max={8} step={1} value={turb} className="flex-1"
-              onChange={(e) => { setTurb(+e.target.value); void api.setTurbulence(+e.target.value); }}
+              onChange={(e) => { setTurb(+e.target.value); void api.setTurbulence(+e.target.value).catch((err) => hub.pushLog("rej", `Turbulence : ${err}`)); }}
             />
             <span className="w-4 font-mono text-acc">{turb}</span>
           </label>
@@ -171,7 +173,7 @@ export default function InstructorPanel({ hub, placeMode, setPlaceMode }: {
           >
             <OctagonMinus size={13} className="mr-1 inline" />Zone interdite
           </Btn>
-          <Btn variant="ghost" onClick={() => void api.clearZones()}>effacer</Btn>
+          <Btn variant="ghost" onClick={() => void api.clearZones().catch((err) => hub.pushLog("rej", `Zones : ${err}`))}>effacer</Btn>
         </Row>
         {placeMode && (
           <p className="mt-2 text-[11.5px] text-warn">
@@ -181,6 +183,7 @@ export default function InstructorPanel({ hub, placeMode, setPlaceMode }: {
       </Section>
 
       <Section title="Outils">
+        <p className="mb-3 text-xs leading-relaxed text-mut">Le vent et la turbulence agissent sur le vol. Les cellules orageuses sont des zones pédagogiques à éviter.</p>
         <Btn
           className="w-full"
           title="Exporte la situation en .scn et ouvre la fenêtre Qt officielle de BlueSky"
@@ -192,6 +195,7 @@ export default function InstructorPanel({ hub, placeMode, setPlaceMode }: {
         >
           <MonitorUp size={13} className="mr-1 inline" />GUI BlueSky natif
         </Btn>
+        <p className="mt-2 text-xs leading-relaxed text-mut">Ouvre une copie de la situation dans l’application BlueSky. Les deux simulations évoluent ensuite séparément.</p>
       </Section>
     </>
   );

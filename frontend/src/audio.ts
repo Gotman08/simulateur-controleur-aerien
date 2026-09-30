@@ -1,7 +1,7 @@
 /** Audio : capture micro WAV mono 16 kHz (envoyee a l'API STT via /api/voice)
  *  et lecture des WAV de collationnement renvoyes par l'API TTS. */
 
-export function playB64Wav(b64: string) {
+export async function playB64Wav(b64: string) {
   const bin = atob(b64);
   const arr = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
@@ -12,10 +12,10 @@ export function playB64Wav(b64: string) {
   audio.onended = () => URL.revokeObjectURL(url);
   audio.onerror = () => URL.revokeObjectURL(url);
   // Lecture bloquee (politique autoplay...) : jamais totalement silencieux.
-  void audio.play().catch((e) => {
-    console.warn("[audio] lecture readback bloquee :", e);
+  try { await audio.play(); } catch (e) {
     URL.revokeObjectURL(url);
-  });
+    throw e;
+  }
 }
 
 /* ----- capture micro -> WAV mono 16 kHz (envoye a /api/voice) ---------------- */
@@ -38,15 +38,20 @@ export class WavRecorder {
       return;
     }
     this.stream = stream;
-    this.ctx = new AudioContext();
-    this.rate = this.ctx.sampleRate;
-    this.src = this.ctx.createMediaStreamSource(this.stream);
-    this.proc = this.ctx.createScriptProcessor(4096, 1, 1);
-    this.chunks = [];
-    this.proc.onaudioprocess = (e) =>
-      this.chunks.push(new Float32Array(e.inputBuffer.getChannelData(0)));
-    this.src.connect(this.proc);
-    this.proc.connect(this.ctx.destination);
+    try {
+      this.ctx = new AudioContext();
+      this.rate = this.ctx.sampleRate;
+      this.src = this.ctx.createMediaStreamSource(this.stream);
+      this.proc = this.ctx.createScriptProcessor(4096, 1, 1);
+      this.chunks = [];
+      this.proc.onaudioprocess = (e) =>
+        this.chunks.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+      this.src.connect(this.proc);
+      this.proc.connect(this.ctx.destination);
+    } catch (error) {
+      await this.stop();
+      throw error;
+    }
   }
 
   /** Arrete la capture et renvoie le WAV (ou null si vide). Idempotent :

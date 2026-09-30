@@ -16,6 +16,7 @@ let logSeq = 0;
 const now = () => new Date().toLocaleTimeString("fr-FR", { hour12: false });
 
 export interface SimHub {
+  connection: "connecting" | "connected" | "disconnected";
   stateRef: React.RefObject<SimState>;
   state: SimState;                       // version throttlee (~4 Hz)
   providers: Providers;                  // sante des fournisseurs IA (stt/llm/tts)
@@ -28,10 +29,11 @@ export interface SimHub {
   clearLog: () => void;
   refreshHealth: () => Promise<void>;
   setReport: (r: ExerciseReport | null) => void;
-  onExerciseEnded: (cb: () => void) => void;
+  onExerciseEnded: (cb: () => void) => () => void;
 }
 
 export function useSim(): SimHub {
+  const [connection, setConnection] = useState<SimHub["connection"]>("connecting");
   const stateRef = useRef<SimState>(EMPTY);
   const [state, setState] = useState<SimState>(EMPTY);
   const [providers, setProviders] = useState<Providers>({ stt: false, llm: false, tts: false });
@@ -48,7 +50,7 @@ export function useSim(): SimHub {
     try {
       const h = await api.healthRefresh();
       setProviders(h.providers);
-    } catch { /* serveur indisponible : on garde l'etat courant */ }
+    } catch { setProviders({ stt: false, llm: false, tts: false }); }
   }, []);
 
   // sante initiale + dernier rapport d'exercice eventuel
@@ -63,11 +65,31 @@ export function useSim(): SimHub {
     let closed = false;
     let lastPush = -1e9;          // le tout premier etat est rendu immediatement
     let trailing: number | null = null;   // bord de fuite du throttle
+    let reconnect: number | undefined;
+    let lastStateAt = performance.now();
+    let invalidReported = false;
+    let lastError = "";
 
     const handle = (msg: Record<string, unknown>) => {
       switch (msg.type) {
         case "state": {
-          stateRef.current = msg as unknown as SimState;
+          if (!Array.isArray(msg.aircraft) || !Array.isArray(msg.conflicts) || !Number.isFinite(msg.t)) {
+            throw new Error("État de simulation invalide");
+          }
+          if (msg.predicted !== undefined && !Array.isArray(msg.predicted)) {
+            throw new Error("Liste de conflits prédits invalide");
+          }
+          lastStateAt = performance.now();
+          setConnection("connected");
+          // Older servers omit predictions in the first frame during BlueSky startup.
+          stateRef.current = { ...EMPTY, ...msg, predicted: msg.predicted ?? [] } as SimState;
+          const error = JSON.stringify([msg.last_error, msg.command_errors]);
+          if (error !== lastError) {
+            lastError = error;
+            if (msg.last_error) pushLog("rej", `Simulation : ${msg.last_error}`);
+            const failures = msg.command_errors as SimState["command_errors"];
+            if (failures?.length) pushLog("rej", `Simulation : ${failures[failures.length - 1].message}`);
+          }
           const t = performance.now();
           if (t - lastPush > 240) {
             lastPush = t;
@@ -94,7 +116,7 @@ export function useSim(): SimHub {
           // Reponse vocale systematique : l'audio du collationnement (API TTS)
           // est joue ICI, chemin unique pour les commandes tapees et vocales.
           // (un echec TTS est deja journalise par l'event "error" du backend)
-          if (m.audio_b64) playB64Wav(m.audio_b64);
+          if (m.audio_b64) void playB64Wav(m.audio_b64).catch(() => pushLog("warn", "Lecture audio bloquée. Autorisez le son dans le navigateur."));
           break;
         }
         case "situation":
@@ -128,31 +150,57 @@ export function useSim(): SimHub {
 
     const connect = () => {
       if (closed) return;
+      lastStateAt = performance.now();
       ws = new WebSocket(`${location.protocol === "https:" ? "wss" : "ws"}://${location.host}/ws`);
       // (re)connexion : re-tester les fournisseurs (couvre un health initial
       // rate ou un provider demarre apres l'application)
-      ws.onopen = () => { void refreshHealth(); };
-      ws.onmessage = (ev) => {
-        try { handle(JSON.parse(ev.data)); } catch { /* trame invalide ignoree */ }
+      ws.onopen = () => {
+        void refreshHealth();
+        void api.exerciseReport().then(setReport).catch(() => undefined);
       };
-      ws.onclose = () => { if (!closed) setTimeout(connect, 1500); };
+      ws.onmessage = (ev) => {
+        try { handle(JSON.parse(ev.data)); } catch {
+          if (!invalidReported) { pushLog("warn", "Une trame de simulation invalide a été ignorée."); invalidReported = true; }
+        }
+      };
+      ws.onerror = () => ws?.close();
+      ws.onclose = () => {
+        if (!closed) {
+          setConnection("disconnected");
+          reconnect = window.setTimeout(connect, 1500);
+        }
+      };
     };
     connect();
+    const watchdog = window.setInterval(() => {
+      if (performance.now() - lastStateAt > 5000 && ws?.readyState === WebSocket.OPEN) {
+        setConnection("disconnected");
+        ws.close();
+      }
+    }, 1000);
     return () => {
       closed = true;
+      window.clearTimeout(reconnect);
+      window.clearInterval(watchdog);
       if (trailing !== null) window.clearTimeout(trailing);
       ws?.close();
     };
   }, [pushLog, refreshHealth]);
 
+  const onExerciseEnded = useCallback((cb: () => void) => {
+    endedCb.current = cb;
+    return () => { if (endedCb.current === cb) endedCb.current = () => undefined; };
+  }, []);
+  const clearLog = useCallback(() => setLog([]), []);
+
   return {
-    stateRef, state, providers, log, lastExchange, report,
+    connection, stateRef, state, providers, log, lastExchange, report,
     exerciseLive: state.exercise ?? null,
     exerciseActive: !!state.exercise,
     pushLog,
-    clearLog: () => setLog([]),
+    clearLog,
     refreshHealth,
     setReport,
-    onExerciseEnded: (cb) => { endedCb.current = cb; },
+    onExerciseEnded,
   };
 }

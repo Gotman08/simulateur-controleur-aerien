@@ -43,6 +43,7 @@ import ai_client
 import voices
 import atc_exercise
 import readback as RB
+from atc_stream import WSManager
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 WEB_DIST = os.path.join(os.path.dirname(_HERE), "frontend", "dist")
@@ -65,25 +66,6 @@ EX = atc_exercise.ExerciseEngine(SIM, AI, emit)
 
 
 # --- diffusion WebSocket -----------------------------------------------------
-class WSManager:
-    def __init__(self):
-        self.active = set()
-
-    async def connect(self, ws):
-        await ws.accept()
-        self.active.add(ws)
-
-    def disconnect(self, ws):
-        self.active.discard(ws)
-
-    async def broadcast(self, msg):
-        for ws in list(self.active):
-            try:
-                await ws.send_json(msg)
-            except Exception:
-                self.disconnect(ws)
-
-
 MGR = WSManager()
 
 
@@ -91,8 +73,12 @@ async def _broadcaster():
     """Pousse l'etat ~8 Hz + les evenements en attente vers tous les clients."""
     while True:
         try:
-            while not _event_q.empty():
-                await MGR.broadcast(_event_q.get_nowait())
+            for _ in range(8):
+                try:
+                    event = _event_q.get_nowait()
+                except queue.Empty:
+                    break
+                await MGR.broadcast(event)
             msg = {"type": "state", **SIM.snapshot()}
             if EX.active:
                 ex = EX.state()
@@ -101,7 +87,7 @@ async def _broadcaster():
                                    "score": ex.get("score")}
             await MGR.broadcast(msg)
         except Exception:
-            pass
+            log.exception("Echec de diffusion de l'etat de simulation")
         await asyncio.sleep(0.12)
 
 
@@ -109,9 +95,15 @@ async def _broadcaster():
 async def lifespan(app):
     SIM.start()
     task = asyncio.create_task(_broadcaster())
-    yield
-    task.cancel()
-    SIM.stop()
+    try:
+        yield
+    finally:
+        task.cancel()
+        await asyncio.gather(task, return_exceptions=True)
+        await MGR.shutdown()
+        if EX.active:
+            await asyncio.to_thread(EX.stop)
+        await asyncio.to_thread(SIM.stop)
 
 
 app = FastAPI(title="ATC training app", lifespan=lifespan)
@@ -289,7 +281,10 @@ def scenarios():
 
 @app.post("/api/scenario")
 def scenario(payload: dict = Body(...)):
-    desc = str(payload.get("description", "")).strip()
+    desc = payload.get("description", "")
+    if not isinstance(desc, str) or len(desc) > 4000:
+        raise HTTPException(400, "description attendue : texte de 4000 caractères maximum")
+    desc = desc.strip()
     if not desc:
         raise HTTPException(400, "description vide")
     try:
@@ -338,6 +333,8 @@ def weather_wind(payload: dict = Body(...)):
     dd = _flt(d, "champ 'dir'")
     spd = _opt_flt(payload, "spd", 0.0)
     alt = _opt_flt(payload, "alt", None)
+    if not 0 <= spd <= 250 or (alt is not None and not 0 <= alt <= 60000):
+        raise HTTPException(400, "vent attendu : 0 à 250 kt, altitude de 0 à 60000 ft")
     SIM.set_wind(dd, spd, alt)
     emit({"type": "info", "message": f"Vent réglé : {int(dd):03d}°/{int(spd)} kt"})
     return {"ok": True}
@@ -346,6 +343,8 @@ def weather_wind(payload: dict = Body(...)):
 @app.post("/api/weather/turbulence")
 def weather_turb(payload: dict = Body(...)):
     lvl = _opt_flt(payload, "level", 0.0)
+    if not 0 <= lvl <= 8:
+        raise HTTPException(400, "turbulence attendue : 0 à 8 m/s")
     SIM.set_turbulence(lvl)
     emit({"type": "info", "message": f"Turbulence : {'OFF' if lvl <= 0 else str(lvl) + ' m/s'}"})
     return {"ok": True}
@@ -355,13 +354,19 @@ def weather_turb(payload: dict = Body(...)):
 def weather_zone(payload: dict = Body(...)):
     ztype = payload.get("ztype", "storm")
     shape = str(payload.get("shape", "CIRCLE")).upper()
+    if ztype not in ("storm", "restricted") or shape not in ("CIRCLE", "POLY"):
+        raise HTTPException(400, "type ou forme de zone inconnu")
     if shape == "CIRCLE":
         lat, lon = atc_sim.from_nm(_req_flt(payload, "x"), _req_flt(payload, "y"))
         coords = [lat, lon, _opt_flt(payload, "r", 12.0)]
+        if not 0 < coords[2] <= 200:
+            raise HTTPException(400, "rayon attendu : supérieur à 0 et au plus 200 NM")
     else:
         pts = payload.get("points") or []
         if not isinstance(pts, list):
             raise HTTPException(400, "champ 'points' doit etre une liste [[x, y], ...]")
+        if not 3 <= len(pts) <= 128:
+            raise HTTPException(400, "un polygone doit contenir de 3 à 128 points")
         coords = []
         for p in pts:
             try:
@@ -389,6 +394,8 @@ def command(payload: dict = Body(...)):
     text = payload.get("text", "")
     if not isinstance(text, str):
         raise HTTPException(400, "champ 'text' doit etre une chaine")
+    if len(text) > 4000:
+        raise HTTPException(400, "clairance trop longue (4000 caractères maximum)")
     return _handle_instruction(text)
 
 
@@ -556,10 +563,8 @@ def gui_launch():
 
 @app.websocket("/ws")
 async def ws(websocket: WebSocket):
-    await MGR.connect(websocket)
+    await MGR.connect(websocket, {"type": "state", **SIM.snapshot()})
     try:
-        # envoi initial immediat
-        await websocket.send_json({"type": "state", **SIM.snapshot()})
         while True:
             await websocket.receive_text()        # keepalive (messages ignores)
     except WebSocketDisconnect:

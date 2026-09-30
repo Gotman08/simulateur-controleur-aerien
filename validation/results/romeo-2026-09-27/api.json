@@ -1,0 +1,27 @@
+{
+  "case": "api",
+  "job_id": "722781",
+  "versions": {
+    "bluesky-simulator": "1.1.1",
+    "numpy": "2.5.3",
+    "fastapi": "0.141.1"
+  },
+  "http_requests": 360,
+  "websocket_clients": 16,
+  "frames_per_client": 20,
+  "http_latency": {
+    "median_ms": 16.68,
+    "p95_ms": 99.16,
+    "max_ms": 246.66
+  },
+  "checks": [
+    "real API",
+    "real BlueSky",
+    "parallel readers",
+    "pause/resume",
+    "paused scenario load",
+    "invalid inputs"
+  ],
+  "passed": true,
+  "wall_seconds": 11.25
+}

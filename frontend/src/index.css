@@ -1,19 +1,21 @@
 @import "tailwindcss";
+@import "flowbite-react/plugin/tailwindcss";
+@source "../.flowbite-react/class-list.json";
 
-/* Jetons de design du poste de controle (theme sombre "salle d'ops"). */
+/* Console claire et radar sombre : contraste adapté à la lecture des données. */
 @theme {
-  --color-bg: #0a0e13;
-  --color-panel: #10161e;
-  --color-panel2: #161e28;
-  --color-edge: #233042;
-  --color-ink: #d7e0ea;
-  --color-mut: #7e90a5;
-  --color-acc: #3fc6d6;          /* cyan - selection / actions */
-  --color-rdr: #38d97f;          /* vert radar - trafic nominal */
-  --color-warn: #ffb454;         /* ambre - conflit predit */
-  --color-dang: #ff5868;         /* rouge - perte de separation */
-  --color-mag: #ff5ab0;          /* magenta - meteo / zones */
-  --color-wpt: #4f8fe8;          /* bleu - points de navigation */
+  --color-bg: #e9ede9;
+  --color-panel: #f6f8f4;
+  --color-panel2: #ffffff;
+  --color-edge: #d5ddd6;
+  --color-ink: #1b2a23;
+  --color-mut: #59685f;
+  --color-acc: #285e49;
+  --color-rdr: #256e4f;
+  --color-warn: #95600e;
+  --color-dang: #ac363b;
+  --color-mag: #805476;
+  --color-wpt: #325a7e;
 
   --font-sans: "Segoe UI", system-ui, -apple-system, sans-serif;
   --font-mono: "Cascadia Mono", "JetBrains Mono", Consolas, monospace;
@@ -25,9 +27,27 @@ body {
   background: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  overflow: hidden;
-  user-select: none;
+  overflow: auto;
 }
+
+button, summary, select { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+:focus-visible { outline: 2px solid var(--color-acc); outline-offset: 3px; }
+.workspace { display: grid; grid-template-columns: minmax(0, 1fr) 410px; min-height: 0; flex: 1; }
+.radar-stage { position: relative; min-width: 0; min-height: 360px; overflow: hidden; background: #101b18; }
+.console { display: flex; min-height: 0; flex-direction: column; background: var(--color-panel); border-left: 1px solid var(--color-edge); }
+.radar-controls { color: #c9d5cc; background: #14251fee; border: 1px solid #3b5145; }
+.radar-controls :focus-visible { outline-color: #b1cdbb; }
+.radar-controls input { accent-color: #a4c6b0; }
+.radar-controls button:hover { background: #30483c; }
+@media (min-width: 1100px) { body { overflow: hidden; } }
+@media (max-width: 1099px) {
+  .workspace { grid-template-columns: 1fr; flex: none; }
+  .radar-stage { height: min(58vh, 640px); }
+  .console { border-left: 0; min-height: 540px; }
+  #root { min-height: 100dvh; height: auto; }
+}
+@media (prefers-reduced-motion: reduce) { .animate-alert { animation: none !important; } }
 
 /* Curseurs / scrollbars discrets */
 * { scrollbar-width: thin; scrollbar-color: var(--color-edge) transparent; }

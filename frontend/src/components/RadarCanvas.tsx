@@ -2,7 +2,7 @@
  *  selection d'un aeronef au clic, placement de zones meteo. */
 import { useEffect, useRef } from "react";
 import type { NavData, PlaceMode, SimState } from "../types";
-import { drawScope, drawWindArrow, sx, sy, toNm, type View } from "../radar";
+import { drawScope, drawWindArrow, sx, sy, toNm, type View, type RadarOptions } from "../radar";
 
 const TRAIL_LEN = 14;
 
@@ -13,19 +13,19 @@ interface Props {
   onSelect: (id: string | null) => void;
   placeMode: PlaceMode;
   onPlace: (x: number, y: number) => void;
-  showSweep: boolean;
+  options: RadarOptions;
   /** centre la vue sur cet avion quand la valeur change */
   centerOn?: { id: string; tick: number } | null;
 }
 
 export default function RadarCanvas({
-  stateRef, nav, selected, onSelect, placeMode, onPlace, showSweep, centerOn,
+  stateRef, nav, selected, onSelect, placeMode, onPlace, options, centerOn,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const viewRef = useRef({ panX: 0, panY: 0, zoom: 1 });
   const trailsRef = useRef(new Map<string, [number, number][]>());
-  const propsRef = useRef({ selected, placeMode, showSweep, nav });
-  propsRef.current = { selected, placeMode, showSweep, nav };
+  const propsRef = useRef({ selected, placeMode, options, nav, onSelect, onPlace });
+  propsRef.current = { selected, placeMode, options, nav, onSelect, onPlace };
 
   // recentrage demande depuis les strips
   useEffect(() => {
@@ -45,11 +45,13 @@ export default function RadarCanvas({
     let sweep = 0;
     let lastTs = 0;
     let lastSimT = -1;
+    let lastPaint: unknown[] = [];
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const makeView = (): View => {
       const w = canvas.clientWidth, h = canvas.clientHeight;
       const { panX, panY, zoom } = viewRef.current;
-      const base = (Math.min(w, h) / 2 - 30) / (propsRef.current.nav.range_nm * 1.05 || 70);
+      const base = Math.max(1, Math.min(w, h) / 2 - 30) / (propsRef.current.nav.range_nm * 1.05 || 70);
       return { panX, panY, scale: base * zoom, w, h };
     };
 
@@ -59,6 +61,7 @@ export default function RadarCanvas({
       canvas.width = Math.floor(r.width * dpr);
       canvas.height = Math.floor(r.height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      lastPaint = []; // Resizing clears the bitmap, including a change of display DPR.
     };
     resize();
     const ro = new ResizeObserver(resize);
@@ -72,6 +75,7 @@ export default function RadarCanvas({
 
       // traines : un echo par tick simulateur
       if (st && st.t !== lastSimT) {
+        if (st.t < lastSimT) trailsRef.current.clear();
         lastSimT = st.t;
         const seen = new Set<string>();
         for (const a of st.aircraft) {
@@ -85,10 +89,14 @@ export default function RadarCanvas({
       }
 
       const v = makeView();
-      if (st) {
+      const p = propsRef.current;
+      const signature = [st, p.nav, p.options, p.selected, v.panX, v.panY, v.scale, v.w, v.h];
+      const animateSweep = p.options.sweep && !reducedMotion && !st.paused;
+      if (st && (animateSweep || signature.some((value, i) => value !== lastPaint[i]))) {
+        lastPaint = signature;
         drawScope(ctx, v, propsRef.current.nav, st, trailsRef.current,
           propsRef.current.selected, sweep,
-          { sweep: propsRef.current.showSweep, labels: true, trails: true, rings: true });
+          { ...propsRef.current.options, sweep: propsRef.current.options.sweep && !reducedMotion });
         drawWindArrow(ctx, v, st);
       }
       raf = requestAnimationFrame(render);
@@ -112,6 +120,7 @@ export default function RadarCanvas({
     };
 
     const onDown = (e: PointerEvent) => {
+      if (e.button !== 0) return;
       drag = { x: e.clientX, y: e.clientY, panX: viewRef.current.panX, panY: viewRef.current.panY, moved: false };
       canvas.setPointerCapture(e.pointerId);
     };
@@ -126,6 +135,7 @@ export default function RadarCanvas({
       }
     };
     const onUp = (e: PointerEvent) => {
+      if (e.button !== 0 || !drag) return;
       const wasDrag = drag?.moved;
       drag = null;
       // pointerup synthetique / capture deja perdue : releasePointerCapture
@@ -138,7 +148,7 @@ export default function RadarCanvas({
       const px = e.clientX - rect.left, py = e.clientY - rect.top;
       if (propsRef.current.placeMode) {
         const [nx, ny] = toNm(v, px, py);
-        onPlace(nx, ny);
+        propsRef.current.onPlace(nx, ny);
         return;
       }
       const st = stateRef.current;
@@ -147,15 +157,31 @@ export default function RadarCanvas({
         const d = Math.hypot(sx(v, a.x) - px, sy(v, a.y) - py);
         if (d < 16 && (!best || d < best.d)) best = { id: a.id, d };
       }
-      onSelect(best ? best.id : null);
+      propsRef.current.onSelect(best ? best.id : null);
     };
     const onDbl = () => { viewRef.current = { panX: 0, panY: 0, zoom: 1 }; };
+    const onCancel = () => { drag = null; };
+    const onKey = (e: KeyboardEvent) => {
+      const v = viewRef.current;
+      const step = 8 / v.zoom;
+      if (e.key === "Home") onDbl();
+      else if (e.key === "ArrowLeft") v.panX -= step;
+      else if (e.key === "ArrowRight") v.panX += step;
+      else if (e.key === "ArrowUp") v.panY += step;
+      else if (e.key === "ArrowDown") v.panY -= step;
+      else if (e.key === "+" || e.key === "=") v.zoom = Math.min(12, v.zoom * 1.18);
+      else if (e.key === "-") v.zoom = Math.max(0.4, v.zoom / 1.18);
+      else return;
+      e.preventDefault();
+    };
 
     canvas.addEventListener("wheel", onWheel, { passive: false });
     canvas.addEventListener("pointerdown", onDown);
     canvas.addEventListener("pointermove", onMove);
     canvas.addEventListener("pointerup", onUp);
     canvas.addEventListener("dblclick", onDbl);
+    canvas.addEventListener("pointercancel", onCancel);
+    canvas.addEventListener("keydown", onKey);
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
@@ -164,12 +190,18 @@ export default function RadarCanvas({
       canvas.removeEventListener("pointermove", onMove);
       canvas.removeEventListener("pointerup", onUp);
       canvas.removeEventListener("dblclick", onDbl);
+      canvas.removeEventListener("pointercancel", onCancel);
+      canvas.removeEventListener("keydown", onKey);
     };
-  }, [stateRef, onSelect, onPlace]);
+  }, [stateRef]);
 
   return (
     <canvas
       ref={canvasRef}
+      tabIndex={0}
+      aria-label="Radar interactif. Les aéronefs sont aussi accessibles dans le panneau Trafic."
+      aria-describedby="radar-help"
+      style={{ touchAction: "none" }}
       className={`block h-full w-full ${placeMode ? "cursor-crosshair" : "cursor-default"}`}
     />
   );

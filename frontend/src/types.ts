@@ -19,6 +19,11 @@ export interface Aircraft {
   inzone: string;
   route: [number, number][];
   actwp: number;
+  cas_kt?: number | null;
+  tas_kt?: number | null;
+  lnav?: boolean | null;
+  vnav?: boolean | null;
+  route_names?: string[];
 }
 
 export interface Predicted { pair: [string, string]; t: number; d: number }
@@ -58,6 +63,11 @@ export interface SimState {
   turbulence?: number;
   zones?: Zone[];
   exercise?: ExerciseBrief;
+  sim_alive?: boolean;
+  last_error?: string | null;
+  pending_commands?: number;
+  advance_failures?: number;
+  command_errors?: { kind: string; message: string }[];
 }
 
 export interface NavPoint { x: number; y: number; name: string; type?: string }

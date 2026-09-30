@@ -19,6 +19,8 @@ import time
 import queue
 import logging
 import threading
+from collections import deque
+from copy import deepcopy
 
 import bluesky_runtime as bsk
 
@@ -84,8 +86,11 @@ class SimManager:
         self._zones = {}       # name -> {"type","shape","coords","color"}
         self._zone_seq = 0
         self._cd_on = False    # moteur CD BlueSky reellement actif (cf. _enable_cd)
+        self._last_error = None
+        self._command_errors = deque(maxlen=10)
+        self._advance_failures = 0
         self._snapshot = {"t": 0.0, "running": False, "paused": False,
-                          "speed": speed, "aircraft": [], "conflicts": []}
+                          "speed": speed, "aircraft": [], "conflicts": [], "predicted": []}
 
     # --- cycle de vie --------------------------------------------------------
     def start(self):
@@ -157,9 +162,12 @@ class SimManager:
     def snapshot(self):
         """Copie thread-safe du dernier etat (pour HTTP / WebSocket)."""
         with self._lock:
-            snap = dict(self._snapshot)
-            snap["aircraft"] = [dict(a) for a in self._snapshot["aircraft"]]
-            snap["conflicts"] = [list(c) for c in self._snapshot["conflicts"]]
+            snap = deepcopy(self._snapshot)
+            snap["last_error"] = self._last_error
+            snap["command_errors"] = deepcopy(list(self._command_errors))
+            snap["advance_failures"] = self._advance_failures
+            snap["running"] = self._running
+        snap["pending_commands"] = self._cmd_q.qsize()
         # temoin de vie : un thread sim mort (init BlueSky en echec...) rendrait
         # l'app zombie - l'UI peut desormais l'afficher au lieu d'un radar fige.
         snap["sim_alive"] = bool(self._thread and self._thread.is_alive())
@@ -176,6 +184,16 @@ class SimManager:
 
     # --- thread de simulation (seul a toucher BlueSky) -----------------------
     def _run(self):
+        try:
+            self._run_loop()
+        except Exception as exc:
+            with self._lock:
+                self._last_error = str(exc)
+            _log.exception("arret du thread de simulation")
+        finally:
+            self._running = False
+
+    def _run_loop(self):
         bsk.bs()
         bsk.reset()
         self._define_sector_fixes()
@@ -192,11 +210,15 @@ class SimManager:
             if not paused and wall > 0:
                 try:
                     bsk.advance(wall * speed)
-                    self._advance_failures = 0
-                except Exception:
+                    with self._lock:
+                        self._advance_failures = 0
+                        self._last_error = None
+                except Exception as exc:
                     # jamais avale en silence : le temps sim figerait sans trace.
                     # Log au 1er echec puis tous les 100 (boucle a ~8 Hz).
-                    self._advance_failures = getattr(self, "_advance_failures", 0) + 1
+                    with self._lock:
+                        self._advance_failures += 1
+                        self._last_error = str(exc)
                     if self._advance_failures == 1 or self._advance_failures % 100 == 0:
                         _log.exception("bsk.advance en echec (x%d) - temps simule fige",
                                        self._advance_failures)
@@ -204,22 +226,30 @@ class SimManager:
             time.sleep(self._dt)
 
     def _drain_queue(self):
-        while True:
+        # Keep advancing the simulation even when producers continuously add
+        # instructions. FIFO order is preserved across ticks.
+        deadline = time.monotonic() + 0.025
+        for _ in range(64):
             try:
                 item = self._cmd_q.get_nowait()
             except queue.Empty:
                 return
             try:
                 self._apply(item)
-            except Exception:
+            except Exception as exc:
                 # la file a deja ete acquittee cote HTTP : sans log, l'echec
                 # d'une commande serait strictement invisible.
                 _log.exception("commande sim en echec (ignoree) : %r", item)
+                with self._lock:
+                    self._command_errors.append({"kind": item.get("kind"), "message": str(exc)})
+            if time.monotonic() >= deadline:
+                return
 
     def _apply(self, item):
         kind = item.get("kind")
         if kind == "cmd":
             bsk.cmd(item["line"])
+            bsk.flush_commands()
         elif kind == "create":
             if item["cs"] in self._meta:
                 return                              # indicatif deja present -> on ignore
@@ -239,7 +269,7 @@ class SimManager:
             # preserve le temps simu, les navaids et les fix deja definis.
             for s in bsk.state():
                 bsk.cmd(f"DEL {s['id']}")
-            bsk.advance(0.1)
+            bsk.flush_commands()
             self._meta.clear()
             self._clear_zones()
             self._apply_wind(None, None, None)
@@ -256,6 +286,7 @@ class SimManager:
             bsk.cmd(f"WIND {CLAT:.4f} {CLON:.4f} {float(alt)} {d} {s}")
         else:
             bsk.cmd(f"WIND {CLAT:.4f} {CLON:.4f} {d} {s}")
+        bsk.flush_commands()
         self._wind = {"dir": d, "spd": s, "alt": (int(alt) if alt is not None else None)}
 
     def _apply_turb(self, level):
@@ -269,6 +300,7 @@ class SimManager:
             self._turb = float(level or 0.0)
         except Exception:
             self._turb = 0.0
+            raise
 
     def _apply_zone(self, ztype, shape, coords):
         from bluesky.tools import areafilter
@@ -294,7 +326,7 @@ class SimManager:
         try:
             for c in ("CDMETHOD ON", "ZONER 5", "ZONEDH 1000", "DTLOOK 120"):
                 bsk.cmd(c)
-            bsk.advance(0.1)
+            bsk.flush_commands()
             self._cd_on = True
         except Exception as e:
             self._cd_on = False
@@ -326,6 +358,7 @@ class SimManager:
                         "gs": int(round(gs)),
                         "type": self._meta.get(s["id"], {}).get("type", ""),
                         "conflict": False, "alert": ""})
+        self._enrich(acs)  # Use actual ground track/speed and vertical rate in the fallback.
         res = self._analyze_cd()                         # moteur BlueSky (CD&R)
         engine = "bluesky"
         if res is None:                                  # repli geometrie si CD inactif
@@ -337,7 +370,6 @@ class SimManager:
         for a in acs:
             a["conflict"] = a["id"] in los
             a["alert"] = "los" if a["id"] in los else ("predicted" if a["id"] in warn else "")
-        self._enrich(acs)                                # routes FMS + penetration de zone
         with self._lock:
             try:
                 t = float(bsk.bs().sim.simt)
@@ -347,6 +379,9 @@ class SimManager:
                              "speed": speed, "aircraft": acs, "conflicts": conflicts,
                              "predicted": predicted, "cd_engine": engine,
                              "wind": self._wind, "turbulence": self._turb,
+                             "capabilities": {"conflict_detection": engine, "routes": True,
+                                              "wind": True, "turbulence": True,
+                                              "weather_zones": "training_areas"},
                              "zones": self._zones_payload()}
 
     def _enrich(self, acs):
@@ -355,6 +390,8 @@ class SimManager:
         for a in acs:
             a["route"], a["actwp"], a["inzone"], a["trk"] = [], -1, "", a["hdg"]
             a["vs_fpm"], a["sel_alt_ft"] = 0, None
+            a["cas_kt"], a["tas_kt"], a["lnav"], a["vnav"] = None, None, None, None
+            a["route_names"] = []
         try:
             traf = bsk.bs().traf
             idx = {cs: i for i, cs in enumerate(getattr(traf, "id", []))}
@@ -362,6 +399,14 @@ class SimManager:
                 i = idx.get(a["id"])
                 if i is None:
                     continue
+                for key, attr, factor in (("cas_kt", "cas", bsk.MS2KT), ("tas_kt", "tas", bsk.MS2KT)):
+                    values = getattr(traf, attr, ())
+                    if i < len(values):
+                        a[key] = int(round(float(values[i]) * factor))
+                for key, attr in (("lnav", "swlnav"), ("vnav", "swvnav")):
+                    values = getattr(traf, attr, ())
+                    if i < len(values):
+                        a[key] = bool(values[i])
                 try:                                     # vitesse SOL + route sol (effet du vent visible)
                     a["gs"] = int(round(float(traf.gs[i]) * bsk.MS2KT))
                     a["trk"] = round(float(traf.trk[i]), 1)
@@ -370,7 +415,7 @@ class SimManager:
                 try:                                     # tendance verticale + niveau autorise
                     a["vs_fpm"] = int(round(float(traf.vs[i]) * bsk.M2FT * 60.0))
                     sel = float(traf.selalt[i]) * bsk.M2FT
-                    if sel > 0:
+                    if sel >= 0:
                         a["sel_alt_ft"] = int(round(sel))
                 except Exception:
                     pass
@@ -380,6 +425,7 @@ class SimManager:
                         a["route"] = [[round(x, 2), round(y, 2)]
                                       for x, y in (to_nm(la, lo) for la, lo in zip(r.wplat, r.wplon))]
                         a["actwp"] = int(getattr(r, "iactwp", -1))
+                        a["route_names"] = list(getattr(r, "wpname", []))
         except Exception:
             pass
         # Penetration de zone en geometrie NM (la fonction compilee kwikdist de
@@ -452,9 +498,9 @@ class SimManager:
 
     @staticmethod
     def _vel_nm_s(a):
-        """Vecteur vitesse (NM/s) a partir du cap et de la vitesse sol."""
+        """Ground velocity (NM/s); heading is only a legacy-data fallback."""
         v = a["gs"] / 3600.0
-        h = math.radians(a["hdg"])
+        h = math.radians(a.get("trk", a["hdg"]))
         return v * math.sin(h), v * math.cos(h)        # x=est, y=nord
 
     @classmethod
@@ -467,25 +513,44 @@ class SimManager:
         for i in range(len(acs)):
             for j in range(i + 1, len(acs)):
                 a, b = acs[i], acs[j]
-                if abs(a["alt_ft"] - b["alt_ft"]) >= SEP_FT:
-                    continue                                  # separes verticalement
+                dz = a["alt_ft"] - b["alt_ft"]
+                vz = (a.get("vs_fpm", 0) - b.get("vs_fpm", 0)) / 60.0
                 dx, dy = a["x"] - b["x"], a["y"] - b["y"]
-                if math.hypot(dx, dy) < SEP_NM:
+                if math.hypot(dx, dy) < SEP_NM and abs(dz) < SEP_FT:
                     current.append([a["id"], b["id"]])
                     continue
                 avx, avy = cls._vel_nm_s(a)
                 bvx, bvy = cls._vel_nm_s(b)
                 rvx, rvy = avx - bvx, avy - bvy
                 vv = rvx * rvx + rvy * rvy
+                # Intersect the open horizontal/vertical loss-of-separation
+                # intervals with the lookahead. Looking only at current
+                # altitude or at a CPA inside the horizon misses real alerts.
+                lo, hi = 0.0, LOOKAHEAD_S
+                if abs(vz) < 1e-9:
+                    if abs(dz) >= SEP_FT:
+                        continue
+                else:
+                    z1, z2 = sorted(((-SEP_FT - dz) / vz, (SEP_FT - dz) / vz))
+                    lo, hi = max(lo, z1), min(hi, z2)
+                dot = dx * rvx + dy * rvy
                 if vv < 1e-9:
-                    continue                                  # vitesse relative nulle
-                t = -(dx * rvx + dy * rvy) / vv               # temps du CPA
-                if t <= 0 or t > LOOKAHEAD_S:
-                    continue                                  # s'eloignent ou trop loin
+                    if math.hypot(dx, dy) >= SEP_NM:
+                        continue
+                    cpa = lo
+                else:
+                    disc = dot * dot - vv * (dx * dx + dy * dy - SEP_NM * SEP_NM)
+                    if disc <= 0:
+                        continue
+                    root = math.sqrt(disc)
+                    lo, hi = max(lo, (-dot - root) / vv), min(hi, (-dot + root) / vv)
+                    cpa = -dot / vv
+                if lo >= hi:
+                    continue
+                t = max(lo, min(hi, cpa))
                 dcpa = math.hypot(dx + rvx * t, dy + rvy * t)
-                if dcpa < SEP_NM:
-                    predicted.append({"pair": [a["id"], b["id"]],
-                                      "t": int(round(t)), "d": round(dcpa, 1)})
+                predicted.append({"pair": [a["id"], b["id"]],
+                                  "t": int(round(t)), "d": round(dcpa, 1)})
         return current, predicted
 
     def _compute_nav(self):
