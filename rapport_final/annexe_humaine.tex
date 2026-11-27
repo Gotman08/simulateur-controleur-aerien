@@ -1,22 +1,45 @@
-% Tableau genere automatiquement depuis bench/results/human_e2e.json - ne pas editer a la main
-\section{Annexe : corpus de la contre-épreuve à locuteur humain}
+% Tableau construit a partir de bench/results/human_e2e.json (verdicts et totaux verifies
+% champ a champ contre les donnees brutes). Toute mise a jour des mesures doit etre
+% repercutee ici depuis ce fichier de resultats.
+\section{Annexe: corpus de la contre-épreuve à locuteur humain}
 \label{sec:annexe-humain}
 
-Le tableau~\ref{tab:annexe-humain} donne le corpus intégral de la contre-épreuve à
-locuteur humain réel (section~\ref{sec:res-e2e}) : les 25 clairances dans leur forme
-écrite du corpus annoté, l'ordre TrafScript attendu après validation, et le verdict
-d'exécution exacte dans les deux conditions (prises micro brutes ; canal radio simulé,
-bruit SNR 12~dB puis passe-bande VHF). Les clairances écrites en abrégé
-(\texttt{AFR1234}, \texttt{FL320}, \texttt{hdg}) ont été prononcées en phraséologie
-parlée (\emph{air france one two three four}, \emph{flight level three two zero},
-\emph{heading}). Ce tableau est généré automatiquement depuis les données brutes
-versionnées (\texttt{bench/results/human\_e2e.json}), comme toutes les valeurs
-chiffrées du document.
+Cette annexe donne le corpus intégral de la contre-épreuve à locuteur humain réel décrite en
+section~\ref{sec:res-e2e}. Il s'agit de la mesure qui répond le plus directement à la question
+d'origine du stage, puisque c'est la seule où un être humain parle réellement dans le micro de
+l'application: les 25 clairances ont été enregistrées par la capture du navigateur,
+c'est-à-dire par le chemin exact du \emph{push-to-talk}, puis passées dans la chaîne de
+production complète.
 
-\begin{table}[h]
+Le tableau~\ref{tab:annexe-humain} donne, pour chacune de ces 25 clairances, sa forme écrite
+dans le corpus annoté, l'ordre TrafScript attendu après validation, et le verdict d'exécution
+exacte dans les deux conditions comparées: les prises micro brutes, telles que l'application
+m'entend, et les mêmes prises dégradées par le canal radio simulé du banc (bruit à 12~dB de
+rapport signal sur bruit, puis passe-bande VHF, avec la même graine aléatoire). Les clairances
+écrites en abrégé dans le corpus (\texttt{AFR1234}, \texttt{FL320}, \texttt{hdg}) ont été
+\emph{prononcées} en phraséologie parlée, \emph{air france one two three four},
+\emph{flight level three two zero}, \emph{heading}, comme le ferait un contrôleur. 
+
+La lecture ligne à ligne est plus instructive que le total. En condition micro, les cinq
+échecs se répartissent en quatre déviations de transcription et une seule erreur
+d'interprétation, pour un taux d'erreur mots moyen de 34,6\,\%; en condition radio, les sept
+échecs se répartissent en six déviations de transcription et, là encore, une seule erreur
+d'interprétation, pour un WER moyen de 39,3\,\%. Autrement dit, la dégradation radio pèse
+presque exclusivement sur l'étage d'écoute, et non sur la compréhension: c'est cohérent avec
+tout le reste du banc. On remarquera enfin que les lignes~10 et~24, toutes deux portant
+l'indicatif épelé \texttt{CSA1DZ}, échouent dans les \emph{deux} conditions; c'est le défaut
+de réassemblage des indicatifs alphanumériques analysé en section~\ref{sec:res-e2e}, qui ne
+dépend ni du locuteur ni du canal.
+
+\begin{table}[!htbp]
 \centering
+\caption[Contre-épreuve à locuteur humain réel]{Contre-épreuve à locuteur humain réel: verdict phrase par phrase dans les
+deux conditions. OK = ordre exécuté exactement conforme à l'attendu; KO = écart
+(transcription déviée ou interprétation erronée, détail en
+section~\ref{sec:res-e2e}). Source: \texttt{bench/results/human\_e2e.json}.}
+\label{tab:annexe-humain}
 \footnotesize
-\begin{tabular}{>{\raggedright}p{0.5cm} >{\raggedright}p{6.6cm} >{\raggedright}p{4.4cm} c c}
+\begin{tabular}{>{\raggedright\arraybackslash}p{0.5cm} >{\raggedright\arraybackslash}p{6.6cm} >{\raggedright\arraybackslash}p{4.4cm} c c}
 \toprule
 \rowcolor{lightgray}\textbf{\#} & \textbf{Clairance (forme écrite du corpus)} & \textbf{Ordre attendu (TrafScript)} & \textbf{Micro} & \textbf{Radio}\\
 \midrule
@@ -49,9 +72,4 @@ chiffrées du document.
  & \multicolumn{2}{l}{\textbf{Total d'exécutions exactes}} & \textbf{20/25} & \textbf{18/25}\\
 \bottomrule
 \end{tabular}
-\caption{Contre-épreuve à locuteur humain réel : verdict phrase par phrase dans les
-deux conditions. OK = ordre exécuté exactement conforme à l'attendu ; KO = écart
-(transcription déviée ou interprétation erronée, détail en
-section~\ref{sec:res-e2e}).}
-\label{tab:annexe-humain}
 \end{table}
