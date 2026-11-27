@@ -87,7 +87,7 @@ def trafscript_to_order(line):
 
 def readback_reference(attendu):
     import readback
-    orders = [o for o in (trafscript_to_order(l) for l in attendu) if o]
+    orders = [o for o in (trafscript_to_order(ligne) for ligne in attendu) if o]
     return readback.readback_text(orders)
 
 
@@ -208,8 +208,8 @@ def diagnostic(attendu, obtenu, appels, rejetes):
         return "aucun_appel_outil"
     if not obtenu and rejetes:
         return "ordre_rejete_validation"
-    ref = [trafscript_to_order(l) for l in attendu]
-    got = [trafscript_to_order(l) for l in obtenu]
+    ref = [trafscript_to_order(ligne) for ligne in attendu]
+    got = [trafscript_to_order(ligne) for ligne in obtenu]
     ref = [o for o in ref if o]
     got = [o for o in got if o]
     if not got:
