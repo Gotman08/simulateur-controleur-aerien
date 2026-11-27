@@ -1,0 +1,104 @@
+{
+ "modele": "nvidia/NVIDIA-NemotronLabs-VoiceChat-11B",
+ "checkpoint": "/dev/shm/vc/ckpt",
+ "mode": "s2s",
+ "invite_systeme": "You are an airline pilot talking on the air traffic control radio. The user is the air traffic controller. As soon as the controller finishes speaking, answer out loud. Always answer by reading back the instruction you heard, then your callsign, exactly as pilots do: for example, if you hear 'air france one two three four turn left heading two seven zero', you say 'turn left heading two seven zero, air france one two three four'. Keep answering every transmission.",
+ "message_systeme_atc": "You are the pilot of an airliner flying in controlled airspace. You are listening to the air traffic control (ATC) radio frequency. Every user turn is a radio transmission from the air traffic controller. \n\nDo two things for every clearance you hear:\n1. Call the tool set_flight_order once for each instruction, with the exact values spoken by the controller. This is how the aircraft actually executes the clearance, so it is mandatory.\n2. Answer on the radio with the standard ICAO read back and nothing else: repeat the instruction, then say your callsign. Keep it short, no chatter, no greetings, no questions.\n\nConversion rules for the tool arguments:\n- spelled out numbers become integers: 'two seven zero' is 270, 'one two three four' is 1234.\n- 'flight level' N or 'FL' N means action ALT with value = N * 100 feet; an altitude given in feet is used as is.\n- heading is in degrees, action HDG; speed is in knots, action SPD; 'direct to' a waypoint is action ADDWPT with the waypoint name.\n- callsigns use the ICAO airline code plus the flight number: air france is AFR, speedbird is BAW, lufthansa is DLH, ryanair is RYR, easyjet is EZY, klm is KLM, american is AAL, united is UAL, csa is CSA. A spelled registration uses the phonetic alphabet, so 'csa one delta zulu' is CSA1DZ.\n- use only the four actions HDG, ALT, SPD and ADDWPT. Ignore purely informational items such as QNH, altimeter settings or frequency changes.\n\nRead back numbers digit by digit, as pilots do on the radio.",
+ "outils": [
+  {
+   "function": {
+    "name": "set_flight_order",
+    "description": "Apply an air traffic control clearance to the aircraft. Call it once for every instruction heard on the radio.",
+    "parameters": {
+     "type": "object",
+     "properties": {
+      "callsign": {
+       "type": "string",
+       "description": "ICAO callsign of the aircraft, for example AFR1234, BAW57 or CSA1DZ"
+      },
+      "action": {
+       "type": "string",
+       "enum": [
+        "HDG",
+        "ALT",
+        "SPD",
+        "ADDWPT"
+       ],
+       "description": "HDG for a heading in degrees, ALT for an altitude in feet, SPD for a speed in knots, ADDWPT to proceed direct to a waypoint"
+      },
+      "value": {
+       "type": "integer",
+       "description": "Numeric value: degrees for HDG, feet for ALT (flight level multiplied by 100), knots for SPD, 0 for ADDWPT"
+      },
+      "waypoint": {
+       "type": "string",
+       "description": "Waypoint name, only for the ADDWPT action"
+      }
+     },
+     "required": [
+      "callsign",
+      "action",
+      "value"
+     ]
+    }
+   }
+  }
+ ],
+ "chargement_modele_s": 161.8733261100133,
+ "gpu": "NVIDIA GH200 120GB",
+ "torch": "2.10.0+cu128",
+ "rows": [
+  {
+   "id": "sapi_radio_c00",
+   "condition": "sapi_radio",
+   "wav": "/dev/shm/vc/stim/wav/sapi_radio/c00.wav",
+   "phrase": "air france one two three four turn left heading two seven zero",
+   "duree_entree_s": 10.6889375,
+   "s2s_latence_s": 32.671308852994116,
+   "s2s_texte": " <$0.72$>  <|4.48|> Turn left heading two hundred and seventy degrees, Air France one two three four.",
+   "_cles_resultat": [
+    "audio",
+    "audio_len",
+    "source_audio",
+    "source_audio_len",
+    "src_text",
+    "src_text_asr_head",
+    "src_text_rnnt",
+    "text",
+    "tokens_audio",
+    "tokens_function",
+    "tokens_function_pred",
+    "tokens_len",
+    "tokens_text",
+    "tokens_text_src"
+   ],
+   "s2s_audio": "/dev/shm/vc/out/audio/wav/sapi_radio_c00_s2s.wav",
+   "s2s_audio_duree_s": 10.8,
+   "s2s_rtf": 3.0251211900920474
+  },
+  {
+   "id": "sapi_radio_c08",
+   "condition": "sapi_radio",
+   "wav": "/dev/shm/vc/stim/wav/sapi_radio/c08.wav",
+   "phrase": "air france one two three four descend flight level one zero zero",
+   "duree_entree_s": 10.8189375,
+   "s2s_latence_s": 33.126817130018026,
+   "s2s_texte": " <$0.72$>  <|4.56|> Descent flight level one zero zero, air France one two three four.",
+   "s2s_audio": "/dev/shm/vc/out/audio/wav/sapi_radio_c08_s2s.wav",
+   "s2s_audio_duree_s": 10.96,
+   "s2s_rtf": 3.0225198111330314
+  },
+  {
+   "id": "sapi_radio_c18",
+   "condition": "sapi_radio",
+   "wav": "/dev/shm/vc/stim/wav/sapi_radio/c18.wav",
+   "phrase": "AFR1234 reduce speed two five zero knots",
+   "duree_entree_s": 10.498625,
+   "s2s_latence_s": 32.34648860999732,
+   "s2s_texte": " <$0.72$>  <|4.16|> Air France one two three four, reduce speed to five knots.",
+   "s2s_audio": "/dev/shm/vc/out/audio/wav/sapi_radio_c18_s2s.wav",
+   "s2s_audio_duree_s": 10.64,
+   "s2s_rtf": 3.0400835159771917
+  }
+ ]
+}

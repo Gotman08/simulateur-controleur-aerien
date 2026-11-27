@@ -1,0 +1,3593 @@
+{
+ "modele": "nvidia/NVIDIA-NemotronLabs-VoiceChat-11B",
+ "protocole": {
+  "conditions": [
+   "humain_micro",
+   "humain_radio",
+   "sapi_propre",
+   "sapi_radio"
+  ],
+  "n_cas": 25,
+  "corpus": "bench_corpus, cas EN in-grammar positifs (identiques a e2e_bench)",
+  "validation": "atc_llm.postprocess_orders (bornes S2 + graphe secteur)",
+  "juge_intelligibilite": "faster-whisper small, WER norm_radio (protocole tts_bench)",
+  "materiel": "NVIDIA GH200 120GB",
+  "torch": "2.10.0+cu128",
+  "chargement_modele_s": 166.3313245679892,
+  "invite_systeme_atc": "You are the pilot of an airliner flying in controlled airspace. You are listening to the air traffic control (ATC) radio frequency. Every user turn is a radio transmission from the air traffic controller. \n\nDo two things for every clearance you hear:\n1. Call the tool set_flight_order once for each instruction, with the exact values spoken by the controller. This is how the aircraft actually executes the clearance, so it is mandatory.\n2. Answer on the radio with the standard ICAO read back and nothing else: repeat the instruction, then say your callsign. Keep it short, no chatter, no greetings, no questions.\n\nConversion rules for the tool arguments:\n- spelled out numbers become integers: 'two seven zero' is 270, 'one two three four' is 1234.\n- 'flight level' N or 'FL' N means action ALT with value = N * 100 feet; an altitude given in feet is used as is.\n- heading is in degrees, action HDG; speed is in knots, action SPD; 'direct to' a waypoint is action ADDWPT with the waypoint name.\n- callsigns use the ICAO airline code plus the flight number: air france is AFR, speedbird is BAW, lufthansa is DLH, ryanair is RYR, easyjet is EZY, klm is KLM, american is AAL, united is UAL, csa is CSA. A spelled registration uses the phonetic alphabet, so 'csa one delta zulu' is CSA1DZ.\n- use only the four actions HDG, ALT, SPD and ADDWPT. Ignore purely informational items such as QNH, altimeter settings or frequency changes.\n\nRead back numbers digit by digit, as pilots do on the radio.",
+  "outils": [
+   {
+    "function": {
+     "name": "set_flight_order",
+     "description": "Apply an air traffic control clearance to the aircraft. Call it once for every instruction heard on the radio.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "callsign": {
+        "type": "string",
+        "description": "ICAO callsign of the aircraft, for example AFR1234, BAW57 or CSA1DZ"
+       },
+       "action": {
+        "type": "string",
+        "enum": [
+         "HDG",
+         "ALT",
+         "SPD",
+         "ADDWPT"
+        ],
+        "description": "HDG for a heading in degrees, ALT for an altitude in feet, SPD for a speed in knots, ADDWPT to proceed direct to a waypoint"
+       },
+       "value": {
+        "type": "integer",
+        "description": "Numeric value: degrees for HDG, feet for ALT (flight level multiplied by 100), knots for SPD, 0 for ADDWPT"
+       },
+       "waypoint": {
+        "type": "string",
+        "description": "Waypoint name, only for the ADDWPT action"
+       }
+      },
+      "required": [
+       "callsign",
+       "action",
+       "value"
+      ]
+     }
+    }
+   }
+  ]
+ },
+ "resume": {
+  "sapi_radio": {
+   "n": 25,
+   "collationnement_k": 9,
+   "collationnement_correct": 0.36,
+   "ic95_collationnement": [
+    0.20247880774458224,
+    0.5548150225183514
+   ],
+   "collationnement_manques": {
+    "indicatif": 14,
+    "action": 4,
+    "valeur": 7
+   },
+   "reponses_muettes": 0,
+   "k": 0,
+   "exactitude_ordres": 0.0,
+   "ic95": [
+    1.3877787807814457e-17,
+    0.13319225093904846
+   ],
+   "sans_appel_outil": 25,
+   "ordres_rejetes": 0,
+   "attribution_echecs": {
+    "aucun_appel_outil": 25
+   },
+   "latence_s2s": {
+    "n": 25,
+    "moyenne_s": 30.783618272596506,
+    "mediane_s": 30.909248450014275,
+    "p95_s": 32.176000868401026,
+    "min_s": 29.0236575769959,
+    "max_s": 32.24401321698679,
+    "ic95_moyenne_s": [
+     30.405810184217817,
+     31.154219810892275
+    ]
+   },
+   "latence_fc": {
+    "n": 0
+   },
+   "wer_collationnement": 0.8473333333333334,
+   "ic95_wer_collationnement": [
+    0.6537119047619048,
+    1.0341023809523808
+   ]
+  },
+  "sapi_propre": {
+   "n": 25,
+   "collationnement_k": 9,
+   "collationnement_correct": 0.36,
+   "ic95_collationnement": [
+    0.20247880774458224,
+    0.5548150225183514
+   ],
+   "collationnement_manques": {
+    "indicatif": 12,
+    "action": 2,
+    "valeur": 6
+   },
+   "reponses_muettes": 0,
+   "k": 0,
+   "exactitude_ordres": 0.0,
+   "ic95": [
+    1.3877787807814457e-17,
+    0.13319225093904846
+   ],
+   "sans_appel_outil": 25,
+   "ordres_rejetes": 0,
+   "attribution_echecs": {
+    "aucun_appel_outil": 25
+   },
+   "latence_s2s": {
+    "n": 25,
+    "moyenne_s": 30.727060103360564,
+    "mediane_s": 30.754168362997007,
+    "p95_s": 32.111237690597775,
+    "min_s": 28.652373556018574,
+    "max_s": 32.15544029400917,
+    "ic95_moyenne_s": [
+     30.341105634482606,
+     31.104275223037575
+    ]
+   },
+   "latence_fc": {
+    "n": 0
+   },
+   "wer_collationnement": 1.025047619047619,
+   "ic95_wer_collationnement": [
+    0.7378095238095238,
+    1.371052380952381
+   ]
+  },
+  "humain_micro": {
+   "n": 25,
+   "collationnement_k": 12,
+   "collationnement_correct": 0.48,
+   "ic95_collationnement": [
+    0.30031285954112974,
+    0.6650148304964322
+   ],
+   "collationnement_manques": {
+    "indicatif": 10,
+    "action": 2,
+    "valeur": 7
+   },
+   "reponses_muettes": 0,
+   "k": 0,
+   "exactitude_ordres": 0.0,
+   "ic95": [
+    1.3877787807814457e-17,
+    0.13319225093904846
+   ],
+   "sans_appel_outil": 25,
+   "ordres_rejetes": 0,
+   "attribution_echecs": {
+    "aucun_appel_outil": 25
+   },
+   "latence_s2s": {
+    "n": 25,
+    "moyenne_s": 37.58302063767915,
+    "mediane_s": 36.97043130599195,
+    "p95_s": 44.02799964078585,
+    "min_s": 32.15275953200762,
+    "max_s": 45.525209059007466,
+    "ic95_moyenne_s": [
+     36.33639846531887,
+     38.93347447165981
+    ]
+   },
+   "latence_fc": {
+    "n": 0
+   },
+   "wer_collationnement": 0.9718730158730159,
+   "ic95_wer_collationnement": [
+    0.7422539682539682,
+    1.2388277777777776
+   ]
+  },
+  "humain_radio": {
+   "n": 25,
+   "collationnement_k": 5,
+   "collationnement_correct": 0.2,
+   "ic95_collationnement": [
+    0.08860584686802572,
+    0.3913095036954033
+   ],
+   "collationnement_manques": {
+    "indicatif": 17,
+    "action": 6,
+    "valeur": 10
+   },
+   "reponses_muettes": 0,
+   "k": 0,
+   "exactitude_ordres": 0.0,
+   "ic95": [
+    1.3877787807814457e-17,
+    0.13319225093904846
+   ],
+   "sans_appel_outil": 25,
+   "ordres_rejetes": 0,
+   "attribution_echecs": {
+    "aucun_appel_outil": 25
+   },
+   "latence_s2s": {
+    "n": 25,
+    "moyenne_s": 37.562078009360704,
+    "mediane_s": 37.322044920001645,
+    "p95_s": 44.095777859818185,
+    "min_s": 32.21244714097702,
+    "max_s": 45.34895234601572,
+    "ic95_moyenne_s": [
+     36.31119280034577,
+     38.91197060302319
+    ]
+   },
+   "latence_fc": {
+    "n": 0
+   },
+   "wer_collationnement": 1.9213015873015875,
+   "ic95_wer_collationnement": [
+    1.2866896825396825,
+    2.7089563492063493
+   ]
+  }
+ },
+ "comparaisons_appariees": {
+  "sapi_radio_vs_cascade_romeo": {
+   "n01": 0,
+   "n10": 10,
+   "p_value": 0.001953125,
+   "n": 25,
+   "voicechat_k": 9,
+   "reference_k": 19,
+   "p_holm": 0.005859375
+  },
+  "sapi_radio_vs_cascade_locale": {
+   "n01": 0,
+   "n10": 10,
+   "p_value": 0.001953125,
+   "n": 25,
+   "voicechat_k": 9,
+   "reference_k": 19,
+   "p_holm": 0.005859375
+  },
+  "humain_micro_vs_cascade": {
+   "n01": 0,
+   "n10": 8,
+   "p_value": 0.0078125,
+   "n": 25,
+   "voicechat_k": 12,
+   "reference_k": 20,
+   "p_holm": 0.0078125
+  },
+  "humain_radio_vs_cascade": {
+   "n01": 0,
+   "n10": 13,
+   "p_value": 0.000244140625,
+   "n": 25,
+   "voicechat_k": 5,
+   "reference_k": 18,
+   "p_holm": 0.0009765625
+  }
+ },
+ "rows": {
+  "sapi_radio": [
+   {
+    "id": "sapi_radio_c00",
+    "cas": 0,
+    "phrase": "air france one two three four turn left heading two seven zero",
+    "attendu": [
+     "HDG AFR1234 270"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG AFR1234 270",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.48|> Turn left heading two hundred and seventy degrees, Air France one two three four.",
+    "collationnement_reference": "heading two seven zero, air france one two three four",
+    "wer_collationnement": 0.6,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.797738385008415,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.6889375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c01",
+    "cas": 1,
+    "phrase": "speedbird five seven turn right heading 090",
+    "attendu": [
+     "HDG BAW57 90"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG BAW57 90",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.92|> Turn right heading zero nine zero, Speedbird five seven.",
+    "collationnement_reference": "heading zero niner zero, speedbird five seven",
+    "wer_collationnement": 0.5,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 30.518756592995487,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.0839375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c02",
+    "cas": 2,
+    "phrase": "AFR1234 fly heading three six zero",
+    "attendu": [
+     "HDG AFR1234 360"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG AFR1234 360",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.84|> Air France one two three four fly heading three six zero, Air France one two three four.",
+    "collationnement_reference": "heading three six zero, air france one two three four",
+    "wer_collationnement": 0.8,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 30.483999494987074,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.0738125,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c03",
+    "cas": 3,
+    "phrase": "EZY21 fly heading 100",
+    "attendu": [
+     "HDG EZY21 100"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG EZY21 100",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.12|> Y two hundred one fly heading one hundred, air France Y two hundred one.",
+    "collationnement_reference": "heading one zero zero, easyjet two one",
+    "wer_collationnement": 1.75,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 29.0236575769959,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 9.3290625,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c04",
+    "cas": 4,
+    "phrase": "lufthansa eight eight heading one eight zero",
+    "attendu": [
+     "HDG DLH88 180"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG DLH88 180",
+      "indicatif": false,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.12|> Lutana eight heading one hundred and eighty zero, Lutana eight.",
+    "collationnement_reference": "heading one eight zero, lufthansa eight eight",
+    "wer_collationnement": 1.25,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 29.148766528000124,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 9.2640625,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c05",
+    "cas": 5,
+    "phrase": "ryanair niner turn right heading two two five",
+    "attendu": [
+     "HDG RYR9 225"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG RYR9 225",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.52|> Turn right heading two hundred and twenty five, Ryanair nine hundred and twenty five.",
+    "collationnement_reference": "heading two two five, ryanair niner",
+    "wer_collationnement": 0.75,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 29.867856971977744,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 9.7039375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c06",
+    "cas": 6,
+    "phrase": "AFR1234 hdg 045",
+    "attendu": [
+     "HDG AFR1234 45"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG AFR1234 45",
+      "indicatif": false,
+      "action": false,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>",
+    "collationnement_reference": "heading zero four five, air france one two three four",
+    "wer_collationnement": 1.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 30.91245910699945,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.243875,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c07",
+    "cas": 7,
+    "phrase": "BAW57 turn left heading 310",
+    "attendu": [
+     "HDG BAW57 310"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG BAW57 310",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.4|> Beware five seven turn left heading three hundred and ten, air France five seven.",
+    "collationnement_reference": "heading three one zero, speedbird five seven",
+    "wer_collationnement": 1.5,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.63290946901543,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.52375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c08",
+    "cas": 8,
+    "phrase": "air france one two three four descend flight level one zero zero",
+    "attendu": [
+     "ALT AFR1234 10000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 10000",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.56|> Descent flight level one zero zero, air France one two three four.",
+    "collationnement_reference": "climb flight level one zero zero, air france one two three four",
+    "wer_collationnement": 0.14285714285714285,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 32.242731726000784,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.8189375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c09",
+    "cas": 9,
+    "phrase": "csa one delta zulu climb flight level two four zero",
+    "attendu": [
+     "ALT CSA1DZ 24000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT CSA1DZ 24000",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.48|> Climb flight level two four zero, Delta Zulu.",
+    "collationnement_reference": "climb flight level two four zero, charlie sierra alfa one delta zulu",
+    "wer_collationnement": 0.4,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.909077438001987,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.6789375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c10",
+    "cas": 10,
+    "phrase": "AFR1234 climb FL320",
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 32000",
+      "indicatif": true,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.84|> Climb flight level three hundred and twenty zero, Air France one two three four.",
+    "collationnement_reference": "climb flight level three two zero, air france one two three four",
+    "wer_collationnement": 0.14285714285714285,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 30.909248450014275,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.068875,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c11",
+    "cas": 11,
+    "phrase": "BAW57 descend to flight level 80",
+    "attendu": [
+     "ALT BAW57 8000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT BAW57 8000",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.6|> Descend to flight level eighty, C-A-W-U five thousand seven hundred.",
+    "collationnement_reference": "climb flight level zero eight zero, speedbird five seven",
+    "wer_collationnement": 1.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 30.088947206008015,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 9.904,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c12",
+    "cas": 12,
+    "phrase": "EZY21 climb 5 thousand feet",
+    "attendu": [
+     "ALT EZY21 5000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT EZY21 5000",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.36|> Climb five thousand feet, Y two hundred one.",
+    "collationnement_reference": "climb flight level zero five zero, easyjet two one",
+    "wer_collationnement": 0.8333333333333334,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 29.494241025007796,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 9.554125,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c13",
+    "cas": 13,
+    "phrase": "AFR1234 descend altitude 6000 feet",
+    "attendu": [
+     "ALT AFR1234 6000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 6000",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.32|> Descend altitude six thousand feet, Air France one two three four.",
+    "collationnement_reference": "climb flight level zero six zero, air france one two three four",
+    "wer_collationnement": 0.5714285714285714,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.71927650598809,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.57875,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c14",
+    "cas": 14,
+    "phrase": "air france one two three four climb to flight level three two zero",
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 32000",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.56|> Climb to flight level three two zero, air France one two three four.",
+    "collationnement_reference": "climb flight level three two zero, air france one two three four",
+    "wer_collationnement": 0.14285714285714285,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 32.24401321698679,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.8389375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c15",
+    "cas": 15,
+    "phrase": "BAW57 maintain flight level 100",
+    "attendu": [
+     "ALT BAW57 10000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT BAW57 10000",
+      "indicatif": false,
+      "action": false,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.16|> I hear you, BAAW five thousand seven hundred and seven. I am holding.",
+    "collationnement_reference": "climb flight level one zero zero, speedbird five seven",
+    "wer_collationnement": 1.3333333333333333,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.05176531500183,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.283875,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c16",
+    "cas": 16,
+    "phrase": "DLH88 descend 4000 feet",
+    "attendu": [
+     "ALT DLH88 4000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT DLH88 4000",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.28|>  descend four thousand feet, DLH eight.",
+    "collationnement_reference": "climb flight level zero four zero, lufthansa eight eight",
+    "wer_collationnement": 1.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 29.6271224830125,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 9.4590625,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c17",
+    "cas": 17,
+    "phrase": "speedbird five seven climb flight level one five zero",
+    "attendu": [
+     "ALT BAW57 15000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT BAW57 15000",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.24|> Climb flight level one five zero, seedbird five seven.",
+    "collationnement_reference": "climb flight level one five zero, speedbird five seven",
+    "wer_collationnement": 0.16666666666666666,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.294505552010378,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.419,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c18",
+    "cas": 18,
+    "phrase": "AFR1234 reduce speed two five zero knots",
+    "attendu": [
+     "SPD AFR1234 250"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD AFR1234 250",
+      "indicatif": true,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.16|> Air France one two three four, reduce speed to five knots.",
+    "collationnement_reference": "speed two five zero knots, air france one two three four",
+    "wer_collationnement": 1.3333333333333333,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.52303250398836,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.498625,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c19",
+    "cas": 19,
+    "phrase": "AFR1234 increase speed 300",
+    "attendu": [
+     "SPD AFR1234 300"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD AFR1234 300",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.68|> Air France one two three four, increase speed three hundred.",
+    "collationnement_reference": "speed three zero zero knots, air france one two three four",
+    "wer_collationnement": 1.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 30.25366249997751,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 9.90375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c20",
+    "cas": 20,
+    "phrase": "RYR9 increase speed to 280 knots",
+    "attendu": [
+     "SPD RYR9 280"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD RYR9 280",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.0|> I hear you, RYR nine, increase speed to two hundred and eighty knots.",
+    "collationnement_reference": "speed two eight zero knots, ryanair niner",
+    "wer_collationnement": 1.8,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.073610720981378,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.27875,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c21",
+    "cas": 21,
+    "phrase": "easyjet two one reduce speed two two zero",
+    "attendu": [
+     "SPD EZY21 220"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD EZY21 220",
+      "indicatif": false,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.36|> Reduce speed to two zero, jet two one.",
+    "collationnement_reference": "speed two two zero knots, easyjet two one",
+    "wer_collationnement": 0.8,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 29.531218505988363,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 9.5939375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c22",
+    "cas": 22,
+    "phrase": "BAW57 speed 250",
+    "attendu": [
+     "SPD BAW57 250"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD BAW57 250",
+      "indicatif": false,
+      "action": false,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.84|> I hear five thousand seven hundred and fifty. Air France five thousand seven hundred and fifty.",
+    "collationnement_reference": "speed two five zero knots, speedbird five seven",
+    "wer_collationnement": 1.2,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 30.690400726976804,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.00875,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c23",
+    "cas": 23,
+    "phrase": "csa one delta zulu reduce 230",
+    "attendu": [
+     "SPD CSA1DZ 230"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD CSA1DZ 230",
+      "indicatif": false,
+      "action": false,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.0|> Delta Zulu reduced two hundred and thirty, air France one two three four.",
+    "collationnement_reference": "speed two three zero knots, charlie sierra alfa one delta zulu",
+    "wer_collationnement": 1.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 30.812882564991014,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.2388125,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c24",
+    "cas": 24,
+    "phrase": "AFR1234 maintain 250 knots",
+    "attendu": [
+     "SPD AFR1234 250"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD AFR1234 250",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.32|> Maintain two hundred and fifty knots, Air France one two three four.",
+    "collationnement_reference": "speed two five zero knots, air france one two three four",
+    "wer_collationnement": 0.16666666666666666,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.738576247997116,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.608625,
+    "erreur": null
+   }
+  ],
+  "sapi_propre": [
+   {
+    "id": "sapi_propre_c00",
+    "cas": 0,
+    "phrase": "air france one two three four turn left heading two seven zero",
+    "attendu": [
+     "HDG AFR1234 270"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG AFR1234 270",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.48|> Turn left heading two hundred and seventy degrees, Air France one two three four.",
+    "collationnement_reference": "heading two seven zero, air france one two three four",
+    "wer_collationnement": 0.6,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.939256604993716,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.6889375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c01",
+    "cas": 1,
+    "phrase": "speedbird five seven turn right heading 090",
+    "attendu": [
+     "HDG BAW57 90"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG BAW57 90",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.76|> Turn right heading zero nine zero, Speedbird five seven.",
+    "collationnement_reference": "heading zero niner zero, speedbird five seven",
+    "wer_collationnement": 0.5,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 30.64724670498981,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.0839375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c02",
+    "cas": 2,
+    "phrase": "AFR1234 fly heading three six zero",
+    "attendu": [
+     "HDG AFR1234 360"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG AFR1234 360",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.84|> Air France one two three four fly heading three six zero, air France one two three four.",
+    "collationnement_reference": "heading three six zero, air france one two three four",
+    "wer_collationnement": 0.8,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 30.594256619981024,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.0738125,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c03",
+    "cas": 3,
+    "phrase": "EZY21 fly heading 100",
+    "attendu": [
+     "HDG EZY21 100"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG EZY21 100",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.04|> Fly heading one hundred, Y two hundred one.",
+    "collationnement_reference": "heading one zero zero, easyjet two one",
+    "wer_collationnement": 0.75,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 29.343232770013856,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 9.3290625,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c04",
+    "cas": 4,
+    "phrase": "lufthansa eight eight heading one eight zero",
+    "attendu": [
+     "HDG DLH88 180"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG DLH88 180",
+      "indicatif": true,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.04|> Lufthansa eight hundred and eighty heading one hundred and eighty zero, Lufthansa eight hundred and eighty.",
+    "collationnement_reference": "heading one eight zero, lufthansa eight eight",
+    "wer_collationnement": 1.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 28.652373556018574,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 9.2640625,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c05",
+    "cas": 5,
+    "phrase": "ryanair niner turn right heading two two five",
+    "attendu": [
+     "HDG RYR9 225"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG RYR9 225",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.52|> Turn right heading two hundred and twenty five, Ryanair nine hundred and twenty five.",
+    "collationnement_reference": "heading two two five, ryanair niner",
+    "wer_collationnement": 0.75,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 29.74531916101114,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 9.7039375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c06",
+    "cas": 6,
+    "phrase": "AFR1234 hdg 045",
+    "attendu": [
+     "HDG AFR1234 45"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG AFR1234 45",
+      "indicatif": false,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.0|> I hear you, France one two three four, turn left heading two hundred and seventy degrees. France one two three four, turn left heading two hundred and seventy degrees.",
+    "collationnement_reference": "heading zero four five, air france one two three four",
+    "wer_collationnement": 2.8,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 30.754168362997007,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.243875,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c07",
+    "cas": 7,
+    "phrase": "BAW57 turn left heading 310",
+    "attendu": [
+     "HDG BAW57 310"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG BAW57 310",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.24|> Beware five seven turn left heading three hundred and ten, BAAW five seven.",
+    "collationnement_reference": "heading three one zero, speedbird five seven",
+    "wer_collationnement": 1.25,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.48520371800987,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.52375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c08",
+    "cas": 8,
+    "phrase": "air france one two three four descend flight level one zero zero",
+    "attendu": [
+     "ALT AFR1234 10000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 10000",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.48|> I hear you, France one two three four, descend flight level one zero zero.",
+    "collationnement_reference": "climb flight level one zero zero, air france one two three four",
+    "wer_collationnement": 1.2857142857142858,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 32.15423296199879,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.8189375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c09",
+    "cas": 9,
+    "phrase": "csa one delta zulu climb flight level two four zero",
+    "attendu": [
+     "ALT CSA1DZ 24000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT CSA1DZ 24000",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.48|> Climb flight level two four zero, air France one two three four.",
+    "collationnement_reference": "climb flight level two four zero, charlie sierra alfa one delta zulu",
+    "wer_collationnement": 0.6,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.838990096992347,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.6789375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c10",
+    "cas": 10,
+    "phrase": "AFR1234 climb FL320",
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 32000",
+      "indicatif": true,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.76|> Climb flight level three hundred and twenty zero, Air France one two three four.",
+    "collationnement_reference": "climb flight level three two zero, air france one two three four",
+    "wer_collationnement": 0.14285714285714285,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 30.68989574399893,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.068875,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c11",
+    "cas": 11,
+    "phrase": "BAW57 descend to flight level 80",
+    "attendu": [
+     "ALT BAW57 8000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT BAW57 8000",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.52|> Descend to flight level eighty, BAAW five thousand seven hundred and seven.",
+    "collationnement_reference": "climb flight level zero eight zero, speedbird five seven",
+    "wer_collationnement": 0.8333333333333334,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 30.041161820001435,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 9.904,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c12",
+    "cas": 12,
+    "phrase": "EZY21 climb 5 thousand feet",
+    "attendu": [
+     "ALT EZY21 5000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT EZY21 5000",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.28|> Climb five thousand feet, easy y two one.",
+    "collationnement_reference": "climb flight level zero five zero, easyjet two one",
+    "wer_collationnement": 0.6666666666666666,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 29.385030106001068,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 9.554125,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c13",
+    "cas": 13,
+    "phrase": "AFR1234 descend altitude 6000 feet",
+    "attendu": [
+     "ALT AFR1234 6000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 6000",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.32|>  descend altitude six thousand feet, Air France one two three four.",
+    "collationnement_reference": "climb flight level zero six zero, air france one two three four",
+    "wer_collationnement": 0.5714285714285714,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.693135619017994,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.57875,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c14",
+    "cas": 14,
+    "phrase": "air france one two three four climb to flight level three two zero",
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 32000",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.56|> Climb to flight level three two zero, air France one two three four.",
+    "collationnement_reference": "climb flight level three two zero, air france one two three four",
+    "wer_collationnement": 0.14285714285714285,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 32.15544029400917,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.8389375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c15",
+    "cas": 15,
+    "phrase": "BAW57 maintain flight level 100",
+    "attendu": [
+     "ALT BAW57 10000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT BAW57 10000",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.0|> I hear you, BAAW five thousand seven hundred and seven. I will maintain flight level one hundred. BAAW five thousand seven hundred and seven, confirm. BAAW five thousand seven hundred and seven, you are clear. BAAW five thousand seven hundred and seven, I will maintain flight level one hundred.",
+    "collationnement_reference": "climb flight level one zero zero, speedbird five seven",
+    "wer_collationnement": 4.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.024358221009606,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.283875,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c16",
+    "cas": 16,
+    "phrase": "DLH88 descend 4000 feet",
+    "attendu": [
+     "ALT DLH88 4000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT DLH88 4000",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.12|>  descend four thousand feet, DLH eight.",
+    "collationnement_reference": "climb flight level zero four zero, lufthansa eight eight",
+    "wer_collationnement": 1.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 29.5050959129876,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 9.4590625,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c17",
+    "cas": 17,
+    "phrase": "speedbird five seven climb flight level one five zero",
+    "attendu": [
+     "ALT BAW57 15000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT BAW57 15000",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.24|> Climb flight level one five zero, speedbird five seven.",
+    "collationnement_reference": "climb flight level one five zero, speedbird five seven",
+    "wer_collationnement": 0.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.36301091898349,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.419,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c18",
+    "cas": 18,
+    "phrase": "AFR1234 reduce speed two five zero knots",
+    "attendu": [
+     "SPD AFR1234 250"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD AFR1234 250",
+      "indicatif": true,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.24|> Air France one two three four, reduce speed to five zero knots.",
+    "collationnement_reference": "speed two five zero knots, air france one two three four",
+    "wer_collationnement": 1.3333333333333333,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.460343156009912,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.498625,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c19",
+    "cas": 19,
+    "phrase": "AFR1234 increase speed 300",
+    "attendu": [
+     "SPD AFR1234 300"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD AFR1234 300",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.6|> Air France one two three four, increase speed three hundred.",
+    "collationnement_reference": "speed three zero zero knots, air france one two three four",
+    "wer_collationnement": 1.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 30.15374609598075,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 9.90375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c20",
+    "cas": 20,
+    "phrase": "RYR9 increase speed to 280 knots",
+    "attendu": [
+     "SPD RYR9 280"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD RYR9 280",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.0|> I hear you, RYR nine, increase speed to two hundred and eighty knots.",
+    "collationnement_reference": "speed two eight zero knots, ryanair niner",
+    "wer_collationnement": 1.8,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.007567429012852,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.27875,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c21",
+    "cas": 21,
+    "phrase": "easyjet two one reduce speed two two zero",
+    "attendu": [
+     "SPD EZY21 220"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD EZY21 220",
+      "indicatif": true,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.36|> Reduce speed to two zero, easyjet two one.",
+    "collationnement_reference": "speed two two zero knots, easyjet two one",
+    "wer_collationnement": 0.6,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 29.41059704698273,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 9.5939375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c22",
+    "cas": 22,
+    "phrase": "BAW57 speed 250",
+    "attendu": [
+     "SPD BAW57 250"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD BAW57 250",
+      "indicatif": false,
+      "action": false,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.76|> I hear five thousand seven hundred and seventy two hundred and fifty. Air France five thousand seven hundred and seventy two hundred and fifty.",
+    "collationnement_reference": "speed two five zero knots, speedbird five seven",
+    "wer_collationnement": 1.2,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 30.578900282998802,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.00875,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c23",
+    "cas": 23,
+    "phrase": "csa one delta zulu reduce 230",
+    "attendu": [
+     "SPD CSA1DZ 230"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD CSA1DZ 230",
+      "indicatif": false,
+      "action": false,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.84|> Delta Zulu reduced two hundred and thirty, air France one two three four.",
+    "collationnement_reference": "speed two three zero knots, charlie sierra alfa one delta zulu",
+    "wer_collationnement": 1.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 30.855461060011294,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.2388125,
+    "erreur": null
+   },
+   {
+    "id": "sapi_propre_c24",
+    "cas": 24,
+    "phrase": "AFR1234 maintain 250 knots",
+    "attendu": [
+     "SPD AFR1234 250"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD AFR1234 250",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.4|> Air France one two three four, maintain two hundred and fifty knots.",
+    "collationnement_reference": "speed two five zero knots, air france one two three four",
+    "wer_collationnement": 1.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 31.698478320002323,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.608625,
+    "erreur": null
+   }
+  ],
+  "humain_micro": [
+   {
+    "id": "humain_micro_c00",
+    "cas": 0,
+    "phrase": "air france one two three four turn left heading two seven zero",
+    "attendu": [
+     "HDG AFR1234 270"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG AFR1234 270",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|10.64|> Turn left heading two seven zero, Air France one two three four.",
+    "collationnement_reference": "heading two seven zero, air france one two three four",
+    "wer_collationnement": 0.4,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 45.525209059007466,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 16.234,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c01",
+    "cas": 1,
+    "phrase": "speedbird five seven turn right heading 090",
+    "attendu": [
+     "HDG BAW57 90"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG BAW57 90",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|8.08|> Turn right heading zero nine zero, speedbird five seven.",
+    "collationnement_reference": "heading zero niner zero, speedbird five seven",
+    "wer_collationnement": 0.5,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 40.49505137998494,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 14.271375,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c02",
+    "cas": 2,
+    "phrase": "AFR1234 fly heading three six zero",
+    "attendu": [
+     "HDG AFR1234 360"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG AFR1234 360",
+      "indicatif": true,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|8.48|> Fly heading three thousand six hundred-zero, Air France one two three four.",
+    "collationnement_reference": "heading three six zero, air france one two three four",
+    "wer_collationnement": 0.4,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 40.2178254009923,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 14.1006875,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c03",
+    "cas": 3,
+    "phrase": "EZY21 fly heading 100",
+    "attendu": [
+     "HDG EZY21 100"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG EZY21 100",
+      "indicatif": false,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|6.96|> I hear you, easy jet two one fly heading one zero zero-zero zero.",
+    "collationnement_reference": "heading one zero zero, easyjet two one",
+    "wer_collationnement": 2.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 36.97043130599195,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 12.991375,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c04",
+    "cas": 4,
+    "phrase": "lufthansa eight eight heading one eight zero",
+    "attendu": [
+     "HDG DLH88 180"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG DLH88 180",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|6.24|> Lufthansa eight hundred and eighty eight, turn right heading one hundred and eighty, Lufthansa eight hundred and eighty eight.",
+    "collationnement_reference": "heading one eight zero, lufthansa eight eight",
+    "wer_collationnement": 1.25,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 34.42566820399952,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 11.882,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c05",
+    "cas": 5,
+    "phrase": "ryanair niner turn right heading two two five",
+    "attendu": [
+     "HDG RYR9 225"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG RYR9 225",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|7.84|> Turn right heading two hundred and twenty five, air France one two three four.",
+    "collationnement_reference": "heading two two five, ryanair niner",
+    "wer_collationnement": 1.25,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 38.2650146530068,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 13.503375,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c06",
+    "cas": 6,
+    "phrase": "AFR1234 hdg 045",
+    "attendu": [
+     "HDG AFR1234 45"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG AFR1234 45",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|8.16|> I hear you, friend one two three four, turn right heading zero four five.",
+    "collationnement_reference": "heading zero four five, air france one two three four",
+    "wer_collationnement": 1.6,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 38.97632747498574,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 13.759375,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c07",
+    "cas": 7,
+    "phrase": "BAW57 turn left heading 310",
+    "attendu": [
+     "HDG BAW57 310"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG BAW57 310",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|8.0|> Turn left heading three one zero, Speedbird five seven.",
+    "collationnement_reference": "heading three one zero, speedbird five seven",
+    "wer_collationnement": 0.5,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 38.78289215397672,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 13.5886875,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c08",
+    "cas": 8,
+    "phrase": "air france one two three four descend flight level one zero zero",
+    "attendu": [
+     "ALT AFR1234 10000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 10000",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|9.6|> I hear you, France one two three four, descent flight level one zero zero.",
+    "collationnement_reference": "climb flight level one zero zero, air france one two three four",
+    "wer_collationnement": 1.2857142857142858,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 42.95092194000608,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 15.295375,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c09",
+    "cas": 9,
+    "phrase": "csa one delta zulu climb flight level two four zero",
+    "attendu": [
+     "ALT CSA1DZ 24000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT CSA1DZ 24000",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|10.16|> Climb flight level two four zero, air France one two three four.",
+    "collationnement_reference": "climb flight level two four zero, charlie sierra alfa one delta zulu",
+    "wer_collationnement": 0.6,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 44.2972690659808,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 15.807375,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c10",
+    "cas": 10,
+    "phrase": "AFR1234 climb FL320",
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 32000",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.4|> Climb, Air Franceire <$4.96$>  <|8.0|> Flight level three two zero, Air France one two three four.",
+    "collationnement_reference": "climb flight level three two zero, air france one two three four",
+    "wer_collationnement": 0.2857142857142857,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 38.49001313498593,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 13.5886875,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c11",
+    "cas": 11,
+    "phrase": "BAW57 descend to flight level 80",
+    "attendu": [
+     "ALT BAW57 8000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT BAW57 8000",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|6.64|> Descend to flight level eight zero, speedbird five seven.",
+    "collationnement_reference": "climb flight level zero eight zero, speedbird five seven",
+    "wer_collationnement": 0.5,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 35.75173423299566,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 12.5646875,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c12",
+    "cas": 12,
+    "phrase": "EZY21 climb 5 thousand feet",
+    "attendu": [
+     "ALT EZY21 5000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT EZY21 5000",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|5.2|> Climb five thousand feet, easyjet two one.",
+    "collationnement_reference": "climb flight level zero five zero, easyjet two one",
+    "wer_collationnement": 0.5,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 33.737225312012015,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 11.37,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c13",
+    "cas": 13,
+    "phrase": "AFR1234 descend altitude 6000 feet",
+    "attendu": [
+     "ALT AFR1234 6000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 6000",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|7.36|> Descend altitude six thousand feet, air France one two three four.",
+    "collationnement_reference": "climb flight level zero six zero, air france one two three four",
+    "wer_collationnement": 0.5714285714285714,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 38.440944639005465,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 13.5886875,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c14",
+    "cas": 14,
+    "phrase": "air france one two three four climb to flight level three two zero",
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 32000",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|6.96|> Climb to flight level three two zero, air France one two three four.",
+    "collationnement_reference": "climb flight level three two zero, air france one two three four",
+    "wer_collationnement": 0.14285714285714285,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 37.444776782009285,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 13.162,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c15",
+    "cas": 15,
+    "phrase": "BAW57 maintain flight level 100",
+    "attendu": [
+     "ALT BAW57 10000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT BAW57 10000",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|6.48|> Speedbird five seven, maintain flight level one-zero-zero.",
+    "collationnement_reference": "climb flight level one zero zero, speedbird five seven",
+    "wer_collationnement": 0.8333333333333334,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 36.18549864398665,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 12.65,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c16",
+    "cas": 16,
+    "phrase": "DLH88 descend 4000 feet",
+    "attendu": [
+     "ALT DLH88 4000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT DLH88 4000",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|5.44|> Descent four thousand feet, Lufthansa eight hundred and eighty eight.",
+    "collationnement_reference": "climb flight level zero four zero, lufthansa eight eight",
+    "wer_collationnement": 0.8333333333333334,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 32.746084345009876,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 11.114,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c17",
+    "cas": 17,
+    "phrase": "speedbird five seven climb flight level one five zero",
+    "attendu": [
+     "ALT BAW57 15000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT BAW57 15000",
+      "indicatif": false,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|7.04|> Climb five thousand and seventy feet, speed five. seven. Air France one two three four.",
+    "collationnement_reference": "climb flight level one five zero, speedbird five seven",
+    "wer_collationnement": 1.1666666666666667,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 38.98493692500051,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 13.674,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c18",
+    "cas": 18,
+    "phrase": "AFR1234 reduce speed two five zero knots",
+    "attendu": [
+     "SPD AFR1234 250"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD AFR1234 250",
+      "indicatif": true,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|6.96|> Air France one two three four, reduce speed to five zero knots.",
+    "collationnement_reference": "speed two five zero knots, air france one two three four",
+    "wer_collationnement": 1.3333333333333333,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 36.94411166899954,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 12.991375,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c19",
+    "cas": 19,
+    "phrase": "AFR1234 increase speed 300",
+    "attendu": [
+     "SPD AFR1234 300"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD AFR1234 300",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|6.8|> I hear you, France one two three four, increase speed three zero zero.",
+    "collationnement_reference": "speed three zero zero knots, air france one two three four",
+    "wer_collationnement": 1.1666666666666667,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 35.465103852009634,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 12.394,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c20",
+    "cas": 20,
+    "phrase": "RYR9 increase speed to 280 knots",
+    "attendu": [
+     "SPD RYR9 280"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD RYR9 280",
+      "indicatif": false,
+      "action": false,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.4|> I hear you, increase hundred. I hear you, nine <$5.44$>  <|7.28|> I hear you, eight. I hear you, nine.",
+    "collationnement_reference": "speed two eight zero knots, ryanair niner",
+    "wer_collationnement": 3.2,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 36.802999138017185,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 12.906,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c21",
+    "cas": 21,
+    "phrase": "easyjet two one reduce speed two two zero",
+    "attendu": [
+     "SPD EZY21 220"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD EZY21 220",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.88|> Reduce speed to two hundred and twenty knots, easyjet two one reduced speed to two hundred and twenty knots.",
+    "collationnement_reference": "speed two two zero knots, easyjet two one",
+    "wer_collationnement": 1.4,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 32.15275953200762,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.858,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c22",
+    "cas": 22,
+    "phrase": "BAW57 speed 250",
+    "attendu": [
+     "SPD BAW57 250"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD BAW57 250",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|5.28|> Speed bird five seven speed two five zero.",
+    "collationnement_reference": "speed two five zero knots, speedbird five seven",
+    "wer_collationnement": 0.8,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 32.33555514900945,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.943375,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c23",
+    "cas": 23,
+    "phrase": "csa one delta zulu reduce 230",
+    "attendu": [
+     "SPD CSA1DZ 230"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD CSA1DZ 230",
+      "indicatif": false,
+      "action": false,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|7.2|> Reduce to two thousand three hundred and zero, Delta Zulu.",
+    "collationnement_reference": "speed two three zero knots, charlie sierra alfa one delta zulu",
+    "wer_collationnement": 0.7777777777777778,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 36.883537087007426,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 12.8206875,
+    "erreur": null
+   },
+   {
+    "id": "humain_micro_c24",
+    "cas": 24,
+    "phrase": "AFR1234 maintain 250 knots",
+    "attendu": [
+     "SPD AFR1234 250"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD AFR1234 250",
+      "indicatif": true,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|6.96|> Air France one two three four, maintain two five zero zero knots.",
+    "collationnement_reference": "speed two five zero knots, air france one two three four",
+    "wer_collationnement": 1.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 36.3036248619901,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 12.735375,
+    "erreur": null
+   }
+  ],
+  "humain_radio": [
+   {
+    "id": "humain_radio_c00",
+    "cas": 0,
+    "phrase": "air france one two three four turn left heading two seven zero",
+    "attendu": [
+     "HDG AFR1234 270"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG AFR1234 270",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|10.64|> Turn left heading two seven zero, Air France one two three four.",
+    "collationnement_reference": "heading two seven zero, air france one two three four",
+    "wer_collationnement": 0.4,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 45.34895234601572,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 16.234,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c01",
+    "cas": 1,
+    "phrase": "speedbird five seven turn right heading 090",
+    "attendu": [
+     "HDG BAW57 90"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG BAW57 90",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|8.64|> I hear you, speedbird five seven turn right heading zero nine zero. Speedbird five seven turn right heading zero nine zero.",
+    "collationnement_reference": "heading zero niner zero, speedbird five seven",
+    "wer_collationnement": 2.75,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 40.34213277400704,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 14.271375,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c02",
+    "cas": 2,
+    "phrase": "AFR1234 fly heading three six zero",
+    "attendu": [
+     "HDG AFR1234 360"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG AFR1234 360",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|8.24|> I hear you, France one two three four fly heading three six zero. France one two three four, turn left heading two seven zero.",
+    "collationnement_reference": "heading three six zero, air france one two three four",
+    "wer_collationnement": 2.2,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 39.85019183499389,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 14.1006875,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c03",
+    "cas": 3,
+    "phrase": "EZY21 fly heading 100",
+    "attendu": [
+     "HDG EZY21 100"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG EZY21 100",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|6.96|> I hear you, easy jets, choose eight, slide heading one-zero-zero, easy jets.",
+    "collationnement_reference": "heading one zero zero, easyjet two one",
+    "wer_collationnement": 2.5,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 37.1992748179764,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 12.991375,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c04",
+    "cas": 4,
+    "phrase": "lufthansa eight eight heading one eight zero",
+    "attendu": [
+     "HDG DLH88 180"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG DLH88 180",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|6.08|> I hear turn right heading one hundred and eighty, air France eight thousand eight hundred and eighty.",
+    "collationnement_reference": "heading one eight zero, lufthansa eight eight",
+    "wer_collationnement": 1.75,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 34.28989307797747,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 11.882,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c05",
+    "cas": 5,
+    "phrase": "ryanair niner turn right heading two two five",
+    "attendu": [
+     "HDG RYR9 225"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG RYR9 225",
+      "indicatif": false,
+      "action": false,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.48|> I am not sure what you mean by that. Could you <$5.52$>  <|7.2|> I am not sure what you mean by that. Could you repeat it?",
+    "collationnement_reference": "heading two two five, ryanair niner",
+    "wer_collationnement": 6.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 38.24712522700429,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 13.503375,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c06",
+    "cas": 6,
+    "phrase": "AFR1234 hdg 045",
+    "attendu": [
+     "HDG AFR1234 45"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG AFR1234 45",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|8.08|> Air France one two three four, turn right heading zero four five. Air France one two three four, turn right heading zero four five.",
+    "collationnement_reference": "heading zero four five, air france one two three four",
+    "wer_collationnement": 1.8,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 38.8166842799983,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 13.759375,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c07",
+    "cas": 7,
+    "phrase": "BAW57 turn left heading 310",
+    "attendu": [
+     "HDG BAW57 310"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG BAW57 310",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|7.92|> I hear turn left heading three one zero, air France five seven. Turn left heading three one zero, air France five seven.",
+    "collationnement_reference": "heading three one zero, speedbird five seven",
+    "wer_collationnement": 3.25,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 38.425926986004924,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 13.5886875,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c08",
+    "cas": 8,
+    "phrase": "air france one two three four descend flight level one zero zero",
+    "attendu": [
+     "ALT AFR1234 10000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 10000",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|9.12|> Air France one two three four, distance flight level one zero zero.",
+    "collationnement_reference": "climb flight level one zero zero, air france one two three four",
+    "wer_collationnement": 1.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 43.32417699100915,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 15.295375,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c09",
+    "cas": 9,
+    "phrase": "csa one delta zulu climb flight level two four zero",
+    "attendu": [
+     "ALT CSA1DZ 24000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT CSA1DZ 24000",
+      "indicatif": false,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|5.04|> Climb five thousand feet per minute, air <$5.84$>  <|8.56|> Level two, four zero zero, air France one two three four.",
+    "collationnement_reference": "climb flight level two four zero, charlie sierra alfa one delta zulu",
+    "wer_collationnement": 1.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 44.28867807702045,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 15.807375,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c10",
+    "cas": 10,
+    "phrase": "AFR1234 climb FL320",
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 32000",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.64|> Climb, air France one one one <$5.36$>  <|7.92|> Level three-two-zero, France one two three four.",
+    "collationnement_reference": "climb flight level three two zero, air france one two three four",
+    "wer_collationnement": 0.5714285714285714,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 38.410689811978955,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 13.5886875,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c11",
+    "cas": 11,
+    "phrase": "BAW57 descend to flight level 80",
+    "attendu": [
+     "ALT BAW57 8000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT BAW57 8000",
+      "indicatif": false,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|6.96|> five thousand seven hundred and twenty five feet.",
+    "collationnement_reference": "climb flight level zero eight zero, speedbird five seven",
+    "wer_collationnement": 1.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 35.84824532098719,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 12.5646875,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c12",
+    "cas": 12,
+    "phrase": "EZY21 climb 5 thousand feet",
+    "attendu": [
+     "ALT EZY21 5000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT EZY21 5000",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|5.12|> Climb five thousand feet, jet two one.",
+    "collationnement_reference": "climb flight level zero five zero, easyjet two one",
+    "wer_collationnement": 0.6666666666666666,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 33.40749581399723,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 11.37,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c13",
+    "cas": 13,
+    "phrase": "AFR1234 descend altitude 6000 feet",
+    "attendu": [
+     "ALT AFR1234 6000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 6000",
+      "indicatif": true,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|5.52|> Descend, altitude, thousand, air, zero, five <$6.56$>  <|7.44|> Descending, air France one two three four.",
+    "collationnement_reference": "climb flight level zero six zero, air france one two three four",
+    "wer_collationnement": 0.8571428571428571,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 38.811215508991154,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 13.5886875,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c14",
+    "cas": 14,
+    "phrase": "air france one two three four climb to flight level three two zero",
+    "attendu": [
+     "ALT AFR1234 32000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 32000",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|6.96|> Climb to flight level three two zero, air France one two three four.",
+    "collationnement_reference": "climb flight level three two zero, air france one two three four",
+    "wer_collationnement": 0.14285714285714285,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 37.44691522800713,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 13.162,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c15",
+    "cas": 15,
+    "phrase": "BAW57 maintain flight level 100",
+    "attendu": [
+     "ALT BAW57 10000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT BAW57 10000",
+      "indicatif": false,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|6.56|> five thousand seven hundred and maintain flight level one, air France five thousand seven hundred.",
+    "collationnement_reference": "climb flight level one zero zero, speedbird five seven",
+    "wer_collationnement": 1.1666666666666667,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 36.14679796600831,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 12.65,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c16",
+    "cas": 16,
+    "phrase": "DLH88 descend 4000 feet",
+    "attendu": [
+     "ALT DLH88 4000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT DLH88 4000",
+      "indicatif": false,
+      "action": false,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.96|> I hear you, Tower. I am turning left heading two thousand seven hundred and ten. Air France eight thousand eight hundred and eighty. Tower, do you read?",
+    "collationnement_reference": "climb flight level zero four zero, lufthansa eight eight",
+    "wer_collationnement": 2.8333333333333335,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 32.6013083490252,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 11.114,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c17",
+    "cas": 17,
+    "phrase": "speedbird five seven climb flight level one five zero",
+    "attendu": [
+     "ALT BAW57 15000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT BAW57 15000",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|3.92|> five thousand seven hundred and climb <$4.48$>  <|6.88|> Flight levels one-five-zero.",
+    "collationnement_reference": "climb flight level one five zero, speedbird five seven",
+    "wer_collationnement": 0.8333333333333334,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 38.7608132790192,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 13.674,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c18",
+    "cas": 18,
+    "phrase": "AFR1234 reduce speed two five zero knots",
+    "attendu": [
+     "SPD AFR1234 250"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD AFR1234 250",
+      "indicatif": true,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|6.88|> I hear you, Air France one two three four, reduce speed to five zero zero knots. Air France one two three four, that is you.",
+    "collationnement_reference": "speed two five zero knots, air france one two three four",
+    "wer_collationnement": 2.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 37.322044920001645,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 12.991375,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c19",
+    "cas": 19,
+    "phrase": "AFR1234 increase speed 300",
+    "attendu": [
+     "SPD AFR1234 300"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD AFR1234 300",
+      "indicatif": false,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.88|> I hear <$5.12$>  <|6.8|> I hear you, France one two three four. I am unable to increase my speed. I am currently at three thousand and zero zero. I am unable to increase my speed.",
+    "collationnement_reference": "speed three zero zero knots, air france one two three four",
+    "wer_collationnement": 4.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 35.415106673986884,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 12.394,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c20",
+    "cas": 20,
+    "phrase": "RYR9 increase speed to 280 knots",
+    "attendu": [
+     "SPD RYR9 280"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD RYR9 280",
+      "indicatif": false,
+      "action": false,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|7.28|> The increase is because the higher altitude has thinner air, which reduces lift and requires more power to maintain the same climb angle. To keep the climb rate the same, you need to double the climb rate and the power.",
+    "collationnement_reference": "speed two eight zero knots, ryanair niner",
+    "wer_collationnement": 8.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 36.85697019501822,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 12.906,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c21",
+    "cas": 21,
+    "phrase": "easyjet two one reduce speed two two zero",
+    "attendu": [
+     "SPD EZY21 220"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD EZY21 220",
+      "indicatif": false,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|5.2|> Reduce speed to two hundred and twenty knots, air France one two three four.",
+    "collationnement_reference": "speed two two zero knots, easyjet two one",
+    "wer_collationnement": 1.0,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 32.21244714097702,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.858,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c22",
+    "cas": 22,
+    "phrase": "BAW57 speed 250",
+    "attendu": [
+     "SPD BAW57 250"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD BAW57 250",
+      "indicatif": false,
+      "action": false,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|5.28|> five thousand and seventy degrees magnetic, air France five thousand and seventy.",
+    "collationnement_reference": "speed two five zero knots, speedbird five seven",
+    "wer_collationnement": 1.2,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 32.36898729699897,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 10.943375,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c23",
+    "cas": 23,
+    "phrase": "csa one delta zulu reduce 230",
+    "attendu": [
+     "SPD CSA1DZ 230"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD CSA1DZ 230",
+      "indicatif": false,
+      "action": false,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|6.88|> Reduce to two-three-zero, Cessna on Delta Zulu.",
+    "collationnement_reference": "speed two three zero knots, charlie sierra alfa one delta zulu",
+    "wer_collationnement": 0.7777777777777778,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 36.61560529001872,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 12.8206875,
+    "erreur": null
+   },
+   {
+    "id": "humain_radio_c24",
+    "cas": 24,
+    "phrase": "AFR1234 maintain 250 knots",
+    "attendu": [
+     "SPD AFR1234 250"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD AFR1234 250",
+      "indicatif": true,
+      "action": false,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|6.72|> Maintain two-five-zero, air France one two three four.",
+    "collationnement_reference": "speed two five zero knots, air france one two three four",
+    "wer_collationnement": 0.3333333333333333,
+    "wer_aller_retour": NaN,
+    "juge_transcription": "",
+    "s2s_latence_s": 36.6942710269941,
+    "fc_latence_s": null,
+    "s2s_rtf": null,
+    "duree_entree_s": 12.735375,
+    "erreur": null
+   }
+  ]
+ }
+}
