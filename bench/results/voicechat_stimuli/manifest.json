@@ -1,0 +1,1402 @@
+[
+ {
+  "id": "sapi_radio_c00",
+  "condition": "sapi_radio",
+  "cas": 0,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c00.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c00.wav",
+  "phrase": "air france one two three four turn left heading two seven zero",
+  "categorie": "cap",
+  "attendu": [
+   "HDG AFR1234 270"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c01",
+  "condition": "sapi_radio",
+  "cas": 1,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c01.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c01.wav",
+  "phrase": "speedbird five seven turn right heading 090",
+  "categorie": "cap",
+  "attendu": [
+   "HDG BAW57 90"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c02",
+  "condition": "sapi_radio",
+  "cas": 2,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c02.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c02.wav",
+  "phrase": "AFR1234 fly heading three six zero",
+  "categorie": "cap",
+  "attendu": [
+   "HDG AFR1234 360"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c03",
+  "condition": "sapi_radio",
+  "cas": 3,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c03.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c03.wav",
+  "phrase": "EZY21 fly heading 100",
+  "categorie": "cap",
+  "attendu": [
+   "HDG EZY21 100"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c04",
+  "condition": "sapi_radio",
+  "cas": 4,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c04.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c04.wav",
+  "phrase": "lufthansa eight eight heading one eight zero",
+  "categorie": "cap",
+  "attendu": [
+   "HDG DLH88 180"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c05",
+  "condition": "sapi_radio",
+  "cas": 5,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c05.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c05.wav",
+  "phrase": "ryanair niner turn right heading two two five",
+  "categorie": "cap",
+  "attendu": [
+   "HDG RYR9 225"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c06",
+  "condition": "sapi_radio",
+  "cas": 6,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c06.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c06.wav",
+  "phrase": "AFR1234 hdg 045",
+  "categorie": "cap",
+  "attendu": [
+   "HDG AFR1234 45"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c07",
+  "condition": "sapi_radio",
+  "cas": 7,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c07.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c07.wav",
+  "phrase": "BAW57 turn left heading 310",
+  "categorie": "cap",
+  "attendu": [
+   "HDG BAW57 310"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c08",
+  "condition": "sapi_radio",
+  "cas": 8,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c08.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c08.wav",
+  "phrase": "air france one two three four descend flight level one zero zero",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT AFR1234 10000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c09",
+  "condition": "sapi_radio",
+  "cas": 9,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c09.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c09.wav",
+  "phrase": "csa one delta zulu climb flight level two four zero",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT CSA1DZ 24000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c10",
+  "condition": "sapi_radio",
+  "cas": 10,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c10.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c10.wav",
+  "phrase": "AFR1234 climb FL320",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT AFR1234 32000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c11",
+  "condition": "sapi_radio",
+  "cas": 11,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c11.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c11.wav",
+  "phrase": "BAW57 descend to flight level 80",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT BAW57 8000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c12",
+  "condition": "sapi_radio",
+  "cas": 12,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c12.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c12.wav",
+  "phrase": "EZY21 climb 5 thousand feet",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT EZY21 5000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c13",
+  "condition": "sapi_radio",
+  "cas": 13,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c13.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c13.wav",
+  "phrase": "AFR1234 descend altitude 6000 feet",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT AFR1234 6000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c14",
+  "condition": "sapi_radio",
+  "cas": 14,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c14.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c14.wav",
+  "phrase": "air france one two three four climb to flight level three two zero",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT AFR1234 32000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c15",
+  "condition": "sapi_radio",
+  "cas": 15,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c15.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c15.wav",
+  "phrase": "BAW57 maintain flight level 100",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT BAW57 10000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c16",
+  "condition": "sapi_radio",
+  "cas": 16,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c16.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c16.wav",
+  "phrase": "DLH88 descend 4000 feet",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT DLH88 4000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c17",
+  "condition": "sapi_radio",
+  "cas": 17,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c17.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c17.wav",
+  "phrase": "speedbird five seven climb flight level one five zero",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT BAW57 15000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c18",
+  "condition": "sapi_radio",
+  "cas": 18,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c18.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c18.wav",
+  "phrase": "AFR1234 reduce speed two five zero knots",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD AFR1234 250"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c19",
+  "condition": "sapi_radio",
+  "cas": 19,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c19.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c19.wav",
+  "phrase": "AFR1234 increase speed 300",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD AFR1234 300"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c20",
+  "condition": "sapi_radio",
+  "cas": 20,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c20.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c20.wav",
+  "phrase": "RYR9 increase speed to 280 knots",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD RYR9 280"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c21",
+  "condition": "sapi_radio",
+  "cas": 21,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c21.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c21.wav",
+  "phrase": "easyjet two one reduce speed two two zero",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD EZY21 220"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c22",
+  "condition": "sapi_radio",
+  "cas": 22,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c22.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c22.wav",
+  "phrase": "BAW57 speed 250",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD BAW57 250"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c23",
+  "condition": "sapi_radio",
+  "cas": 23,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c23.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c23.wav",
+  "phrase": "csa one delta zulu reduce 230",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD CSA1DZ 230"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_radio_c24",
+  "condition": "sapi_radio",
+  "cas": 24,
+  "wav": "/dev/shm/vc/stim/wav/sapi_radio/c24.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_radio\\c24.wav",
+  "phrase": "AFR1234 maintain 250 knots",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD AFR1234 250"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c00",
+  "condition": "sapi_propre",
+  "cas": 0,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c00.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c00.wav",
+  "phrase": "air france one two three four turn left heading two seven zero",
+  "categorie": "cap",
+  "attendu": [
+   "HDG AFR1234 270"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c01",
+  "condition": "sapi_propre",
+  "cas": 1,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c01.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c01.wav",
+  "phrase": "speedbird five seven turn right heading 090",
+  "categorie": "cap",
+  "attendu": [
+   "HDG BAW57 90"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c02",
+  "condition": "sapi_propre",
+  "cas": 2,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c02.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c02.wav",
+  "phrase": "AFR1234 fly heading three six zero",
+  "categorie": "cap",
+  "attendu": [
+   "HDG AFR1234 360"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c03",
+  "condition": "sapi_propre",
+  "cas": 3,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c03.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c03.wav",
+  "phrase": "EZY21 fly heading 100",
+  "categorie": "cap",
+  "attendu": [
+   "HDG EZY21 100"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c04",
+  "condition": "sapi_propre",
+  "cas": 4,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c04.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c04.wav",
+  "phrase": "lufthansa eight eight heading one eight zero",
+  "categorie": "cap",
+  "attendu": [
+   "HDG DLH88 180"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c05",
+  "condition": "sapi_propre",
+  "cas": 5,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c05.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c05.wav",
+  "phrase": "ryanair niner turn right heading two two five",
+  "categorie": "cap",
+  "attendu": [
+   "HDG RYR9 225"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c06",
+  "condition": "sapi_propre",
+  "cas": 6,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c06.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c06.wav",
+  "phrase": "AFR1234 hdg 045",
+  "categorie": "cap",
+  "attendu": [
+   "HDG AFR1234 45"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c07",
+  "condition": "sapi_propre",
+  "cas": 7,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c07.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c07.wav",
+  "phrase": "BAW57 turn left heading 310",
+  "categorie": "cap",
+  "attendu": [
+   "HDG BAW57 310"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c08",
+  "condition": "sapi_propre",
+  "cas": 8,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c08.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c08.wav",
+  "phrase": "air france one two three four descend flight level one zero zero",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT AFR1234 10000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c09",
+  "condition": "sapi_propre",
+  "cas": 9,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c09.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c09.wav",
+  "phrase": "csa one delta zulu climb flight level two four zero",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT CSA1DZ 24000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c10",
+  "condition": "sapi_propre",
+  "cas": 10,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c10.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c10.wav",
+  "phrase": "AFR1234 climb FL320",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT AFR1234 32000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c11",
+  "condition": "sapi_propre",
+  "cas": 11,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c11.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c11.wav",
+  "phrase": "BAW57 descend to flight level 80",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT BAW57 8000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c12",
+  "condition": "sapi_propre",
+  "cas": 12,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c12.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c12.wav",
+  "phrase": "EZY21 climb 5 thousand feet",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT EZY21 5000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c13",
+  "condition": "sapi_propre",
+  "cas": 13,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c13.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c13.wav",
+  "phrase": "AFR1234 descend altitude 6000 feet",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT AFR1234 6000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c14",
+  "condition": "sapi_propre",
+  "cas": 14,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c14.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c14.wav",
+  "phrase": "air france one two three four climb to flight level three two zero",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT AFR1234 32000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c15",
+  "condition": "sapi_propre",
+  "cas": 15,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c15.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c15.wav",
+  "phrase": "BAW57 maintain flight level 100",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT BAW57 10000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c16",
+  "condition": "sapi_propre",
+  "cas": 16,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c16.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c16.wav",
+  "phrase": "DLH88 descend 4000 feet",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT DLH88 4000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c17",
+  "condition": "sapi_propre",
+  "cas": 17,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c17.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c17.wav",
+  "phrase": "speedbird five seven climb flight level one five zero",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT BAW57 15000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c18",
+  "condition": "sapi_propre",
+  "cas": 18,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c18.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c18.wav",
+  "phrase": "AFR1234 reduce speed two five zero knots",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD AFR1234 250"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c19",
+  "condition": "sapi_propre",
+  "cas": 19,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c19.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c19.wav",
+  "phrase": "AFR1234 increase speed 300",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD AFR1234 300"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c20",
+  "condition": "sapi_propre",
+  "cas": 20,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c20.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c20.wav",
+  "phrase": "RYR9 increase speed to 280 knots",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD RYR9 280"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c21",
+  "condition": "sapi_propre",
+  "cas": 21,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c21.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c21.wav",
+  "phrase": "easyjet two one reduce speed two two zero",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD EZY21 220"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c22",
+  "condition": "sapi_propre",
+  "cas": 22,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c22.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c22.wav",
+  "phrase": "BAW57 speed 250",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD BAW57 250"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c23",
+  "condition": "sapi_propre",
+  "cas": 23,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c23.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c23.wav",
+  "phrase": "csa one delta zulu reduce 230",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD CSA1DZ 230"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "sapi_propre_c24",
+  "condition": "sapi_propre",
+  "cas": 24,
+  "wav": "/dev/shm/vc/stim/wav/sapi_propre/c24.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\sapi_propre\\c24.wav",
+  "phrase": "AFR1234 maintain 250 knots",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD AFR1234 250"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c00",
+  "condition": "humain_micro",
+  "cas": 0,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c00.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c00.wav",
+  "phrase": "air france one two three four turn left heading two seven zero",
+  "categorie": "cap",
+  "attendu": [
+   "HDG AFR1234 270"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c01",
+  "condition": "humain_micro",
+  "cas": 1,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c01.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c01.wav",
+  "phrase": "speedbird five seven turn right heading 090",
+  "categorie": "cap",
+  "attendu": [
+   "HDG BAW57 90"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c02",
+  "condition": "humain_micro",
+  "cas": 2,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c02.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c02.wav",
+  "phrase": "AFR1234 fly heading three six zero",
+  "categorie": "cap",
+  "attendu": [
+   "HDG AFR1234 360"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c03",
+  "condition": "humain_micro",
+  "cas": 3,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c03.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c03.wav",
+  "phrase": "EZY21 fly heading 100",
+  "categorie": "cap",
+  "attendu": [
+   "HDG EZY21 100"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c04",
+  "condition": "humain_micro",
+  "cas": 4,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c04.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c04.wav",
+  "phrase": "lufthansa eight eight heading one eight zero",
+  "categorie": "cap",
+  "attendu": [
+   "HDG DLH88 180"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c05",
+  "condition": "humain_micro",
+  "cas": 5,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c05.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c05.wav",
+  "phrase": "ryanair niner turn right heading two two five",
+  "categorie": "cap",
+  "attendu": [
+   "HDG RYR9 225"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c06",
+  "condition": "humain_micro",
+  "cas": 6,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c06.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c06.wav",
+  "phrase": "AFR1234 hdg 045",
+  "categorie": "cap",
+  "attendu": [
+   "HDG AFR1234 45"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c07",
+  "condition": "humain_micro",
+  "cas": 7,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c07.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c07.wav",
+  "phrase": "BAW57 turn left heading 310",
+  "categorie": "cap",
+  "attendu": [
+   "HDG BAW57 310"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c08",
+  "condition": "humain_micro",
+  "cas": 8,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c08.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c08.wav",
+  "phrase": "air france one two three four descend flight level one zero zero",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT AFR1234 10000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c09",
+  "condition": "humain_micro",
+  "cas": 9,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c09.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c09.wav",
+  "phrase": "csa one delta zulu climb flight level two four zero",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT CSA1DZ 24000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c10",
+  "condition": "humain_micro",
+  "cas": 10,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c10.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c10.wav",
+  "phrase": "AFR1234 climb FL320",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT AFR1234 32000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c11",
+  "condition": "humain_micro",
+  "cas": 11,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c11.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c11.wav",
+  "phrase": "BAW57 descend to flight level 80",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT BAW57 8000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c12",
+  "condition": "humain_micro",
+  "cas": 12,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c12.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c12.wav",
+  "phrase": "EZY21 climb 5 thousand feet",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT EZY21 5000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c13",
+  "condition": "humain_micro",
+  "cas": 13,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c13.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c13.wav",
+  "phrase": "AFR1234 descend altitude 6000 feet",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT AFR1234 6000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c14",
+  "condition": "humain_micro",
+  "cas": 14,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c14.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c14.wav",
+  "phrase": "air france one two three four climb to flight level three two zero",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT AFR1234 32000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c15",
+  "condition": "humain_micro",
+  "cas": 15,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c15.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c15.wav",
+  "phrase": "BAW57 maintain flight level 100",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT BAW57 10000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c16",
+  "condition": "humain_micro",
+  "cas": 16,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c16.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c16.wav",
+  "phrase": "DLH88 descend 4000 feet",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT DLH88 4000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c17",
+  "condition": "humain_micro",
+  "cas": 17,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c17.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c17.wav",
+  "phrase": "speedbird five seven climb flight level one five zero",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT BAW57 15000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c18",
+  "condition": "humain_micro",
+  "cas": 18,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c18.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c18.wav",
+  "phrase": "AFR1234 reduce speed two five zero knots",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD AFR1234 250"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c19",
+  "condition": "humain_micro",
+  "cas": 19,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c19.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c19.wav",
+  "phrase": "AFR1234 increase speed 300",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD AFR1234 300"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c20",
+  "condition": "humain_micro",
+  "cas": 20,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c20.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c20.wav",
+  "phrase": "RYR9 increase speed to 280 knots",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD RYR9 280"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c21",
+  "condition": "humain_micro",
+  "cas": 21,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c21.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c21.wav",
+  "phrase": "easyjet two one reduce speed two two zero",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD EZY21 220"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c22",
+  "condition": "humain_micro",
+  "cas": 22,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c22.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c22.wav",
+  "phrase": "BAW57 speed 250",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD BAW57 250"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c23",
+  "condition": "humain_micro",
+  "cas": 23,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c23.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c23.wav",
+  "phrase": "csa one delta zulu reduce 230",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD CSA1DZ 230"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_micro_c24",
+  "condition": "humain_micro",
+  "cas": 24,
+  "wav": "/dev/shm/vc/stim/wav/humain_micro/c24.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_micro\\c24.wav",
+  "phrase": "AFR1234 maintain 250 knots",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD AFR1234 250"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c00",
+  "condition": "humain_radio",
+  "cas": 0,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c00.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c00.wav",
+  "phrase": "air france one two three four turn left heading two seven zero",
+  "categorie": "cap",
+  "attendu": [
+   "HDG AFR1234 270"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c01",
+  "condition": "humain_radio",
+  "cas": 1,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c01.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c01.wav",
+  "phrase": "speedbird five seven turn right heading 090",
+  "categorie": "cap",
+  "attendu": [
+   "HDG BAW57 90"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c02",
+  "condition": "humain_radio",
+  "cas": 2,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c02.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c02.wav",
+  "phrase": "AFR1234 fly heading three six zero",
+  "categorie": "cap",
+  "attendu": [
+   "HDG AFR1234 360"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c03",
+  "condition": "humain_radio",
+  "cas": 3,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c03.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c03.wav",
+  "phrase": "EZY21 fly heading 100",
+  "categorie": "cap",
+  "attendu": [
+   "HDG EZY21 100"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c04",
+  "condition": "humain_radio",
+  "cas": 4,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c04.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c04.wav",
+  "phrase": "lufthansa eight eight heading one eight zero",
+  "categorie": "cap",
+  "attendu": [
+   "HDG DLH88 180"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c05",
+  "condition": "humain_radio",
+  "cas": 5,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c05.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c05.wav",
+  "phrase": "ryanair niner turn right heading two two five",
+  "categorie": "cap",
+  "attendu": [
+   "HDG RYR9 225"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c06",
+  "condition": "humain_radio",
+  "cas": 6,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c06.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c06.wav",
+  "phrase": "AFR1234 hdg 045",
+  "categorie": "cap",
+  "attendu": [
+   "HDG AFR1234 45"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c07",
+  "condition": "humain_radio",
+  "cas": 7,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c07.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c07.wav",
+  "phrase": "BAW57 turn left heading 310",
+  "categorie": "cap",
+  "attendu": [
+   "HDG BAW57 310"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c08",
+  "condition": "humain_radio",
+  "cas": 8,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c08.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c08.wav",
+  "phrase": "air france one two three four descend flight level one zero zero",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT AFR1234 10000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c09",
+  "condition": "humain_radio",
+  "cas": 9,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c09.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c09.wav",
+  "phrase": "csa one delta zulu climb flight level two four zero",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT CSA1DZ 24000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c10",
+  "condition": "humain_radio",
+  "cas": 10,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c10.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c10.wav",
+  "phrase": "AFR1234 climb FL320",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT AFR1234 32000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c11",
+  "condition": "humain_radio",
+  "cas": 11,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c11.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c11.wav",
+  "phrase": "BAW57 descend to flight level 80",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT BAW57 8000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c12",
+  "condition": "humain_radio",
+  "cas": 12,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c12.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c12.wav",
+  "phrase": "EZY21 climb 5 thousand feet",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT EZY21 5000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c13",
+  "condition": "humain_radio",
+  "cas": 13,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c13.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c13.wav",
+  "phrase": "AFR1234 descend altitude 6000 feet",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT AFR1234 6000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c14",
+  "condition": "humain_radio",
+  "cas": 14,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c14.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c14.wav",
+  "phrase": "air france one two three four climb to flight level three two zero",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT AFR1234 32000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c15",
+  "condition": "humain_radio",
+  "cas": 15,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c15.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c15.wav",
+  "phrase": "BAW57 maintain flight level 100",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT BAW57 10000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c16",
+  "condition": "humain_radio",
+  "cas": 16,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c16.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c16.wav",
+  "phrase": "DLH88 descend 4000 feet",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT DLH88 4000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c17",
+  "condition": "humain_radio",
+  "cas": 17,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c17.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c17.wav",
+  "phrase": "speedbird five seven climb flight level one five zero",
+  "categorie": "niveau",
+  "attendu": [
+   "ALT BAW57 15000"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c18",
+  "condition": "humain_radio",
+  "cas": 18,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c18.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c18.wav",
+  "phrase": "AFR1234 reduce speed two five zero knots",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD AFR1234 250"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c19",
+  "condition": "humain_radio",
+  "cas": 19,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c19.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c19.wav",
+  "phrase": "AFR1234 increase speed 300",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD AFR1234 300"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c20",
+  "condition": "humain_radio",
+  "cas": 20,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c20.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c20.wav",
+  "phrase": "RYR9 increase speed to 280 knots",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD RYR9 280"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c21",
+  "condition": "humain_radio",
+  "cas": 21,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c21.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c21.wav",
+  "phrase": "easyjet two one reduce speed two two zero",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD EZY21 220"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c22",
+  "condition": "humain_radio",
+  "cas": 22,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c22.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c22.wav",
+  "phrase": "BAW57 speed 250",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD BAW57 250"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c23",
+  "condition": "humain_radio",
+  "cas": 23,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c23.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c23.wav",
+  "phrase": "csa one delta zulu reduce 230",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD CSA1DZ 230"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ },
+ {
+  "id": "humain_radio_c24",
+  "condition": "humain_radio",
+  "cas": 24,
+  "wav": "/dev/shm/vc/stim/wav/humain_radio/c24.wav",
+  "wav_local": "C:\\Users\\nicol\\Downloads\\simulateur-controleur-aerien\\bench\\results\\voicechat_stimuli\\wav\\humain_radio\\c24.wav",
+  "phrase": "AFR1234 maintain 250 knots",
+  "categorie": "vitesse",
+  "attendu": [
+   "SPD AFR1234 250"
+  ],
+  "silence_avant_s": 0.25,
+  "silence_apres_s": 6.0
+ }
+]

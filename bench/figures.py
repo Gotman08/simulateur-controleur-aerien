@@ -93,9 +93,9 @@ def fig_stt():
         ax.set_xticks(xs)
         ax.set_xticklabels(systems, rotation=20, ha="right")
         ax.set_title(f"{ckey} (n={d['corpora'][ckey]['n']})")
-    axes[0].set_ylabel("WER moyen par extrait (%) - IC 95 % bootstrap")
+    axes[0].set_ylabel("WER moyen par extrait (%), IC 95 % bootstrap")
     axes[0].legend(fontsize=8)
-    fig.suptitle("STT : WER par modele, corpus ATC reels, avec/sans passe-bande VHF", y=1.02)
+    fig.suptitle("STT : WER par modèle, corpus ATC réels, avec/sans passe-bande VHF", y=1.02)
     save(fig, "fig_stt_wer.png")
 
     # --- RTF ------------------------------------------------------------------
@@ -106,12 +106,12 @@ def fig_stt():
                 for s in systems]
         ax.bar(xs + (k - 0.5) * 0.38, rtfs, 0.38, label=ckey, color=C[k + 2],
                edgecolor="white")
-    ax.axhline(1.0, color="red", lw=1, ls="--", label="temps reel (RTF=1)")
+    ax.axhline(1.0, color="red", lw=1, ls="--", label="temps réel (RTF = 1)")
     ax.set_yscale("log")
     ax.set_xticks(xs)
     ax.set_xticklabels(systems, rotation=20, ha="right")
-    ax.set_ylabel("RTF (traitement / duree audio, log)")
-    ax.set_title(f"STT : facteur temps reel - {d['protocole'].get('gpu', '?')}")
+    ax.set_ylabel("RTF (traitement / durée audio, log)")
+    ax.set_title(f"STT : facteur temps réel sur {d['protocole'].get('gpu', '?')}")
     ax.legend(fontsize=8)
     save(fig, "fig_stt_rtf.png")
 
@@ -167,9 +167,9 @@ def fig_llm():
                label=lbl, color=C[k + 1], edgecolor="white")
     ax.set_xticks(xs)
     ax.set_xticklabels(labels, rotation=15, ha="right")
-    ax.set_ylabel("Exactitude TrafScript exacte (%) - IC 95 % Wilson")
+    ax.set_ylabel("Exactitude TrafScript exacte (%), IC 95 % Wilson")
     ax.set_ylim(0, 118)
-    ax.set_title("Extraction d'intention : exactitude par systeme (chaine de production complete)")
+    ax.set_title("Extraction d'intention : exactitude par système (chaîne de production complète)")
     ax.legend(fontsize=8, loc="upper center", ncol=3, framealpha=0.9)
     save(fig, "fig_llm_exactitude.png")
 
@@ -194,7 +194,7 @@ def fig_llm():
                         color="black")
     ax.grid(False)
     fig.colorbar(im, label="exactitude (%)")
-    ax.set_title("Exactitude par categorie de clairance")
+    ax.set_title("Exactitude par catégorie de clairance")
     save(fig, "fig_llm_categories.png")
 
     # --- latence + debit -----------------------------------------------------------
@@ -208,7 +208,7 @@ def fig_llm():
         ax1.bar(xs + 0.19, p95s, 0.38, label="p95", color=C[1], edgecolor="white")
         ax1.set_xticks(xs)
         ax1.set_xticklabels([_sysname(s) for s in llms], rotation=15, ha="right")
-        ax1.set_ylabel("Latence interpretation (s)")
+        ax1.set_ylabel("Latence d'interprétation (s)")
         ax1.set_title("Latence par clairance")
         ax1.legend(fontsize=8)
         tps = [d["systems"][s].get("tokens", {}).get("tokens_generes_par_s_moyen", np.nan)
@@ -216,8 +216,8 @@ def fig_llm():
         ax2.bar(xs, tps, 0.5, color=C[2], edgecolor="white")
         ax2.set_xticks(xs)
         ax2.set_xticklabels([_sysname(s) for s in llms], rotation=15, ha="right")
-        ax2.set_ylabel("Tokens generes / s")
-        ax2.set_title("Debit de generation")
+        ax2.set_ylabel("Tokens générés / s")
+        ax2.set_title("Débit de génération")
         save(fig, "fig_llm_latence.png")
 
     # --- scenarios ---------------------------------------------------------------------
@@ -236,9 +236,9 @@ def fig_llm():
                     ha="center", fontsize=7)
         ax.set_xticks(xs)
         ax.set_xticklabels([_sysname(s) for s in have], rotation=15, ha="right")
-        ax.set_ylabel("Contraintes respectees (%) - IC 95 % Wilson")
+        ax.set_ylabel("Contraintes respectées (%), IC 95 % Wilson")
         ax.set_ylim(0, 105)
-        ax.set_title("Generation de situations : conformite aux contraintes (20 descriptions)")
+        ax.set_title("Génération de situations : conformité aux contraintes (20 descriptions)")
         save(fig, "fig_llm_scenarios.png")
 
 
@@ -265,14 +265,14 @@ def fig_tts():
     rhi = [v["ic95_rtf"][1] for _, v in engines]
     ax1.bar(xs, rtf, 0.5, yerr=[np.array(rtf) - rlo, np.array(rhi) - np.array(rtf)],
             capsize=3, color=C[0], edgecolor="white")
-    ax1.axhline(1.0, color="red", lw=1, ls="--", label="temps reel")
+    ax1.axhline(1.0, color="red", lw=1, ls="--", label="temps réel")
     ax1.set_xticks(xs)
     ax1.set_xticklabels(names, rotation=25, ha="right", fontsize=7)
-    ax1.set_ylabel("RTF synthese")
-    ax1.set_title("Cout de synthese (RTF, IC 95 %)")
+    ax1.set_ylabel("RTF de synthèse")
+    ax1.set_title("Coût de synthèse (RTF, IC 95 %)")
     ax1.legend(fontsize=8)
-    for k, cond, lab in ((0, "wer_aller_retour_propre", "propre"),
-                         (1, "wer_aller_retour_vhf", "apres VHF")):
+    for k, cond, lab in ((0, "wer_aller_retour_propre", "avant VHF"),
+                         (1, "wer_aller_retour_vhf", "après VHF")):
         vals = [100 * v[cond] for _, v in engines]
         ic = [v["ic95_wer_propre" if k == 0 else "ic95_wer_vhf"] for _, v in engines]
         elo = [val - 100 * c[0] for val, c in zip(vals, ic)]
@@ -282,7 +282,7 @@ def fig_tts():
     ax2.set_xticks(xs)
     ax2.set_xticklabels(names, rotation=25, ha="right", fontsize=7)
     ax2.set_ylabel("WER aller-retour (%)")
-    ax2.set_title(f"Intelligibilite objective (juge : {d.get('juge', '?')})")
+    ax2.set_title("Intelligibilité objective aller-retour")
     ax2.legend(fontsize=8)
     save(fig, "fig_tts.png")
 
@@ -320,9 +320,9 @@ def fig_e2e():
                  color="white", fontweight="bold")
     ax1.set_xticks(xs)
     ax1.set_xticklabels([c[1] for c in conds], fontsize=7.5)
-    ax1.set_ylabel("Clairances correctement executees (%)")
+    ax1.set_ylabel("Clairances correctement exécutées (%)")
     ax1.set_ylim(0, 105)
-    ax1.set_title("Reussite E2E par condition - IC 95 % Wilson")
+    ax1.set_title("Réussite de bout en bout par condition, IC 95 % Wilson")
     # latences par etage : pile locale et, si mesuree, pile ROMEO (tunnel inclus)
     stages = [("stt", "STT"), ("llm", "LLM"), ("tts", "TTS")]
     piles = [("locale", d)] + ([("ROMEO", romeo)] if romeo else [])
@@ -342,9 +342,9 @@ def fig_e2e():
     ax2.set_xticklabels([f"pile {p}" for p, _ in piles], fontsize=8)
     ax2.set_xlim(-0.7, len(piles) - 0.3 + 0.9)
     ax2.set_ylabel("Latence (s)")
-    ax2.set_title("Latence vocale par etage")
+    ax2.set_title("Latence vocale par étage")
     ax2.legend(fontsize=8, loc="center right")
-    fig.suptitle(f"Boucle vocale complete - 25 clairances, canal SNR {d['config']['snr_db']} dB "
+    fig.suptitle(f"Boucle vocale complète : 25 clairances, canal SNR {d['config']['snr_db']} dB "
                  f"(graine commune a toutes les conditions)", y=1.03, fontsize=9)
     save(fig, "fig_e2e.png")
 
@@ -364,11 +364,11 @@ def fig_sim():
         lo = [r["ic95"][0] for r in rows]
         hi = [r["ic95"][1] for r in rows]
         ax.plot(ns, ms, "o-", color=C[0])
-        ax.fill_between(ns, lo, hi, alpha=0.25, color=C[0], label="IC 95 % (5 reps)")
-        ax.axhline(1.0, color="red", lw=1, ls="--", label="temps reel")
+        ax.fill_between(ns, lo, hi, alpha=0.25, color=C[0], label="IC 95 % (5 répétitions)")
+        ax.axhline(1.0, color="red", lw=1, ls="--", label="temps réel")
         ax.set_xlabel("Nombre d'avions")
-        ax.set_ylabel("Facteur temps reel (x)")
-        ax.set_title("BlueSky headless : montee en charge (10 s simulees)")
+        ax.set_ylabel("Facteur d'accélération (× le temps réel)")
+        ax.set_title("BlueSky headless : vitesse de simulation selon le nombre d'aéronefs")
         ax.legend(fontsize=8)
         save(fig, "fig_sim_scaling.png")
     if "cpa_multi_graines" in d:
@@ -381,11 +381,11 @@ def fig_sim():
         ax.bar(xs - 0.19, worst, 0.38, label="max", color=C[3], edgecolor="white")
         ax.bar(xs + 0.19, p99, 0.38, label="p99", color=C[0], edgecolor="white")
         ax.set_yscale("log")
-        ax.axhline(0.1, color="gray", ls=":", lw=1, label="0,1 NM (2 % de la norme)")
+        ax.axhline(0.1, color="gray", ls=":", lw=1, label="0,1 NM (2 % de la norme de séparation)")
         ax.set_xticks(xs)
         ax.set_xticklabels([f"graine {s}" for s in seeds])
-        ax.set_ylabel("Erreur dCPA vs grille fine (NM, log)")
-        ax.set_title(f"Prediction CPA vs verite numerique - "
+        ax.set_ylabel("Erreur sur dCPA face à la grille fine (NM, log)")
+        ax.set_title(f"Prédiction du CPA face à la vérité numérique : "
                      f"{d['cpa_multi_graines']['total_geometries']:,} geometries, "
                      f"{d['cpa_multi_graines']['total_desaccords']} desaccords".replace(",", " "))
         ax.legend(fontsize=8)
@@ -396,9 +396,9 @@ def fig_sim():
         ax.bar(["dCPA max", "dCPA p99", "dCPA moyen"],
                [g["dcpa_nm"]["max"], g["dcpa_nm"]["p99"], g["dcpa_nm"]["moyenne"]],
                color=[C[3], C[1], C[0]], edgecolor="white")
-        ax.axhline(5.0, color="red", ls="--", lw=1, label="norme de separation (5 NM)")
+        ax.axhline(5.0, color="red", ls="--", lw=1, label="norme de séparation (5 NM)")
         ax.set_ylabel("dCPA analytique (NM)")
-        ax.set_title(f"Conflits generes par construction : garantie {g['taux_garantie']:.1%} "
+        ax.set_title(f"Conflits générés par construction : garantie {g['taux_garantie']:.1%} "
                      f"(n={g['n']})")
         ax.legend(fontsize=8)
         save(fig, "fig_conflit_garanti.png")

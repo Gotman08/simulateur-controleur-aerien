@@ -1,0 +1,214 @@
+{
+ "modele": "nvidia/NVIDIA-NemotronLabs-VoiceChat-11B",
+ "protocole": {
+  "conditions": [
+   "sapi_radio"
+  ],
+  "n_cas": 25,
+  "corpus": "bench_corpus, cas EN in-grammar positifs (identiques a e2e_bench)",
+  "validation": "atc_llm.postprocess_orders (bornes S2 + graphe secteur)",
+  "juge_intelligibilite": "faster-whisper small, WER norm_radio (protocole tts_bench)",
+  "materiel": "NVIDIA GH200 120GB",
+  "torch": "2.10.0+cu128",
+  "chargement_modele_s": 161.8733261100133,
+  "invite_systeme_atc": "You are the pilot of an airliner flying in controlled airspace. You are listening to the air traffic control (ATC) radio frequency. Every user turn is a radio transmission from the air traffic controller. \n\nDo two things for every clearance you hear:\n1. Call the tool set_flight_order once for each instruction, with the exact values spoken by the controller. This is how the aircraft actually executes the clearance, so it is mandatory.\n2. Answer on the radio with the standard ICAO read back and nothing else: repeat the instruction, then say your callsign. Keep it short, no chatter, no greetings, no questions.\n\nConversion rules for the tool arguments:\n- spelled out numbers become integers: 'two seven zero' is 270, 'one two three four' is 1234.\n- 'flight level' N or 'FL' N means action ALT with value = N * 100 feet; an altitude given in feet is used as is.\n- heading is in degrees, action HDG; speed is in knots, action SPD; 'direct to' a waypoint is action ADDWPT with the waypoint name.\n- callsigns use the ICAO airline code plus the flight number: air france is AFR, speedbird is BAW, lufthansa is DLH, ryanair is RYR, easyjet is EZY, klm is KLM, american is AAL, united is UAL, csa is CSA. A spelled registration uses the phonetic alphabet, so 'csa one delta zulu' is CSA1DZ.\n- use only the four actions HDG, ALT, SPD and ADDWPT. Ignore purely informational items such as QNH, altimeter settings or frequency changes.\n\nRead back numbers digit by digit, as pilots do on the radio.",
+  "outils": [
+   {
+    "function": {
+     "name": "set_flight_order",
+     "description": "Apply an air traffic control clearance to the aircraft. Call it once for every instruction heard on the radio.",
+     "parameters": {
+      "type": "object",
+      "properties": {
+       "callsign": {
+        "type": "string",
+        "description": "ICAO callsign of the aircraft, for example AFR1234, BAW57 or CSA1DZ"
+       },
+       "action": {
+        "type": "string",
+        "enum": [
+         "HDG",
+         "ALT",
+         "SPD",
+         "ADDWPT"
+        ],
+        "description": "HDG for a heading in degrees, ALT for an altitude in feet, SPD for a speed in knots, ADDWPT to proceed direct to a waypoint"
+       },
+       "value": {
+        "type": "integer",
+        "description": "Numeric value: degrees for HDG, feet for ALT (flight level multiplied by 100), knots for SPD, 0 for ADDWPT"
+       },
+       "waypoint": {
+        "type": "string",
+        "description": "Waypoint name, only for the ADDWPT action"
+       }
+      },
+      "required": [
+       "callsign",
+       "action",
+       "value"
+      ]
+     }
+    }
+   }
+  ]
+ },
+ "resume": {
+  "sapi_radio": {
+   "n": 3,
+   "collationnement_k": 2,
+   "collationnement_correct": 0.6666666666666666,
+   "ic95_collationnement": [
+    0.2076596008020477,
+    0.9385080552796037
+   ],
+   "collationnement_manques": {
+    "indicatif": 0,
+    "action": 0,
+    "valeur": 1
+   },
+   "reponses_muettes": 0,
+   "k": 0,
+   "exactitude_ordres": 0.0,
+   "ic95": [
+    5.551115123125783e-17,
+    0.5614970317550454
+   ],
+   "sans_appel_outil": 3,
+   "ordres_rejetes": 0,
+   "attribution_echecs": {
+    "aucun_appel_outil": 3
+   },
+   "latence_s2s": {
+    "n": 3,
+    "moyenne_s": 32.714871531003155,
+    "mediane_s": 32.671308852994116,
+    "p95_s": 33.08126630231563,
+    "min_s": 32.34648860999732,
+    "max_s": 33.126817130018026,
+    "ic95_moyenne_s": [
+     32.34648860999732,
+     33.126817130018026
+    ]
+   },
+   "latence_fc": {
+    "n": 0
+   },
+   "wer_collationnement": 0.6920634920634919,
+   "ic95_wer_collationnement": [
+    0.14285714285714285,
+    1.3333333333333333
+   ],
+   "wer_aller_retour": 0.047619047619047616,
+   "ic95_wer_aller_retour": [
+    0.0,
+    0.14285714285714285
+   ],
+   "rtf_s2s_median": 3.0251211900920474
+  }
+ },
+ "comparaisons_appariees": {},
+ "rows": {
+  "sapi_radio": [
+   {
+    "id": "sapi_radio_c00",
+    "cas": 0,
+    "phrase": "air france one two three four turn left heading two seven zero",
+    "attendu": [
+     "HDG AFR1234 270"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "HDG AFR1234 270",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.48|> Turn left heading two hundred and seventy degrees, Air France one two three four.",
+    "collationnement_reference": "heading two seven zero, air france one two three four",
+    "wer_collationnement": 0.6,
+    "wer_aller_retour": 0.0,
+    "juge_transcription": "Turn left heading 270 degrees, Air France 1-2-3-4.",
+    "s2s_latence_s": 32.671308852994116,
+    "fc_latence_s": null,
+    "s2s_rtf": 3.0251211900920474,
+    "duree_entree_s": 10.6889375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c08",
+    "cas": 8,
+    "phrase": "air france one two three four descend flight level one zero zero",
+    "attendu": [
+     "ALT AFR1234 10000"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": true,
+    "collationnement_detail": [
+     {
+      "trafscript": "ALT AFR1234 10000",
+      "indicatif": true,
+      "action": true,
+      "valeur": true
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.56|> Descent flight level one zero zero, air France one two three four.",
+    "collationnement_reference": "climb flight level one zero zero, air france one two three four",
+    "wer_collationnement": 0.14285714285714285,
+    "wer_aller_retour": 0.14285714285714285,
+    "juge_transcription": "Decent flight level 1-0-0, Air France 1-2-3-4.",
+    "s2s_latence_s": 33.126817130018026,
+    "fc_latence_s": null,
+    "s2s_rtf": 3.0225198111330314,
+    "duree_entree_s": 10.8189375,
+    "erreur": null
+   },
+   {
+    "id": "sapi_radio_c18",
+    "cas": 18,
+    "phrase": "AFR1234 reduce speed two five zero knots",
+    "attendu": [
+     "SPD AFR1234 250"
+    ],
+    "obtenu": [],
+    "correct": false,
+    "collationnement_ok": false,
+    "collationnement_detail": [
+     {
+      "trafscript": "SPD AFR1234 250",
+      "indicatif": true,
+      "action": true,
+      "valeur": false
+     }
+    ],
+    "appels": [],
+    "ordres": [],
+    "rejetes": [],
+    "diagnostic": "aucun_appel_outil",
+    "texte_agent": "<$0.72$>  <|4.16|> Air France one two three four, reduce speed to five knots.",
+    "collationnement_reference": "speed two five zero knots, air france one two three four",
+    "wer_collationnement": 1.3333333333333333,
+    "wer_aller_retour": 0.0,
+    "juge_transcription": "Air France 1-2-3-4, reduce speed to five knots.",
+    "s2s_latence_s": 32.34648860999732,
+    "fc_latence_s": null,
+    "s2s_rtf": 3.0400835159771917,
+    "duree_entree_s": 10.498625,
+    "erreur": null
+   }
+  ]
+ }
+}
